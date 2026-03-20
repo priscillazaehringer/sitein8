@@ -340,6 +340,8 @@ const db=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let currentUser=null,projectId=null,brandCSS=null,brandVoice=null,brandArchetype=null;
 let selectedLayout='centered',selectedSections={problem:true,services:true,testimonials:true,cta:true};
 let contentData={},polishedCopy={};
+const DEV_MODE = ['localhost','127.0.0.1','0.0.0.0',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+console.log('[sitein8] DEV_MODE:', DEV_MODE, '| hostname:', JSON.stringify(window.location.hostname), '| protocol:', window.location.protocol);
 
 /* AUTH */
 async function signOut(){
@@ -348,6 +350,17 @@ async function signOut(){
   window.location.href='module00.html';
 }
 async function initAuth(){
+  if (DEV_MODE) {
+    currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = 'dev@sitein8.com';
+    await initProject();
+    await loadBrandFromModule01();
+    await loadState();
+    return;
+  }
+
   db.auth.onAuthStateChange(async(event,session)=>{
     if(session?.user){
       currentUser=session.user;
@@ -358,13 +371,14 @@ async function initAuth(){
       await loadBrandFromModule01();
       await loadState();
     } else {
+      if(DEV_MODE)return;
       document.getElementById('authGate').style.display='flex';
       document.getElementById('mainApp').style.display='none';
       setTimeout(()=>{window.location.href='module00.html';},2000);
     }
   });
   const{data:{session}}=await db.auth.getSession();
-  if(!session){document.getElementById('authGate').style.display='flex';setTimeout(()=>{window.location.href='module00.html';},2000);}
+  if(!session){if(DEV_MODE)return;document.getElementById('authGate').style.display='flex';setTimeout(()=>{window.location.href='module00.html';},2000);}
 }
 
 /* INIT PROJECT - raw fetch, SiteGround-safe */

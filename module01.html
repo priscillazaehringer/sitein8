@@ -284,6 +284,10 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 .companion-footer { background: var(--charcoal); padding: 32px 24px; text-align: center; color: var(--lavender); font-size: 15px; }
 .companion-footer a { color: var(--electric-yellow); text-decoration: none; }
 
+/* === BRAND PREVIEW === */
+.brand-preview-swatches { display: flex; gap: 0; overflow: hidden; }
+.brand-preview-swatches div { flex: 1; height: 56px; }
+
 @media (max-width: 640px) {
   .header-title { font-size: 32px; }
   .reveal-archetype { font-size: 44px; }
@@ -515,16 +519,25 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
       </div>
     </div>
 
-    <div style="margin-bottom:40px">
-      <button class="btn btn--yellow" onclick="copyAll()" id="copyAllBtn" style="width:100%;text-align:center;font-size:20px;padding:22px 40px;">📋 Copy Everything — CSS + Voice Guide</button>
+    <!-- Live brand preview panel -->
+    <div id="brandPreviewPanel"></div>
+
+    <!-- Copy buttons -->
+    <div style="display:flex;gap:16px;margin:32px 0;flex-wrap:wrap">
+      <button class="btn btn--yellow" onclick="copyBlock(document.querySelector('#cssCopyBtn'),'css')" id="cssCopyBtn" style="flex:1;text-align:center;font-size:17px;padding:18px 32px;">📋 Copy CSS</button>
+      <button class="btn btn--outline" onclick="copyBlock(document.querySelector('#voiceCopyBtn'),'voice')" id="voiceCopyBtn" style="flex:1;text-align:center;font-size:17px;padding:18px 32px;">📋 Copy Voice Guide</button>
     </div>
 
-    <div class="output-label">Your complete CSS design system</div>
-    <div class="output-block" id="cssOutput"></div>
-    <div class="output-label" style="margin-top:40px">Your brand voice + writing sample</div>
-    <div class="output-block" id="voiceOutput"></div>
-    <div id="platformInstructions" style="margin-top:40px"></div>
-    <div class="output-note">👆 Your CSS + voice guide are auto-saved. Every future module loads them automatically. But you can also copy them manually if you want to use them in standalone Claude prompts.</div>
+    <!-- Voice guide as formatted text -->
+    <div id="voiceGuideFormatted" style="margin-bottom:40px"></div>
+
+    <!-- CSS code block (collapsed) -->
+    <details style="margin-bottom:32px">
+      <summary style="font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);cursor:pointer;padding:12px 0">View raw CSS code</summary>
+      <div class="output-block" id="cssOutput"></div>
+    </details>
+
+    <div id="platformInstructions"></div>
 
     <div style="background:var(--deep-purple);padding:32px;margin-top:40px">
       <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">What's next in Module 02: Homepage</h3>
@@ -573,6 +586,8 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let projectId = null;
 let saveTimer = null;
+const DEV_MODE = ['localhost','127.0.0.1','0.0.0.0',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+console.log('[sitein8] DEV_MODE:', DEV_MODE, '| hostname:', JSON.stringify(window.location.hostname), '| protocol:', window.location.protocol);
 
 /* ============================================
    AUTH
@@ -594,6 +609,16 @@ async function signOut() {
 }
 
 async function initAuth() {
+  if (DEV_MODE) {
+    currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = 'dev@sitein8.com';
+    await initProject();
+    await loadState();
+    return;
+  }
+
   db.auth.onAuthStateChange(async (event, session) => {
     if (session?.user) {
       currentUser = session.user;
@@ -603,6 +628,7 @@ async function initAuth() {
       await initProject();
       await loadState();
     } else {
+      if (DEV_MODE) return;
       document.getElementById('authGate').style.display = 'flex';
       document.getElementById('mainApp').style.display = 'none';
       setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
@@ -611,6 +637,7 @@ async function initAuth() {
 
   const { data: { session } } = await db.auth.getSession();
   if (!session) {
+    if (DEV_MODE) return;
     document.getElementById('authGate').style.display = 'flex';
     setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
   }
@@ -680,7 +707,7 @@ async function saveToSupabase() {
   const state = buildStateObject();
   if (currentUser?.email) state.userEmail = currentUser.email;
   const outputValue = (window._cssOutput && window._voiceOutput)
-    ? JSON.stringify({ css: window._cssOutput, voice: window._voiceOutput })
+    ? JSON.stringify(window._outputData || { css: window._cssOutput, voice: window._voiceOutput })
     : null;
 
   const body = {
@@ -725,8 +752,8 @@ async function loadState() {
       if (out.css && out.voice) {
         window._cssOutput = out.css;
         window._voiceOutput = out.voice;
-        document.getElementById('cssOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(out.css)}</pre>`;
-        document.getElementById('voiceOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'voice')">Copy Voice Guide</button><pre>${esc(out.voice)}</pre>`;
+        window._outputData = out;
+        renderOutputPanel();
         renderPlatformInstructions();
         document.querySelector('[data-step="output"]').disabled = false;
       }
@@ -735,14 +762,36 @@ async function loadState() {
 }
 
 function buildStateObject() {
+  const a = resultArchetype ? archetypes[resultArchetype] : null;
+  const sa = secondaryArchetype ? archetypes[secondaryArchetype] : null;
+  let paletteTokens = null, fontHeading = null, fontBody = null;
+  if (a && brandPath === 'existing') {
+    fontHeading = `'${document.getElementById('userHeadingFont')?.value?.trim() || 'Georgia'}', serif`;
+    fontBody = `'${document.getElementById('userBodyFont')?.value?.trim() || 'sans-serif'}', sans-serif`;
+    paletteTokens = { bg_dark: document.getElementById('userColor3')?.value, bg_light: document.getElementById('userColor4')?.value, primary: document.getElementById('userColor1')?.value, accent: document.getElementById('userColor2')?.value, text_on_dark: '#f0f0f0', text_on_light: document.getElementById('userColor3')?.value, subtle: document.getElementById('userColor1')?.value + '80', card_bg: document.getElementById('userColor4')?.value };
+  } else if (a && a.palettes) {
+    const pl = a.palettes[selectedPalette], fn = a.fonts[selectedFont];
+    paletteTokens = pl.tokens;
+    fontHeading = fn.heading;
+    fontBody = fn.body;
+  }
+  // Voice traits: 3 from primary, 2 from secondary
+  let voiceTraits = [];
+  if (a?.traits) voiceTraits = a.traits.slice(0, 3);
+  if (sa?.traits) voiceTraits = voiceTraits.concat(sa.traits.slice(0, 2));
   return {
     brandPath,
     selectedPlatform,
     quizAnswers,
     resultArchetype,
+    secondaryArchetype,
     selectedPalette,
     selectedFont,
     styleChoices,
+    paletteTokens,
+    fontHeading,
+    fontBody,
+    voiceTraits,
     writingSample: document.getElementById('writingSample')?.value || '',
     userColors: {
       c1: document.getElementById('userColor1')?.value,
@@ -818,6 +867,7 @@ function restoreFromState(s) {
   }
   if (s.resultArchetype) {
     resultArchetype = s.resultArchetype;
+    secondaryArchetype = s.secondaryArchetype || null;
     selectedPalette = s.selectedPalette || 0;
     selectedFont = s.selectedFont || 0;
     styleChoices = s.styleChoices || styleChoices;
@@ -852,6 +902,7 @@ let selectedPlatform = null;
 let quizAnswers = [];
 let scores = {};
 let resultArchetype = null;
+let secondaryArchetype = null;
 let selectedPalette = 0;
 let selectedFont = 0;
 let styleChoices = { corners: "0px", density: "balanced", animation: "expressive" };
@@ -1392,16 +1443,24 @@ function submitQuiz() {
       Object.entries(opt.scores).forEach(([a,s])=>{ scores[a]=(scores[a]||0)+s; });
     }
   });
-  resultArchetype=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  resultArchetype=sorted[0][0];
+  secondaryArchetype=sorted[1]?sorted[1][0]:null;
   renderReveal(); goToStep('reveal'); autoSave();
 }
 
 /* === REVEAL === */
 function renderReveal() {
   const a=archetypes[resultArchetype];
-  let h=`<div class="reveal-eyebrow">Your brand archetype is...</div><div class="reveal-archetype">${a.emoji} ${a.name}</div><div class="reveal-tagline">${a.tagline}</div>`;
+  const sa=secondaryArchetype && secondaryArchetype !== resultArchetype ? archetypes[secondaryArchetype] : null;
+  const comboLabel = sa ? `${a.name} with a ${sa.name} streak` : a.name;
+  let h=`<div class="reveal-eyebrow">Your brand archetype is...</div><div class="reveal-archetype">${a.emoji} ${a.name}</div>`;
+  if(sa) h+=`<div style="font-family:'Caveat',cursive;font-size:22px;color:var(--text-light);margin-bottom:8px">with a ${sa.name} streak ${sa.emoji}</div>`;
+  h+=`<div class="reveal-tagline">${a.tagline}</div>`;
   if(a.description) h+=`<p class="reveal-description">${a.description}</p>`;
-  if(a.traits) h+=`<div class="reveal-traits">${a.traits.map(t=>`<span class="trait-tag">${t}</span>`).join('')}</div>`;
+  // Mixed traits: 3 from primary, 2 from secondary
+  const mixedTraits = (a.traits ? a.traits.slice(0,3) : []).concat(sa?.traits ? sa.traits.slice(0,2) : (a.traits ? a.traits.slice(3,5) : []));
+  if(mixedTraits.length) h+=`<div class="reveal-traits">${mixedTraits.map(t=>`<span class="trait-tag">${t}</span>`).join('')}</div>`;
   if(a.voice) h+=`<div class="reveal-voice"><h3>Your Brand Voice</h3><p>${a.voice.description}</p>${a.voice.examples.map(e=>`<div class="voice-example">${e}</div>`).join('')}</div>`;
   document.getElementById('revealContainer').innerHTML=h;
   const ns=document.getElementById('nextStep1');
@@ -1519,11 +1578,150 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
   if(brandPath==='existing'){ const n=document.getElementById('userBrandNotes').value.trim(); if(n) voice+=`\n\nADDITIONAL BRAND NOTES:\n${n}`; }
 
   window._cssOutput=css; window._voiceOutput=voice;
-  document.getElementById('cssOutput').innerHTML=`<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(css)}</pre>`;
-  document.getElementById('voiceOutput').innerHTML=`<button class="copy-btn" onclick="copyBlock(this,'voice')">Copy Voice Guide</button><pre>${esc(voice)}</pre>`;
+
+  // Build structured output data for other modules
+  const sa = secondaryArchetype ? archetypes[secondaryArchetype] : null;
+  let voiceTraits = [];
+  if (a.traits) voiceTraits = a.traits.slice(0, 3);
+  if (sa?.traits) voiceTraits = voiceTraits.concat(sa.traits.slice(0, 2));
+
+  window._outputData = {
+    css: css,
+    voice: voice,
+    combinationDescription: null,
+    archetypeName: a.name,
+    secondaryArchetypeName: sa ? sa.name : null,
+    archetypeEmoji: a.emoji,
+    secondaryArchetypeEmoji: sa ? sa.emoji : null,
+    paletteTokens: tokens,
+    fontHeading: hFont,
+    fontBody: bFont,
+    voiceTraits: voiceTraits
+  };
+
+  // Fire Claude API call for combination description (if we have a secondary archetype)
+  if (secondaryArchetype && secondaryArchetype !== resultArchetype) {
+    try {
+      const comboResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: `This person's brand personality scored highest as ${a.name} and second highest as ${sa.name}. Write a 3-4 sentence brand personality description that speaks to this specific combination. Focus on how these two energies work together in their brand voice and client relationships. Be specific, not generic.` }]
+        })
+      });
+      const comboData = await comboResp.json();
+      const comboText = comboData.content?.find(b => b.type === 'text')?.text || '';
+      if (comboText) window._outputData.combinationDescription = comboText;
+    } catch(e) { console.error('Combination description API error:', e); }
+  }
+
+  renderOutputPanel();
   renderPlatformInstructions();
   document.querySelector('[data-step="output"]').disabled=false;
   await saveToSupabase(); goToStep('output');
+}
+
+function renderOutputPanel() {
+  const od = window._outputData;
+  if (!od) return;
+  const t = od.paletteTokens || {};
+  const hf = od.fontHeading || "'Georgia', serif";
+  const bf = od.fontBody || "sans-serif";
+  const aName = od.archetypeName || 'Your Archetype';
+  const aEmoji = od.archetypeEmoji || '';
+  const saName = od.secondaryArchetypeName || '';
+  const saEmoji = od.secondaryArchetypeEmoji || '';
+  const traits = od.voiceTraits || [];
+  const comboDesc = od.combinationDescription || '';
+
+  // Build live brand preview
+  let previewHTML = `
+  <div style="border:3px solid var(--charcoal);overflow:hidden;margin-bottom:32px">
+    <div style="background:var(--charcoal);padding:16px 24px;display:flex;align-items:center;gap:8px">
+      <div style="width:12px;height:12px;border-radius:50%;background:var(--coral)"></div>
+      <div style="width:12px;height:12px;border-radius:50%;background:var(--electric-yellow)"></div>
+      <div style="width:12px;height:12px;border-radius:50%;background:var(--mint)"></div>
+      <span style="color:var(--lavender);font-size:13px;margin-left:8px">Your Brand Preview</span>
+    </div>
+    <div style="padding:40px;background:${t.bg_light || '#fff'}">
+
+      <!-- Archetype name and emoji -->
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:64px;margin-bottom:12px">${aEmoji}</div>
+        <div style="font-family:${hf};font-weight:900;font-size:36px;color:${t.primary || 'var(--deep-purple)'};line-height:1.1;margin-bottom:4px">${aName}</div>
+        ${saName ? `<div style="font-family:${bf};font-size:16px;color:${t.text_on_light || 'var(--text-light)'};margin-top:8px">with a ${saName} streak ${saEmoji}</div>` : ''}
+        ${comboDesc ? `<p style="font-family:${bf};font-size:17px;color:${t.text_on_light || 'var(--text)'};max-width:580px;margin:20px auto 0;line-height:1.7">${comboDesc}</p>` : ''}
+      </div>
+
+      <!-- Trait tags -->
+      ${traits.length ? `<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:32px">${traits.map(tr => `<span style="font-family:${bf};font-weight:600;font-size:14px;padding:8px 18px;border:2px solid ${t.primary || 'var(--deep-purple)'};color:${t.primary || 'var(--deep-purple)'};background:${t.card_bg || '#fff'}">${tr}</span>`).join('')}</div>` : ''}
+
+      <!-- Color swatches -->
+      <div style="margin-bottom:32px">
+        <div style="font-family:${hf};font-weight:700;font-size:18px;color:${t.text_on_light || 'var(--text)'};margin-bottom:12px">Your Colors</div>
+        <div style="display:flex;gap:0;overflow:hidden;border:2px solid ${t.text_on_light || '#333'}">
+          ${['bg_dark','primary','accent','subtle','bg_light','card_bg','text_on_dark','text_on_light'].filter(k => t[k]).map(k => `<div style="flex:1;height:56px;background:${t[k]}" title="${k}: ${t[k]}"></div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Typography sample -->
+      <div style="margin-bottom:32px">
+        <div style="font-family:${hf};font-weight:700;font-size:18px;color:${t.text_on_light || 'var(--text)'};margin-bottom:12px">Your Typography</div>
+        <div style="font-family:${hf};font-weight:700;font-size:32px;color:${t.text_on_light || 'var(--text)'};line-height:1.2;margin-bottom:8px">Your Brand</div>
+        <div style="font-family:${bf};font-size:17px;color:${t.text_on_light || 'var(--text-light)'};line-height:1.6;opacity:0.85">The quick brown fox jumps over the lazy dog. Your voice, your story, your way.</div>
+      </div>
+
+      <!-- Sample button -->
+      <div style="margin-bottom:32px">
+        <div style="font-family:${hf};font-weight:700;font-size:18px;color:${t.text_on_light || 'var(--text)'};margin-bottom:12px">Sample Button</div>
+        <span style="display:inline-block;padding:16px 36px;background:${t.accent || 'var(--electric-yellow)'};color:${t.bg_dark || 'var(--deep-purple)'};font-family:${bf};font-weight:600;font-size:17px;border:3px solid ${t.accent || 'var(--electric-yellow)'};cursor:default">Get Started</span>
+      </div>
+
+      <!-- Sample card -->
+      <div style="margin-bottom:16px">
+        <div style="font-family:${hf};font-weight:700;font-size:18px;color:${t.text_on_light || 'var(--text)'};margin-bottom:12px">Sample Card</div>
+        <div style="background:${t.card_bg || '#fff'};border:2px solid ${t.subtle || '#ccc'};padding:28px">
+          <h4 style="font-family:${hf};font-weight:700;font-size:20px;color:${t.primary || 'var(--deep-purple)'};margin-bottom:8px">Service Title</h4>
+          <p style="font-family:${bf};font-size:16px;color:${t.text_on_light || 'var(--text)'};opacity:0.8;margin:0;line-height:1.6">This is what a content card looks like with your brand system applied. Your fonts, your colors, your personality.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+
+  document.getElementById('brandPreviewPanel').innerHTML = previewHTML;
+
+  // Render voice guide as formatted readable text
+  const voice = od.voice || window._voiceOutput || '';
+  let voiceHTML = '';
+  if (voice) {
+    const lines = voice.split('\n');
+    let html = '';
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) { html += '<div style="height:16px"></div>'; return; }
+      if (trimmed.startsWith('BRAND VOICE GUIDELINES')) {
+        html += `<h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:var(--electric-yellow);margin-bottom:16px">${trimmed}</h3>`;
+      } else if (trimmed.startsWith('Voice Description:') || trimmed.startsWith('Example Copy:') || trimmed.startsWith('Tone Rules:') || trimmed.startsWith('WRITING SAMPLE') || trimmed.startsWith('ADDITIONAL BRAND NOTES')) {
+        html += `<h4 style="font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--lavender);margin:20px 0 8px">${trimmed}</h4>`;
+      } else if (trimmed.startsWith('- ')) {
+        html += `<p style="color:var(--lavender);font-size:16px;line-height:1.6;padding:4px 0 4px 20px;position:relative"><span style="position:absolute;left:0;color:var(--electric-yellow)">→</span>${trimmed.slice(2)}</p>`;
+      } else if (trimmed.startsWith('"')) {
+        html += `<p style="color:var(--white);font-family:'Caveat',cursive;font-size:20px;padding:12px 0;border-top:1px solid rgba(196,181,253,0.15)">${trimmed}</p>`;
+      } else if (trimmed.startsWith('---')) {
+        html += '<hr style="border:none;border-top:1px solid rgba(196,181,253,0.2);margin:12px 0">';
+      } else {
+        html += `<p style="color:var(--lavender);font-size:16px;line-height:1.7;padding:4px 0">${trimmed}</p>`;
+      }
+    });
+    voiceHTML = `<div style="background:var(--deep-purple);padding:40px">${html}</div>`;
+  }
+  document.getElementById('voiceGuideFormatted').innerHTML = voiceHTML;
+
+  // Still populate the CSS code block for the collapsible view
+  document.getElementById('cssOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(od.css || window._cssOutput || '')}</pre>`;
 }
 
 function copyBlock(btn,t) {

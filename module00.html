@@ -382,6 +382,8 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let projectId = null;
+const DEV_MODE = ['localhost','127.0.0.1','0.0.0.0',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+console.log('[sitein8] DEV_MODE:', DEV_MODE, '| hostname:', JSON.stringify(window.location.hostname), '| protocol:', window.location.protocol);
 
 /* ============================================
    AUTH
@@ -480,8 +482,19 @@ async function initProject() {
 }
 
 async function initAuth() {
+  if (DEV_MODE) {
+    currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = 'dev@sitein8.com';
+    await initProject();
+    restoreChecklist();
+    return;
+  }
+
   // Register listener FIRST — catches sign-in events
   db.auth.onAuthStateChange((event, session) => {
+    if (DEV_MODE) return;
     if (event === 'SIGNED_IN' && session?.user) {
       // Fresh sign-in — go to dashboard
       window.location.href = 'dashboard.html';
