@@ -607,6 +607,17 @@ async function signOut() {
 }
 
 async function initAuth() {
+  const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (DEV_MODE) {
+    currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = 'dev@sitein8.com';
+    await initProject();
+    await loadState();
+    return;
+  }
+
   db.auth.onAuthStateChange(async (event, session) => {
     if (session?.user) {
       currentUser = session.user;

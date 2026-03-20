@@ -241,6 +241,18 @@ async function signOut() {
 }
 
 async function initAuth() {
+  const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (DEV_MODE) {
+    currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
+    document.getElementById('pageLoader').style.display = 'none';
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    if (document.getElementById('userEmail')) document.getElementById('userEmail').textContent = 'dev@sitein8.com';
+    await initProject();
+    await loadDashboard();
+    return;
+  }
+
   // Listen for auth changes FIRST (catches magic link token in URL hash)
   db.auth.onAuthStateChange((event, session) => {
     if (session && session.user && !currentUser) {
