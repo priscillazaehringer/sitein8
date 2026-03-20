@@ -306,26 +306,21 @@ async function loadDashboard() {
   document.getElementById('dashContent').style.display = 'block';
 }
 
+function isModuleComplete(key, moduleMap) {
+  const output = moduleMap[key]?.output;
+  if (!output) return false;
+  // For module01, output is JSON — check css is actually present
+  if (key === 'module01') {
+    try { const o = JSON.parse(output); return !!(o.css); } catch(e) { return false; }
+  }
+  return true;
+}
+
 function renderDashboard(moduleMap) {
-  const completed = MODULES.filter(m => {
-    const output = moduleMap[m.key]?.output;
-    if (!output) return false;
-    // For module01, output is JSON — check css is actually present
-    if (m.key === 'module01') {
-      try { const o = JSON.parse(output); return !!(o.css); } catch(e) { return false; }
-    }
-    return true;
-  });
+  const completed = MODULES.filter(m => isModuleComplete(m.key, moduleMap));
   const count = completed.length;
   const hasData = Object.keys(moduleMap).length > 0;
-  const firstIncomplete = MODULES.find(m => {
-    const output = moduleMap[m.key]?.output;
-    if (!output) return true;
-    if (m.key === 'module01') {
-      try { const o = JSON.parse(output); return !o.css; } catch(e) { return true; }
-    }
-    return false;
-  });
+  const firstIncomplete = MODULES.find(m => !isModuleComplete(m.key, moduleMap));
   const firstIncompleteIdx = MODULES.findIndex(m => m.key === firstIncomplete?.key);
 
   // Header
@@ -371,7 +366,7 @@ function renderDashboard(moduleMap) {
 
   // Module list
   document.getElementById('moduleList').innerHTML = MODULES.map((m, i) => {
-    const isComplete = !!moduleMap[m.key]?.output;
+    const isComplete = isModuleComplete(m.key, moduleMap);
     const isCurrent = firstIncomplete?.key === m.key;
     const isLocked = !isComplete && !isCurrent && i > firstIncompleteIdx;
     const icon = isComplete ? '✓' : isCurrent ? '→' : m.num;
