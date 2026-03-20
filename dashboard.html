@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Dashboard &middot; sitein8</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,500;1,9..144,700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--hot-pink:#E8346B;--electric-yellow:#FFD23F;--mint:#34D399;--deep-purple:#1E1038;--lavender:#C4B5FD;--off-white:#FFFDF7;--charcoal:#1a1a2e;--text:#2D2B3D;--text-light:#6B6980;--white:#FFFFFF}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:var(--off-white);-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.6}
+.auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--deep-purple);padding:24px}
+.auth-box{background:var(--off-white);padding:48px;max-width:480px;width:100%;text-align:center;border:3px solid var(--hot-pink);box-shadow:-6px 6px 0 var(--hot-pink)}
+.auth-box h2{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);margin-bottom:10px}
+.auth-box p{font-size:16px;color:var(--text-light);margin-bottom:28px}
+.auth-wordmark{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:28px}
+.user-bar{background:var(--charcoal);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
+.user-bar-email{color:var(--lavender);font-size:14px}
+.user-bar-right{display:flex;gap:12px;align-items:center}
+.user-bar-link{color:var(--lavender);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;text-decoration:none;opacity:0.7}
+.user-bar-link:hover{opacity:1;color:var(--electric-yellow)}
+.signout-btn{background:none;border:1px solid rgba(196,181,253,0.3);color:var(--lavender);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;padding:6px 14px;cursor:pointer;transition:all 0.2s}
+.signout-btn:hover{border-color:var(--hot-pink);color:var(--hot-pink)}
+.dash-header{background:var(--deep-purple);padding:48px 24px 40px;position:relative;overflow:hidden}
+.dash-header::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:var(--hot-pink);opacity:0.15;border-radius:50%;filter:blur(60px)}
+.dash-header::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:var(--electric-yellow);opacity:0.12;border-radius:50%;filter:blur(50px)}
+.dash-inner{max-width:900px;margin:0 auto;position:relative;z-index:1}
+.dash-eyebrow{font-family:'Caveat',cursive;font-size:22px;color:var(--electric-yellow);margin-bottom:8px}
+.dash-title{font-family:'Fraunces',serif;font-weight:900;font-size:42px;color:var(--white);line-height:1.1;margin-bottom:12px}
+.dash-subtitle{font-size:18px;color:var(--lavender);font-weight:300}
+.arch-badge{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);padding:12px 20px;margin-top:20px}
+.arch-badge-text{color:var(--lavender);font-size:14px}
+.arch-badge-name{color:var(--electric-yellow);font-family:'Fraunces',serif;font-weight:700;font-size:18px;display:block}
+.squiggle{width:100%;height:16px;overflow:hidden}
+.squiggle svg{width:100%;height:16px}
+.dash-main{max-width:900px;margin:0 auto;padding:48px 24px 80px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px}
+.stat-box{background:var(--white);border:3px solid var(--charcoal);padding:24px;text-align:center}
+.stat-num{font-family:'Fraunces',serif;font-weight:900;font-size:48px;color:var(--deep-purple);line-height:1;margin-bottom:4px}
+.stat-label{font-size:13px;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.resume-card{background:var(--deep-purple);padding:32px;margin-bottom:48px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.resume-card h3{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--electric-yellow);margin-bottom:6px}
+.resume-card p{color:var(--lavender);font-size:16px;margin:0}
+.resume-card.done{background:rgba(52,211,153,0.1);border:3px solid var(--mint)}
+.resume-card.done h3{color:var(--mint)}
+.module-list{display:flex;flex-direction:column;gap:16px}
+.mod-row{display:flex;align-items:center;gap:20px;padding:24px 28px;background:var(--white);border:3px solid #e0dde6;transition:all 0.2s;text-decoration:none;color:var(--text)}
+.mod-row:hover{border-color:var(--hot-pink);transform:translateX(4px);box-shadow:-4px 4px 0 var(--hot-pink)}
+.mod-row.completed{border-color:var(--mint)}
+.mod-row.completed:hover{box-shadow:-4px 4px 0 var(--mint)}
+.mod-row.current{border-color:var(--hot-pink);background:rgba(232,52,107,0.04)}
+.mod-row.locked{opacity:0.4;cursor:default;pointer-events:none}
+.mod-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;border:2px solid #e0dde6;font-family:'Fraunces',serif;font-weight:900;color:var(--text-light)}
+.mod-row.completed .mod-icon{background:var(--mint);border-color:var(--mint);color:white}
+.mod-row.current .mod-icon{background:var(--hot-pink);border-color:var(--hot-pink);color:white}
+.mod-info{flex:1}
+.mod-tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:2px}
+.mod-row.completed .mod-tag{color:var(--mint)}
+.mod-row.current .mod-tag{color:var(--hot-pink)}
+.mod-title{font-family:'Fraunces',serif;font-weight:700;font-size:20px;margin-bottom:2px}
+.mod-desc{font-size:15px;color:var(--text-light)}
+.mod-status{font-size:14px;color:var(--text-light);flex-shrink:0}
+.mod-status.done{color:var(--mint);font-weight:600}
+.mod-status.active{color:var(--hot-pink);font-weight:600}
+.upsell{background:var(--electric-yellow);padding:40px;margin-top:48px;display:flex;gap:32px;align-items:center}
+.upsell-icon{font-size:64px;flex-shrink:0}
+.upsell h3{font-family:'Fraunces',serif;font-weight:900;font-size:26px;color:var(--charcoal);margin-bottom:8px}
+.upsell p{font-size:17px;color:var(--charcoal);opacity:0.8;margin-bottom:20px}
+.btn{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:17px;padding:16px 32px;border:3px solid var(--charcoal);cursor:pointer;transition:all 0.25s;display:inline-block;text-decoration:none}
+.btn-dark{background:var(--charcoal);color:white;border-color:var(--charcoal)}
+.btn-dark:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.2)}
+.btn-pink{background:var(--hot-pink);color:white;border-color:var(--hot-pink)}
+.btn-pink:hover{background:#d42a5c;transform:translateY(-3px);box-shadow:0 6px 20px rgba(232,52,107,0.3)}
+.loading{text-align:center;padding:80px 24px;color:var(--text-light);font-family:'Caveat',cursive;font-size:24px}
+.footer{background:var(--charcoal);padding:32px 24px;text-align:center;color:var(--lavender);font-size:15px}
+.footer a{color:var(--electric-yellow);text-decoration:none}
+@media(max-width:640px){.dash-title{font-size:30px}.stats-grid{grid-template-columns:1fr 1fr}.resume-card{flex-direction:column}.upsell{flex-direction:column}.auth-box{padding:32px 24px}}
+</style>
+</head>
+<body>
+
+<div id="pageLoader" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--deep-purple)">
+  <div style="text-align:center">
+    <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--white);letter-spacing:-1px;margin-bottom:16px">sitein8</div>
+    <div style="font-family:'Caveat',cursive;font-size:20px;color:var(--lavender)">Loading your dashboard...</div>
+  </div>
+</div>
+
+<div id="authGate" class="auth-gate" style="display:none">
+  <div class="auth-box">
+    <div class="auth-wordmark">sitein8</div>
+    <h2>Sign in first</h2>
+    <p>Sign in through Module 00 to access your dashboard. Redirecting now...</p>
+    <a href="module00.html" style="display:block;background:var(--hot-pink);color:white;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:17px;padding:16px 32px;border:3px solid var(--hot-pink);text-decoration:none;margin-top:8px">Go to Module 00</a>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none">
+  <div class="user-bar">
+    <span class="user-bar-email" id="userEmail"></span>
+    <div class="user-bar-right">
+      <a href="module00.html" class="user-bar-link">Module 00</a>
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="dash-header">
+    <div class="dash-inner">
+      <div class="dash-eyebrow">Your Companion</div>
+      <h1 class="dash-title" id="dashTitle">Welcome back</h1>
+      <p class="dash-subtitle" id="dashSubtitle">Here is where you left off.</p>
+      <div id="archBadge" class="arch-badge" style="display:none">
+        <span id="archEmoji" style="font-size:28px"></span>
+        <div>
+          <span class="arch-badge-text">Your brand archetype</span>
+          <span class="arch-badge-name" id="archName"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="squiggle"><svg viewBox="0 0 1200 16" preserveAspectRatio="none"><path d="M0,8 C50,2 100,14 150,8 C200,2 250,14 300,8 C350,2 400,14 450,8 C500,2 550,14 600,8 C650,2 700,14 750,8 C800,2 850,14 900,8 C950,2 1000,14 1050,8 C1100,2 1150,14 1200,8" fill="none" stroke="#E8346B" stroke-width="3"/></svg></div>
+
+  <div class="dash-main">
+    <div id="loadingState" class="loading">Loading your progress...</div>
+    <div id="dashContent" style="display:none">
+
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-num" id="statDone">0</div><div class="stat-label">Modules Done</div></div>
+        <div class="stat-box"><div class="stat-num">8</div><div class="stat-label">Total Modules</div></div>
+        <div class="stat-box"><div class="stat-num" id="statPct">0%</div><div class="stat-label">Complete</div></div>
+      </div>
+
+      <div class="resume-card" id="resumeCard">
+        <div>
+          <h3 id="resumeTitle">Ready to start?</h3>
+          <p id="resumeDesc">Begin with Module 00 to get set up.</p>
+        </div>
+        <a class="btn btn-pink" id="resumeBtn" href="module00.html">Start</a>
+      </div>
+
+      <div class="module-list" id="moduleList"></div>
+
+      <div class="upsell" id="upsellCard" style="display:none">
+        <div class="upsell-icon">&#128640;</div>
+        <div>
+          <h3>Want us to build and host it for you?</h3>
+          <p>You have done all the hard thinking. We can take everything you built here and turn it into a live site on your domain.</p>
+          <a href="https://sitein8.com/done-for-you" class="btn btn-dark">Learn More</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="https://sitein8.com">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -14 386 100" width="140" style="display:block;margin:0 auto 16px">
+        <text x="0" y="32" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#E8346B">{</text>
+        <text x="26" y="32" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#FFD23F">}</text>
+        <text x="0" y="68" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#FFD23F">{</text>
+        <text x="26" y="68" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#E8346B">}</text>
+        <text x="54" y="52" font-family="Fraunces,serif" font-weight="900" font-size="42" fill="#FFFDF7">sitein8</text>
+      </svg>
+    </a>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SUPABASE_URL = 'https://rcchpjkcrzwezjpqkcmm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjY2hwamtjcnp3ZXpqcHFrY21tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzMyNzMsImV4cCI6MjA4OTM0OTI3M30._cGF2WKJOJ-F9IFsCpXklDnwwy-fnBggXujvEHanBEs';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================
+// MODULE DEFINITIONS
+// ============================================================
+const MODULES = [
+  { key:'module00', num:'00', title:'Prerequisites & Setup', desc:'Tools, accounts, and everything you need before starting.', file:'module00.html', tag:'Foundation' },
+  { key:'module01', num:'01', title:'Brand Foundation', desc:'Your archetype, design system, and voice guidelines.', file:'module01.html', tag:'Foundation' },
+  { key:'module02', num:'02', title:'Homepage', desc:'The page that makes the right person stay.', file:'module02.html', tag:'Build' },
+  { key:'module03', num:'03', title:'Sales & Services', desc:'The page that converts visitors into clients.', file:'module03.html', tag:'Build' },
+  { key:'module04', num:'04', title:'About Page', desc:'Your story, told to the client.', file:'module04.html', tag:'Build' },
+  { key:'module05', num:'05', title:'Privacy Policy & Terms', desc:'The legal pages, done properly.', file:'module05.html', tag:'Build' },
+  { key:'module06', num:'06', title:'Header & Footer', desc:'Navigation that ties every page together.', file:'module06.html', tag:'Build' },
+  { key:'module07', num:'07', title:'Going Live', desc:'Launch checklist, SEO basics, and what comes next.', file:'module07.html', tag:'Launch' }
+];
+
+const ARCHETYPES = {
+  magician:{name:'The Magician',emoji:'🔮'}, creator:{name:'The Creator',emoji:'🎨'},
+  sage:{name:'The Sage',emoji:'📚'}, hero:{name:'The Hero',emoji:'⚔️'},
+  rebel:{name:'The Rebel',emoji:'🔥'}, explorer:{name:'The Explorer',emoji:'🧭'},
+  caregiver:{name:'The Caregiver',emoji:'🤲'}, ruler:{name:'The Ruler',emoji:'👑'},
+  lover:{name:'The Lover',emoji:'💎'}, jester:{name:'The Jester',emoji:'🎪'},
+  innocent:{name:'The Innocent',emoji:'🌿'}, everyperson:{name:'The Everyperson',emoji:'🤝'}
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null;
+let projectId = null;
+
+// ============================================================
+// AUTH
+// ============================================================
+async function signOut() {
+  try { await db.auth.signOut(); } catch(e) {}
+  try {
+    Object.keys(localStorage).forEach(k => {
+      if (k.startsWith('sb-')) localStorage.removeItem(k);
+    });
+  } catch(e) {}
+  window.location.href = 'module00.html';
+}
+
+async function initAuth() {
+  // Listen for auth changes FIRST (catches magic link token in URL hash)
+  db.auth.onAuthStateChange((event, session) => {
+    if (session && session.user && !currentUser) {
+      currentUser = session.user;
+      showApp();
+    } else if (event === 'SIGNED_OUT') {
+      showAuthGate();
+    }
+  });
+
+  // Then check for existing session
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    if (session && session.user) {
+      if (!currentUser) {
+        currentUser = session.user;
+        showApp();
+      }
+    } else {
+      // No session — redirect to module00
+      showAuthGate();
+    }
+  } catch(e) {
+    console.error('Auth error:', e);
+    showAuthGate();
+  }
+}
+
+function showAuthGate() {
+  document.getElementById('pageLoader').style.display = 'none';
+  document.getElementById('authGate').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
+}
+
+async function showApp() {
+  document.getElementById('pageLoader').style.display = 'none';
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userEmail').textContent = currentUser.email;
+  await initProject();
+  await loadDashboard();
+}
+
+// ============================================================
+// PROJECT
+// ============================================================
+async function initProject() {
+  try {
+    const { data, error } = await db.from('projects').select('id').eq('user_id', currentUser.id).single();
+    if (data) { projectId = data.id; return; }
+  } catch(e) {}
+
+  try {
+    const { data } = await db.from('projects').insert({ user_id: currentUser.id }).select('id').single();
+    if (data) projectId = data.id;
+  } catch(e) {
+    // May already exist — try fetching again
+    try {
+      const { data } = await db.from('projects').select('id').eq('user_id', currentUser.id).single();
+      if (data) projectId = data.id;
+    } catch(e2) {}
+  }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  let moduleMap = {};
+
+  if (projectId) {
+    try {
+      const { data } = await db.from('module_data')
+        .select('module_key,data,output,updated_at')
+        .eq('project_id', projectId);
+      if (data) data.forEach(r => { moduleMap[r.module_key] = r; });
+    } catch(e) {
+      console.error('Error loading module data:', e);
+    }
+  }
+
+  renderDashboard(moduleMap);
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('dashContent').style.display = 'block';
+}
+
+function renderDashboard(moduleMap) {
+  const completed = MODULES.filter(m => {
+    const output = moduleMap[m.key]?.output;
+    if (!output) return false;
+    // For module01, output is JSON — check css is actually present
+    if (m.key === 'module01') {
+      try { const o = JSON.parse(output); return !!(o.css); } catch(e) { return false; }
+    }
+    return true;
+  });
+  const count = completed.length;
+  const hasData = Object.keys(moduleMap).length > 0;
+  const firstIncomplete = MODULES.find(m => {
+    const output = moduleMap[m.key]?.output;
+    if (!output) return true;
+    if (m.key === 'module01') {
+      try { const o = JSON.parse(output); return !o.css; } catch(e) { return true; }
+    }
+    return false;
+  });
+  const firstIncompleteIdx = MODULES.findIndex(m => m.key === firstIncomplete?.key);
+
+  // Header
+  if (!hasData) {
+    document.getElementById('dashTitle').textContent = "You're all set — let's build!";
+    document.getElementById('dashSubtitle').textContent = "You're signed in and ready. Start with Module 00 to get set up.";
+  } else if (count === MODULES.length) {
+    document.getElementById('dashTitle').textContent = "You built it!";
+    document.getElementById('dashSubtitle').textContent = "All modules complete. Your site is ready to go live.";
+  } else {
+    document.getElementById('dashTitle').textContent = "Welcome back";
+    document.getElementById('dashSubtitle').textContent = "Here is where you left off.";
+  }
+
+  // Archetype badge
+  const arch = moduleMap.module01?.data?.resultArchetype;
+  if (arch && ARCHETYPES[arch]) {
+    document.getElementById('archEmoji').textContent = ARCHETYPES[arch].emoji;
+    document.getElementById('archName').textContent = ARCHETYPES[arch].name;
+    document.getElementById('archBadge').style.display = 'inline-flex';
+  }
+
+  // Stats
+  document.getElementById('statDone').textContent = count;
+  document.getElementById('statPct').textContent = Math.round(count / MODULES.length * 100) + '%';
+
+  // Resume card
+  const rc = document.getElementById('resumeCard');
+  if (count === MODULES.length) {
+    rc.classList.add('done');
+    document.getElementById('resumeTitle').textContent = 'Your site is built!';
+    document.getElementById('resumeDesc').textContent = 'All modules complete. Ready to go live.';
+    document.getElementById('resumeBtn').textContent = 'Review Module 07';
+    document.getElementById('resumeBtn').href = 'module07.html';
+    document.getElementById('upsellCard').style.display = 'flex';
+  } else if (firstIncomplete) {
+    const isNew = !moduleMap[firstIncomplete.key];
+    document.getElementById('resumeTitle').textContent = (isNew ? 'Start ' : 'Resume ') + 'Module ' + firstIncomplete.num + ': ' + firstIncomplete.title;
+    document.getElementById('resumeDesc').textContent = firstIncomplete.desc;
+    document.getElementById('resumeBtn').textContent = isNew ? 'Start' : 'Continue';
+    document.getElementById('resumeBtn').href = firstIncomplete.file;
+  }
+
+  // Module list
+  document.getElementById('moduleList').innerHTML = MODULES.map((m, i) => {
+    const isComplete = !!moduleMap[m.key]?.output;
+    const isCurrent = firstIncomplete?.key === m.key;
+    const isLocked = !isComplete && !isCurrent && i > firstIncompleteIdx;
+    const icon = isComplete ? '✓' : isCurrent ? '→' : m.num;
+    const rowClass = isComplete ? 'completed' : isCurrent ? 'current' : isLocked ? 'locked' : '';
+    const statusText = isComplete ? 'Done' : isCurrent ? 'In Progress' : m.tag;
+    const statusClass = isComplete ? 'done' : isCurrent ? 'active' : '';
+    const tag = isLocked ? 'div' : 'a';
+    const href = isLocked ? '' : ` href="${m.file}"`;
+    return `<${tag}${href} class="mod-row ${rowClass}">
+      <div class="mod-icon">${icon}</div>
+      <div class="mod-info">
+        <div class="mod-tag">Module ${m.num} &middot; ${m.tag}</div>
+        <div class="mod-title">${m.title}</div>
+        <div class="mod-desc">${m.desc}</div>
+      </div>
+      <div class="mod-status ${statusClass}">${statusText}</div>
+    </${tag}>`;
+  }).join('');
+}
+
+// ============================================================
+// START
+// ============================================================
+initAuth();
+</script>
+</body>
+</html>
