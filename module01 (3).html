@@ -586,7 +586,8 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let projectId = null;
 let saveTimer = null;
-const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const DEV_MODE = ['localhost','127.0.0.1','0.0.0.0',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+console.log('[sitein8] DEV_MODE:', DEV_MODE, '| hostname:', JSON.stringify(window.location.hostname), '| protocol:', window.location.protocol);
 
 /* ============================================
    AUTH

@@ -340,7 +340,8 @@ const db=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 let currentUser=null,projectId=null,brandCSS=null,brandVoice=null,brandArchetype=null;
 let selectedLayout='centered',selectedSections={problem:true,services:true,testimonials:true,cta:true};
 let contentData={},polishedCopy={};
-const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const DEV_MODE = ['localhost','127.0.0.1','0.0.0.0',''].includes(window.location.hostname) || window.location.protocol === 'file:';
+console.log('[sitein8] DEV_MODE:', DEV_MODE, '| hostname:', JSON.stringify(window.location.hostname), '| protocol:', window.location.protocol);
 
 /* AUTH */
 async function signOut(){
