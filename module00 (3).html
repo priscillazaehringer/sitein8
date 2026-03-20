@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 00: Get Started · sitein8</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,500;1,9..144,700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --hot-pink: #E8346B;
+  --electric-yellow: #FFD23F;
+  --mint: #34D399;
+  --coral: #FF6B6B;
+  --deep-purple: #1E1038;
+  --lavender: #C4B5FD;
+  --off-white: #FFFDF7;
+  --charcoal: #1a1a2e;
+  --text: #2D2B3D;
+  --text-light: #6B6980;
+  --white: #FFFFFF;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: var(--text); background: var(--off-white); -webkit-font-smoothing: antialiased; font-size: 18px; line-height: 1.6; }
+.companion { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+/* === AUTH GATE === */
+.auth-gate {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--deep-purple); padding: 24px;
+}
+.auth-box {
+  background: var(--off-white); padding: 56px 48px; max-width: 500px; width: 100%;
+  text-align: center; border: 3px solid var(--hot-pink);
+  box-shadow: -6px 6px 0 var(--hot-pink);
+}
+.auth-wordmark {
+  font-family: 'Fraunces', serif; font-weight: 900; font-size: 32px;
+  color: var(--deep-purple); letter-spacing: -1px; margin-bottom: 32px;
+}
+.auth-box h2 {
+  font-family: 'Fraunces', serif; font-weight: 900; font-size: 30px;
+  color: var(--deep-purple); margin-bottom: 10px; line-height: 1.2;
+}
+.auth-box p { font-size: 17px; color: var(--text-light); margin-bottom: 32px; line-height: 1.6; }
+.auth-input {
+  width: 100%; padding: 18px 20px; font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 18px; border: 3px solid #e0dde6; background: var(--white); color: var(--text);
+  margin-bottom: 16px; transition: border-color 0.2s;
+}
+.auth-input:focus { outline: none; border-color: var(--hot-pink); }
+.auth-success {
+  background: rgba(52, 211, 153, 0.1); border: 3px solid var(--mint);
+  padding: 24px; margin-top: 20px; text-align: left;
+}
+.auth-success p { color: var(--text); font-size: 16px; margin: 0; line-height: 1.6; }
+
+/* === USER BAR === */
+.user-bar { background: var(--charcoal); padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; }
+.user-bar-email { color: var(--lavender); font-size: 14px; }
+.user-bar-signout { background: none; border: 1px solid rgba(196,181,253,0.3); color: var(--lavender); font-family: 'Bricolage Grotesque', sans-serif; font-size: 13px; padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+.user-bar-signout:hover { border-color: var(--hot-pink); color: var(--hot-pink); }
+
+/* === HEADER === */
+.companion-header { background: var(--deep-purple); padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden; }
+.companion-header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: var(--hot-pink); opacity: 0.15; border-radius: 50%; filter: blur(60px); }
+.companion-header::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px; background: var(--electric-yellow); opacity: 0.12; border-radius: 50%; filter: blur(50px); }
+.header-eyebrow { font-family: 'Caveat', cursive; font-size: 22px; color: var(--electric-yellow); margin-bottom: 8px; position: relative; z-index: 1; }
+.header-logo { position: relative; z-index: 1; margin-bottom: 16px; }
+.header-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: 42px; color: var(--white); line-height: 1.1; margin-bottom: 12px; position: relative; z-index: 1; }
+.header-subtitle { font-size: 18px; color: var(--lavender); font-weight: 300; position: relative; z-index: 1; }
+.header-meta { display: flex; justify-content: center; gap: 24px; margin-top: 20px; font-size: 15px; color: var(--lavender); position: relative; z-index: 1; }
+.squiggle { width: 100%; height: 16px; overflow: hidden; }
+.squiggle svg { width: 100%; height: 16px; }
+
+/* === TAB NAV === */
+.tab-nav { display: flex; background: var(--white); border-bottom: 3px solid var(--charcoal); position: sticky; top: 0; z-index: 100; }
+.tab-btn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 16px; padding: 18px 28px; border: none; background: transparent; color: var(--text-light); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: all 0.2s ease; flex: 1; text-align: center; }
+.tab-btn:hover { color: var(--text); background: rgba(232, 52, 107, 0.04); }
+.tab-btn.active { color: var(--hot-pink); border-bottom-color: var(--hot-pink); background: rgba(232, 52, 107, 0.04); }
+
+/* === PANELS === */
+.panel { display: none; padding: 48px 0 64px; animation: fadeUp 0.4s ease; }
+.panel.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === TYPOGRAPHY === */
+.panel-intro { margin-bottom: 40px; }
+.panel-intro h2 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 34px; color: var(--text); margin-bottom: 12px; }
+.panel-intro p { font-size: 19px; color: var(--text-light); max-width: 620px; line-height: 1.6; }
+.section-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; margin-bottom: 8px; margin-top: 48px; }
+.section-hint { font-family: 'Caveat', cursive; font-size: 20px; color: var(--text-light); margin-bottom: 24px; }
+
+/* === MODULE CARDS === */
+.module-grid { display: flex; flex-direction: column; gap: 0; margin: 32px 0; }
+.module-card { display: flex; gap: 20px; padding: 24px 0; border-bottom: 2px solid #e8e5ef; align-items: flex-start; }
+.module-card:last-child { border-bottom: none; }
+.module-num { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 900; font-size: 18px; flex-shrink: 0; color: var(--white); }
+.module-num.foundation { background: var(--deep-purple); }
+.module-num.build { background: var(--hot-pink); }
+.module-num.launch { background: var(--charcoal); }
+.module-info h4 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 19px; margin-bottom: 4px; }
+.module-info p { font-size: 16px; color: var(--text-light); line-height: 1.5; }
+.module-info .module-tag { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding: 4px 10px; margin-bottom: 6px; }
+.module-tag.foundation { background: rgba(30, 16, 56, 0.08); color: var(--deep-purple); }
+.module-tag.build { background: rgba(232, 52, 107, 0.08); color: var(--hot-pink); }
+.module-tag.launch { background: rgba(26, 26, 46, 0.08); color: var(--charcoal); }
+
+/* === HIGHLIGHT BOX === */
+.highlight-box { padding: 32px; margin: 40px 0; }
+.highlight-box.purple { background: var(--deep-purple); }
+.highlight-box.yellow { background: var(--electric-yellow); }
+.highlight-box h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; margin-bottom: 16px; }
+.highlight-box.purple h3 { color: var(--electric-yellow); }
+.highlight-box.yellow h3 { color: var(--charcoal); }
+.highlight-box p { font-size: 17px; line-height: 1.7; margin-bottom: 8px; }
+.highlight-box.purple p { color: var(--lavender); }
+.highlight-box.yellow p { color: var(--charcoal); }
+
+/* === CHECKLIST === */
+.checklist { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+.checklist-item { display: flex; align-items: flex-start; gap: 16px; padding: 20px 0; border-bottom: 2px solid #e8e5ef; transition: opacity 0.3s ease; }
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item.checked { opacity: 0.55; }
+.check-box { width: 32px; height: 32px; border: 3px solid #d0cdd8; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 18px; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); user-select: none; margin-top: 2px; }
+.check-box:hover { border-color: var(--hot-pink); transform: scale(1.1); }
+.check-box.checked { background: var(--mint); border-color: var(--mint); color: white; }
+.check-content h4 { font-weight: 600; font-size: 18px; margin-bottom: 4px; line-height: 1.3; }
+.check-content p { font-size: 15px; color: var(--text-light); line-height: 1.5; }
+.check-content a { color: var(--hot-pink); font-weight: 600; text-decoration: none; }
+.check-content a:hover { text-decoration: underline; }
+
+/* === PROGRESS === */
+.progress-summary { background: var(--white); border: 3px solid var(--charcoal); padding: 28px; margin: 40px 0; display: flex; align-items: center; gap: 24px; }
+.progress-ring { width: 80px; height: 80px; flex-shrink: 0; position: relative; }
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Fraunces', serif; font-weight: 900; font-size: 22px; color: var(--text); }
+.progress-info h4 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 4px; }
+.progress-info p { font-size: 15px; color: var(--text-light); }
+
+/* === BUTTONS === */
+.btn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; padding: 18px 40px; border: 3px solid var(--charcoal); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: inline-block; text-decoration: none; }
+.btn--pink { background: var(--hot-pink); color: white; border-color: var(--hot-pink); }
+.btn--pink:hover { background: #d42a5c; transform: translateY(-3px) rotate(-1deg) scale(1.03); box-shadow: 0 6px 20px rgba(232, 52, 107, 0.3); }
+.btn--yellow { background: var(--electric-yellow); color: var(--charcoal); border-color: var(--electric-yellow); }
+.btn--yellow:hover { transform: translateY(-3px) rotate(1deg) scale(1.03); box-shadow: 0 6px 20px rgba(255, 210, 63, 0.3); }
+.btn--outline { background: transparent; border-color: var(--hot-pink); color: var(--hot-pink); }
+.btn--outline:hover { background: var(--hot-pink); color: white; transform: translateY(-3px) rotate(-1deg) scale(1.03); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn-row { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; }
+
+.companion-footer { background: var(--charcoal); padding: 32px 24px; text-align: center; color: var(--lavender); font-size: 15px; }
+.companion-footer a { color: var(--electric-yellow); text-decoration: none; }
+.save-indicator { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: var(--charcoal); color: var(--lavender); padding: 10px 20px; font-size: 14px; font-weight: 600; border: 2px solid var(--lavender); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.save-indicator.visible { opacity: 1; }
+
+@media (max-width: 640px) {
+  .header-title { font-size: 32px; }
+  .tab-btn { font-size: 14px; padding: 14px 16px; }
+  .btn { width: 100%; text-align: center; }
+  .btn-row { flex-direction: column; }
+  .progress-summary { flex-direction: column; text-align: center; }
+  .auth-box { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     AUTH GATE — shown until signed in
+     ============================================ -->
+<div id="authGate" class="auth-gate">
+  <div class="auth-box">
+    <div class="auth-wordmark">sitein8</div>
+    <h2>Welcome to Your Companion</h2>
+    <p>Enter your email to get started. We'll send you a magic link — no password needed. Your progress saves automatically across all modules.</p>
+    <input type="email" id="authEmail" class="auth-input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')sendMagicLink()">
+    <button class="btn btn--pink" style="width:100%" onclick="sendMagicLink()" id="authBtn">Send Magic Link →</button>
+    <div id="authMessage"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     MAIN APP — shown after sign in
+     ============================================ -->
+<div id="mainApp" style="display:none">
+
+<div class="user-bar">
+  <span class="user-bar-email" id="userEmail"></span>
+  <div style="display:flex;gap:12px;align-items:center">
+    <a href="dashboard.html" style="color:var(--electric-yellow);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;text-decoration:none;opacity:0.8">← Dashboard</a>
+    <button class="user-bar-signout" onclick="signOut()">Sign out</button>
+  </div>
+</div>
+
+<div class="companion-header">
+  <div class="header-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="64">
+      <circle cx="60" cy="60" r="60" fill="#1E1038"/>
+      <text x="42" y="52" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#E8346B">{</text>
+      <text x="62" y="52" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#FFD23F">}</text>
+      <text x="42" y="82" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#FFD23F">{</text>
+      <text x="62" y="82" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#E8346B">}</text>
+    </svg>
+  </div>
+  <div class="header-eyebrow">Setup Companion</div>
+  <h1 class="header-title">Module 00: Let's Get You Ready 🛠️</h1>
+  <p class="header-subtitle">Everything you need before you start building</p>
+  <div class="header-meta"><span>⏱ 15 min</span><span>📋 one-time setup</span></div>
+</div>
+
+<div class="squiggle"><svg viewBox="0 0 1200 16" preserveAspectRatio="none"><path d="M0,8 C50,2 100,14 150,8 C200,2 250,14 300,8 C350,2 400,14 450,8 C500,2 550,14 600,8 C650,2 700,14 750,8 C800,2 850,14 900,8 C950,2 1000,14 1050,8 C1100,2 1150,14 1200,8" fill="none" stroke="#E8346B" stroke-width="3"/></svg></div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="welcome">👋 Welcome</button>
+  <button class="tab-btn" data-tab="setup">🔧 Get Set Up</button>
+</nav>
+
+<main class="companion">
+
+  <!-- TAB 1: WELCOME -->
+  <div class="panel active" id="panel-welcome">
+    <div class="panel-intro">
+      <h2>Here's what you're about to build.</h2>
+      <p>A complete, professional website — built by you, powered by AI. No code knowledge needed. No designer required. Just you, these companions, and Claude.</p>
+    </div>
+
+    <div class="highlight-box yellow">
+      <h3>How this works</h3>
+      <p>Each module has a companion (like this one) that asks you questions about your business, your voice, and your goals. Your answers get turned into ready-made page HTML. Paste it into your website. Done.</p>
+      <p style="font-weight:600;margin-top:12px">Answer questions → get your page. That's the whole process.</p>
+    </div>
+
+    <h3 class="section-title">The 8 Modules</h3>
+    <div class="section-hint">Here's the full journey, start to finish</div>
+
+    <div class="module-grid">
+      <div class="module-card">
+        <div class="module-num foundation">00</div>
+        <div class="module-info"><span class="module-tag foundation">Foundation</span><h4>Prerequisites & Setup</h4><p>You're here. Get your tools ready and understand how everything works.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num foundation">01</div>
+        <div class="module-info"><span class="module-tag foundation">Foundation</span><h4>Brand Foundation</h4><p>Take a personality quiz, discover your brand archetype, and build a complete CSS design system + voice guidelines that carry into every module.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num build">02</div>
+        <div class="module-info"><span class="module-tag build">Build</span><h4>Homepage</h4><p>Your homepage has one job: make the right person stay. We build it to do exactly that.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num build">03</div>
+        <div class="module-info"><span class="module-tag build">Build</span><h4>Sales & Service Page</h4><p>The page that converts. Offer positioning, objection handling, the structure that moves people to reach out.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num build">04</div>
+        <div class="module-info"><span class="module-tag build">Build</span><h4>About Page</h4><p>Most about pages talk about the business. Yours will talk to the client. Big difference.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num build">05</div>
+        <div class="module-info"><span class="module-tag build">Build</span><h4>Privacy Policy & Terms</h4><p>The legal pages you need. Fill in your business details, get proper policies generated.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num build">06</div>
+        <div class="module-info"><span class="module-tag build">Build</span><h4>Header & Footer</h4><p>Navigation and footer that tie every page together. Consistent, clean, on-brand.</p></div>
+      </div>
+      <div class="module-card">
+        <div class="module-num launch">07</div>
+        <div class="module-info"><span class="module-tag launch">Launch</span><h4>Going Live & What Comes Next</h4><p>Pre-launch checklist, SEO basics, and a bridge to what's possible once your site is live.</p></div>
+      </div>
+    </div>
+
+    <div class="highlight-box purple">
+      <h3>What you'll need</h3>
+      <p>✦ A Claude account (free works, Pro is faster)</p>
+      <p>✦ A website hosting account and platform</p>
+      <p>✦ A few focused hours per module</p>
+      <p>✦ Your brain, your voice, and your business knowledge</p>
+      <p style="margin-top:16px;color:var(--electric-yellow);font-weight:600">What you don't need: a developer, a designer, a big budget, or any knowledge of code.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn--yellow" onclick="switchTab('setup')">Let's Get Set Up →</button>
+    </div>
+  </div>
+
+  <!-- TAB 2: GET SET UP -->
+  <div class="panel" id="panel-setup">
+    <div class="panel-intro">
+      <h2>Check these off and you're ready to go</h2>
+      <p>These are the tools and accounts you'll need. Most are free. Do this once and you're set for the whole program.</p>
+    </div>
+
+    <div class="progress-summary" id="progressSummary">
+      <div class="progress-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" stroke="#e0dde6" stroke-width="6" fill="none"/>
+          <circle cx="40" cy="40" r="34" stroke="#34D399" stroke-width="6" fill="none" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="square" id="progressCircle"/>
+        </svg>
+        <div class="progress-ring-text" id="progressText">0/6</div>
+      </div>
+      <div class="progress-info">
+        <h4 id="progressTitle">Just getting started</h4>
+        <p id="progressDesc">Check off each item as you complete it</p>
+      </div>
+    </div>
+
+    <h3 class="section-title">Essential Tools</h3>
+    <div class="section-hint">You need all of these before Module 01</div>
+
+    <div class="checklist" id="checklist">
+      <div class="checklist-item" data-id="claude">
+        <div class="check-box" onclick="toggleCheck('claude')"></div>
+        <div class="check-content"><h4>Claude Account</h4><p>Sign up at <a href="https://claude.ai" target="_blank">claude.ai</a> — the free plan works. Pro ($20/mo) gives you faster responses and more messages if you want it.</p></div>
+      </div>
+      <div class="checklist-item" data-id="hosting">
+        <div class="check-box" onclick="toggleCheck('hosting')"></div>
+        <div class="check-content"><h4>Website Hosting</h4><p>Where your site lives. <a href="https://www.siteground.com" target="_blank">SiteGround</a> or <a href="https://www.bluehost.com" target="_blank">Bluehost</a> are solid picks for WordPress. Squarespace, Wix, and Showit include hosting.</p></div>
+      </div>
+      <div class="checklist-item" data-id="domain">
+        <div class="check-box" onclick="toggleCheck('domain')"></div>
+        <div class="check-content"><h4>Domain Name</h4><p>Your URL (e.g. yourbusiness.com). Buy through your hosting provider or <a href="https://www.namecheap.com" target="_blank">Namecheap</a>. Make sure it's connected to your hosting.</p></div>
+      </div>
+      <div class="checklist-item" data-id="platform">
+        <div class="check-box" onclick="toggleCheck('platform')"></div>
+        <div class="check-content"><h4>Website Platform Installed</h4><p>WordPress + Elementor is recommended. Also works with Squarespace, Showit, Webflow, Framer, Wix. Just make sure it's installed and you can log in.</p></div>
+      </div>
+      <div class="checklist-item" data-id="photos">
+        <div class="check-box" onclick="toggleCheck('photos')"></div>
+        <div class="check-content"><h4>At Least One Good Photo of You</h4><p>A professional headshot or high-quality candid. Goes on your homepage and about page. Phone photos are fine if the lighting is good.</p></div>
+      </div>
+      <div class="checklist-item" data-id="time">
+        <div class="check-box" onclick="toggleCheck('time')"></div>
+        <div class="check-content"><h4>A Few Focused Hours</h4><p>Each module takes 1-2 hours. Block real time for it — your answers shape everything that gets built.</p></div>
+      </div>
+    </div>
+
+    <div class="highlight-box purple" id="readyBox" style="display:none">
+      <h3>You're all set! 🎉</h3>
+      <p>Everything's checked off. You're ready to move to Module 01 and build your brand foundation.</p>
+      <p style="margin-top:12px;color:var(--electric-yellow)">Module 01 is the big one — it takes about 20 minutes and you'll walk away with your complete design system and voice guidelines.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn--outline" onclick="switchTab('welcome')">← Back</button>
+      <a class="btn btn--yellow" href="module01.html">Start Module 01: Brand Foundation →</a>
+    </div>
+  </div>
+
+</main>
+
+<div class="companion-footer">
+  <a href="https://sitein8.com" style="display:block;margin-bottom:16px">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -14 386 100" width="160" style="display:block;margin:0 auto;">
+      <text x="0" y="32" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#E8346B">{</text>
+      <text x="26" y="32" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#FFD23F">}</text>
+      <text x="0" y="68" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#FFD23F">{</text>
+      <text x="26" y="68" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#E8346B">}</text>
+      <text x="54" y="52" font-family="Fraunces, serif" font-weight="900" font-size="42" fill="#FFFDF7">sitein8</text>
+    </svg>
+  </a>
+  <div style="margin-top:16px">
+    <button onclick="if(confirm('This will uncheck everything and start fresh. Are you sure?')) clearChecklist()" style="background:none;border:none;color:var(--lavender);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;cursor:pointer;opacity:0.6;text-decoration:underline">Clear checklist &amp; start over</button>
+  </div>
+</div>
+
+</div><!-- end #mainApp -->
+
+<script>
+/* ============================================
+   SUPABASE INIT
+   ============================================ */
+const SUPABASE_URL = 'https://rcchpjkcrzwezjpqkcmm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjY2hwamtjcnp3ZXpqcHFrY21tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzMyNzMsImV4cCI6MjA4OTM0OTI3M30._cGF2WKJOJ-F9IFsCpXklDnwwy-fnBggXujvEHanBEs';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let projectId = null;
+
+/* ============================================
+   AUTH
+   ============================================ */
+async function sendMagicLink() {
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    showAuthMsg('Please enter a valid email address.', 'error');
+    return;
+  }
+  const btn = document.getElementById('authBtn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href }
+  });
+
+  if (error) {
+    showAuthMsg('Something went wrong: ' + error.message, 'error');
+    btn.textContent = 'Send Magic Link →'; btn.disabled = false;
+  } else {
+    document.getElementById('authMessage').innerHTML = `
+      <div class="auth-success">
+        <p>✉️ Magic link sent to <strong>${email}</strong>.<br><br>
+        Check your inbox and click the link to continue. It expires in 1 hour.</p>
+      </div>`;
+    btn.textContent = 'Link Sent ✓';
+    btn.style.background = 'var(--mint)';
+    btn.style.borderColor = 'var(--mint)';
+  }
+}
+
+function showAuthMsg(msg, type) {
+  document.getElementById('authMessage').innerHTML = `<p style="margin-top:16px;color:${type === 'error' ? 'var(--hot-pink)' : 'var(--mint)'};font-size:15px">${msg}</p>`;
+}
+
+async function signOut() {
+  try {
+    await db.auth.signOut();
+  } catch(e) {
+    // If Supabase signOut fails (e.g. CSP blocking), clear manually
+    console.log('signOut error, clearing manually:', e);
+  }
+  // Always clear local storage and redirect regardless
+  try {
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sb-')) localStorage.removeItem(key);
+    });
+  } catch(e) {}
+  window.location.reload();
+}
+
+async function initProject() {
+  try {
+    const { data } = await db.from('projects').select('id').eq('user_id', currentUser.id).single();
+    if (data) { projectId = data.id; return; }
+  } catch(e) {}
+  try {
+    const { data } = await db.from('projects').insert({ user_id: currentUser.id }).select('id').single();
+    if (data) projectId = data.id;
+  } catch(e) {
+    try {
+      const { data } = await db.from('projects').select('id').eq('user_id', currentUser.id).single();
+      if (data) projectId = data.id;
+    } catch(e2) {}
+  }
+}
+
+async function initAuth() {
+  // Register listener FIRST — catches magic link token in URL hash
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session?.user) {
+      // Fresh magic link sign-in — go to dashboard
+      window.location.href = 'dashboard.html';
+    } else if (event === 'SIGNED_OUT') {
+      document.getElementById('authGate').style.display = 'flex';
+      document.getElementById('mainApp').style.display = 'none';
+    }
+  });
+
+  // Check existing session
+  const { data: { session } } = await db.auth.getSession();
+  if (session?.user) {
+    // Already signed in — show module00 normally (don't redirect)
+    // User came here intentionally
+    currentUser = session.user;
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('userEmail').textContent = currentUser.email;
+    await initProject();
+    restoreChecklist();
+  } else {
+    // Not signed in — show sign-in form
+    document.getElementById('authGate').style.display = 'flex';
+  }
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${tabId}`).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============================================
+   CHECKLIST (localStorage — no sensitive data)
+   ============================================ */
+const STORAGE_KEY = 'sitein8_module00';
+const TOTAL_ITEMS = 6;
+let checkedItems = {};
+
+function toggleCheck(id) {
+  checkedItems[id] = !checkedItems[id];
+  renderChecklist();
+  saveChecklist();
+}
+
+function renderChecklist() {
+  let count = 0;
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    const id = item.dataset.id;
+    const box = item.querySelector('.check-box');
+    if (checkedItems[id]) {
+      box.classList.add('checked'); box.textContent = '✓';
+      item.classList.add('checked'); count++;
+    } else {
+      box.classList.remove('checked'); box.textContent = '';
+      item.classList.remove('checked');
+    }
+  });
+
+  const pct = count / TOTAL_ITEMS;
+  document.getElementById('progressCircle').style.strokeDashoffset = 213.6 - (pct * 213.6);
+  document.getElementById('progressText').textContent = `${count}/${TOTAL_ITEMS}`;
+
+  const title = document.getElementById('progressTitle');
+  const desc = document.getElementById('progressDesc');
+  if (count === 0) { title.textContent = 'Just getting started'; desc.textContent = 'Check off each item as you complete it'; }
+  else if (count < 3) { title.textContent = 'Making progress!'; desc.textContent = `${TOTAL_ITEMS - count} more to go`; }
+  else if (count < TOTAL_ITEMS) { title.textContent = 'Almost there!'; desc.textContent = `Just ${TOTAL_ITEMS - count} left`; }
+  else { title.textContent = "You're ready! 🎉"; desc.textContent = 'All set for Module 01'; }
+
+  document.getElementById('readyBox').style.display = count === TOTAL_ITEMS ? 'block' : 'none';
+
+  // Mark module00 as complete in Supabase when all items are checked
+  if (count === TOTAL_ITEMS && projectId) {
+    db.from('module_data').upsert({
+      project_id: projectId,
+      module_key: 'module00',
+      data: { checkedItems },
+      output: 'complete',
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'project_id,module_key' }).then(() => {
+      showSaveIndicator();
+    });
+  }
+}
+
+function saveChecklist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedItems)); } catch(e) {}
+}
+
+function restoreChecklist() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { checkedItems = JSON.parse(raw); renderChecklist(); }
+  } catch(e) {}
+}
+
+function clearChecklist() {
+  localStorage.removeItem(STORAGE_KEY);
+  checkedItems = {};
+  renderChecklist();
+}
+
+function showSaveIndicator() {
+  let el = document.getElementById('saveIndicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'saveIndicator';
+    el.className = 'save-indicator';
+    el.textContent = '✓ Saved';
+    document.body.appendChild(el);
+  }
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+initAuth();
+</script>
+</body>
+</html>
