@@ -173,11 +173,16 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <div id="authGate" class="auth-gate">
   <div class="auth-box">
     <div class="auth-wordmark">sitein8</div>
-    <h2>Welcome to Your Companion</h2>
-    <p>Enter your email to get started. We'll send you a magic link — no password needed. Your progress saves automatically across all modules.</p>
-    <input type="email" id="authEmail" class="auth-input" placeholder="your@email.com" onkeydown="if(event.key==='Enter')sendMagicLink()">
-    <button class="btn btn--pink" style="width:100%" onclick="sendMagicLink()" id="authBtn">Send Magic Link →</button>
+    <h2 id="authTitle">Sign In</h2>
+    <p id="authDesc">Enter your email and password to continue. Your progress saves automatically across all modules.</p>
+    <input type="email" id="authEmail" class="auth-input" placeholder="your@email.com">
+    <input type="password" id="authPassword" class="auth-input" placeholder="Password (min 6 characters)" onkeydown="if(event.key==='Enter')handleAuth()">
+    <button class="btn btn--pink" style="width:100%" onclick="handleAuth()" id="authBtn">Sign In →</button>
     <div id="authMessage"></div>
+    <p style="margin-top:20px;font-size:15px;color:var(--text-light)">
+      <span id="authToggleText">Don't have an account?</span>
+      <a href="#" onclick="toggleAuthMode(event)" id="authToggleLink" style="color:var(--hot-pink);font-weight:600;text-decoration:none">Sign up</a>
+    </p>
   </div>
 </div>
 
@@ -381,32 +386,60 @@ let projectId = null;
 /* ============================================
    AUTH
    ============================================ */
-async function sendMagicLink() {
+let isSignUp = false;
+
+function toggleAuthMode(e) {
+  e.preventDefault();
+  isSignUp = !isSignUp;
+  document.getElementById('authTitle').textContent = isSignUp ? 'Create Account' : 'Sign In';
+  document.getElementById('authDesc').textContent = isSignUp
+    ? 'Create an account to get started. Your progress saves automatically across all modules.'
+    : 'Enter your email and password to continue. Your progress saves automatically across all modules.';
+  document.getElementById('authBtn').textContent = isSignUp ? 'Create Account →' : 'Sign In →';
+  document.getElementById('authToggleText').textContent = isSignUp ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('authToggleLink').textContent = isSignUp ? 'Sign in' : 'Sign up';
+  document.getElementById('authMessage').innerHTML = '';
+}
+
+async function handleAuth() {
   const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+
   if (!email || !email.includes('@')) {
     showAuthMsg('Please enter a valid email address.', 'error');
     return;
   }
+  if (!password || password.length < 6) {
+    showAuthMsg('Password must be at least 6 characters.', 'error');
+    return;
+  }
+
   const btn = document.getElementById('authBtn');
-  btn.textContent = 'Sending...'; btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = isSignUp ? 'Creating account...' : 'Signing in...';
+  btn.disabled = true;
 
-  const { error } = await db.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.href }
-  });
-
-  if (error) {
-    showAuthMsg('Something went wrong: ' + error.message, 'error');
-    btn.textContent = 'Send Magic Link →'; btn.disabled = false;
+  if (isSignUp) {
+    const { error } = await db.auth.signUp({ email, password });
+    if (error) {
+      showAuthMsg('Something went wrong: ' + error.message, 'error');
+      btn.textContent = originalText; btn.disabled = false;
+    } else {
+      document.getElementById('authMessage').innerHTML = `
+        <div class="auth-success">
+          <p>✉️ Check your inbox at <strong>${email}</strong> to confirm your account, then sign in.</p>
+        </div>`;
+      btn.textContent = 'Check Your Email ✓';
+      btn.style.background = 'var(--mint)';
+      btn.style.borderColor = 'var(--mint)';
+    }
   } else {
-    document.getElementById('authMessage').innerHTML = `
-      <div class="auth-success">
-        <p>✉️ Magic link sent to <strong>${email}</strong>.<br><br>
-        Check your inbox and click the link to continue. It expires in 1 hour.</p>
-      </div>`;
-    btn.textContent = 'Link Sent ✓';
-    btn.style.background = 'var(--mint)';
-    btn.style.borderColor = 'var(--mint)';
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) {
+      showAuthMsg('Invalid email or password.', 'error');
+      btn.textContent = originalText; btn.disabled = false;
+    }
+    // On success, onAuthStateChange handles the redirect
   }
 }
 
@@ -447,10 +480,10 @@ async function initProject() {
 }
 
 async function initAuth() {
-  // Register listener FIRST — catches magic link token in URL hash
+  // Register listener FIRST — catches sign-in events
   db.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session?.user) {
-      // Fresh magic link sign-in — go to dashboard
+      // Fresh sign-in — go to dashboard
       window.location.href = 'dashboard.html';
     } else if (event === 'SIGNED_OUT') {
       document.getElementById('authGate').style.display = 'flex';
