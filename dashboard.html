@@ -75,7 +75,27 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 .loading{text-align:center;padding:80px 24px;color:var(--text-light);font-family:'Caveat',cursive;font-size:24px}
 .footer{background:var(--charcoal);padding:32px 24px;text-align:center;color:var(--lavender);font-size:15px}
 .footer a{color:var(--electric-yellow);text-decoration:none}
-@media(max-width:640px){.dash-title{font-size:30px}.stats-grid{grid-template-columns:1fr 1fr}.resume-card{flex-direction:column}.upsell{flex-direction:column}.auth-box{padding:32px 24px}}
+/* Brand Identity Card */
+.brand-card{background:var(--white);border:3px solid var(--charcoal);padding:32px;margin-bottom:48px}
+.brand-card-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.brand-card-emoji{font-size:48px;line-height:1}
+.brand-card-name{font-family:'Fraunces',serif;font-weight:900;font-size:24px;color:var(--deep-purple)}
+.brand-card-secondary{font-size:15px;color:var(--text-light);font-weight:400;margin-top:2px}
+.brand-card-swatches{display:flex;gap:0;margin-bottom:20px;border:2px solid #e0dde6;overflow:hidden}
+.brand-card-swatch{flex:1;height:48px}
+.brand-card-fonts{display:flex;gap:24px;margin-bottom:20px;font-size:15px;color:var(--text-light)}
+.brand-card-fonts strong{color:var(--text);font-weight:600}
+.brand-card-traits{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.brand-card-trait{font-size:13px;font-weight:600;padding:6px 14px;border:2px solid var(--deep-purple);color:var(--deep-purple);background:rgba(30,16,56,0.04)}
+.brand-card-toggle{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:15px;padding:12px 24px;border:3px solid var(--hot-pink);background:transparent;color:var(--hot-pink);cursor:pointer;transition:all 0.2s}
+.brand-card-toggle:hover{background:var(--hot-pink);color:white}
+.brand-card-guide{display:none;margin-top:24px;padding:32px;background:var(--deep-purple);animation:brandFadeIn 0.3s ease}
+.brand-card-guide.open{display:block}
+.brand-card-guide h4{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--electric-yellow);margin:20px 0 8px}
+.brand-card-guide h4:first-child{margin-top:0}
+.brand-card-guide p{color:var(--lavender);font-size:15px;line-height:1.7;padding:3px 0}
+@keyframes brandFadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:640px){.dash-title{font-size:30px}.stats-grid{grid-template-columns:1fr 1fr}.resume-card{flex-direction:column}.upsell{flex-direction:column}.auth-box{padding:32px 24px}.brand-card-fonts{flex-direction:column;gap:8px}}
 </style>
 </head>
 <body>
@@ -131,6 +151,8 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
         <div class="stat-box"><div class="stat-num">8</div><div class="stat-label">Total Modules</div></div>
         <div class="stat-box"><div class="stat-num" id="statPct">0%</div><div class="stat-label">Complete</div></div>
       </div>
+
+      <div id="brandIdentityCard" style="display:none"></div>
 
       <div class="resume-card" id="resumeCard">
         <div>
@@ -343,6 +365,14 @@ function renderDashboard(moduleMap) {
     document.getElementById('archBadge').style.display = 'inline-flex';
   }
 
+  // Brand identity card (only if module01 has completed output)
+  if (isModuleComplete('module01', moduleMap)) {
+    try {
+      const m01out = JSON.parse(moduleMap.module01.output);
+      renderBrandCard(m01out, moduleMap.module01.data);
+    } catch(e) { console.error('Brand card parse error:', e); }
+  }
+
   // Stats
   document.getElementById('statDone').textContent = count;
   document.getElementById('statPct').textContent = Math.round(count / MODULES.length * 100) + '%';
@@ -385,6 +415,87 @@ function renderDashboard(moduleMap) {
       <div class="mod-status ${statusClass}">${statusText}</div>
     </${tag}>`;
   }).join('');
+}
+
+// ============================================================
+// BRAND IDENTITY CARD
+// ============================================================
+function renderBrandCard(output, data) {
+  const container = document.getElementById('brandIdentityCard');
+  // Pull from structured output, with fallbacks to data
+  const aName = output.archetypeName || (data?.resultArchetype ? ARCHETYPES[data.resultArchetype]?.name : '') || '';
+  const aEmoji = output.archetypeEmoji || (data?.resultArchetype ? ARCHETYPES[data.resultArchetype]?.emoji : '') || '';
+  const saName = output.secondaryArchetypeName || '';
+  const tokens = output.paletteTokens || data?.paletteTokens || null;
+  const fontH = output.fontHeading || data?.fontHeading || '';
+  const fontB = output.fontBody || data?.fontBody || '';
+  const traits = output.voiceTraits || data?.voiceTraits || [];
+  const voice = output.voice || '';
+
+  if (!aName) return;
+
+  // Extract font display names from CSS font values
+  const fontHName = fontH.replace(/'/g, '').split(',')[0].trim() || 'Not set';
+  const fontBName = fontB.replace(/'/g, '').split(',')[0].trim() || 'Not set';
+
+  let swatchesHTML = '';
+  if (tokens) {
+    const swatchKeys = ['bg_dark', 'primary', 'accent', 'subtle', 'card_bg'];
+    swatchesHTML = `<div class="brand-card-swatches">${swatchKeys.filter(k => tokens[k]).map(k => `<div class="brand-card-swatch" style="background:${tokens[k]}" title="${k}: ${tokens[k]}"></div>`).join('')}</div>`;
+  }
+
+  let traitsHTML = '';
+  if (traits.length) {
+    const top3 = traits.slice(0, 3);
+    traitsHTML = `<div class="brand-card-traits">${top3.map(t => `<span class="brand-card-trait">${t}</span>`).join('')}</div>`;
+  }
+
+  // Format voice guide for accordion
+  let voiceHTML = '';
+  if (voice) {
+    const lines = voice.split('\n');
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      if (trimmed.startsWith('BRAND VOICE GUIDELINES') || trimmed.startsWith('Voice Description:') || trimmed.startsWith('Example Copy:') || trimmed.startsWith('Tone Rules:') || trimmed.startsWith('WRITING SAMPLE') || trimmed.startsWith('ADDITIONAL BRAND NOTES')) {
+        voiceHTML += `<h4>${trimmed}</h4>`;
+      } else if (trimmed.startsWith('- ')) {
+        voiceHTML += `<p style="padding-left:16px"><span style="color:var(--electric-yellow)">→</span> ${trimmed.slice(2)}</p>`;
+      } else if (trimmed.startsWith('"')) {
+        voiceHTML += `<p style="color:var(--white);font-family:'Caveat',cursive;font-size:19px;padding:8px 0;border-top:1px solid rgba(196,181,253,0.15)">${trimmed}</p>`;
+      } else if (trimmed.startsWith('---')) {
+        voiceHTML += '';
+      } else {
+        voiceHTML += `<p>${trimmed}</p>`;
+      }
+    });
+  }
+
+  container.innerHTML = `
+    <div class="brand-card">
+      <div class="brand-card-header">
+        <div class="brand-card-emoji">${aEmoji}</div>
+        <div>
+          <div class="brand-card-name">${aName}</div>
+          ${saName ? `<div class="brand-card-secondary">with a ${saName} streak</div>` : ''}
+        </div>
+      </div>
+      ${swatchesHTML}
+      <div class="brand-card-fonts">
+        <div><strong>Heading:</strong> ${fontHName}</div>
+        <div><strong>Body:</strong> ${fontBName}</div>
+      </div>
+      ${traitsHTML}
+      ${voice ? `<button class="brand-card-toggle" onclick="toggleBrandGuide(this)">View Brand Guide</button>
+      <div class="brand-card-guide" id="brandGuideAccordion">${voiceHTML}</div>` : ''}
+    </div>`;
+  container.style.display = 'block';
+}
+
+function toggleBrandGuide(btn) {
+  const guide = document.getElementById('brandGuideAccordion');
+  const isOpen = guide.classList.toggle('open');
+  btn.textContent = isOpen ? 'Hide Brand Guide' : 'View Brand Guide';
 }
 
 // ============================================================
