@@ -226,6 +226,7 @@ const ARCHETYPES = {
 // ============================================================
 let currentUser = null;
 let projectId = null;
+const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 // ============================================================
 // AUTH
@@ -241,7 +242,6 @@ async function signOut() {
 }
 
 async function initAuth() {
-  const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (DEV_MODE) {
     currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
     document.getElementById('pageLoader').style.display = 'none';
@@ -282,6 +282,7 @@ async function initAuth() {
 }
 
 function showAuthGate() {
+  if (DEV_MODE) return;
   document.getElementById('pageLoader').style.display = 'none';
   document.getElementById('authGate').style.display = 'flex';
   document.getElementById('mainApp').style.display = 'none';

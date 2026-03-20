@@ -586,6 +586,7 @@ const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let projectId = null;
 let saveTimer = null;
+const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 /* ============================================
    AUTH
@@ -607,7 +608,6 @@ async function signOut() {
 }
 
 async function initAuth() {
-  const DEV_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (DEV_MODE) {
     currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
     document.getElementById('authGate').style.display = 'none';
@@ -627,6 +627,7 @@ async function initAuth() {
       await initProject();
       await loadState();
     } else {
+      if (DEV_MODE) return;
       document.getElementById('authGate').style.display = 'flex';
       document.getElementById('mainApp').style.display = 'none';
       setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
@@ -635,6 +636,7 @@ async function initAuth() {
 
   const { data: { session } } = await db.auth.getSession();
   if (!session) {
+    if (DEV_MODE) return;
     document.getElementById('authGate').style.display = 'flex';
     setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
   }
