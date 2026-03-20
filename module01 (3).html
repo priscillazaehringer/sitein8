@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 01: Brand Foundation · sitein8</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,500;1,9..144,700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --hot-pink: #E8346B;
+  --electric-yellow: #FFD23F;
+  --pop-blue: #3B82F6;
+  --mint: #34D399;
+  --coral: #FF6B6B;
+  --deep-purple: #1E1038;
+  --lavender: #C4B5FD;
+  --peach: #FBBF77;
+  --off-white: #FFFDF7;
+  --charcoal: #1a1a2e;
+  --text: #2D2B3D;
+  --text-light: #6B6980;
+  --white: #FFFFFF;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: var(--text); background: var(--off-white); -webkit-font-smoothing: antialiased; font-size: 18px; line-height: 1.6; }
+.companion { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+/* AUTH REDIRECT */
+.auth-gate {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--deep-purple); padding: 24px;
+}
+.auth-box {
+  background: var(--off-white); padding: 56px 48px; max-width: 480px; width: 100%;
+  text-align: center; border: 3px solid var(--hot-pink);
+  box-shadow: -6px 6px 0 var(--hot-pink);
+}
+.auth-box h2 { font-family: 'Fraunces', serif; font-weight: 900; font-size: 32px; color: var(--deep-purple); margin-bottom: 8px; }
+.auth-box p { font-size: 17px; color: var(--text-light); margin-bottom: 32px; }
+.auth-success p { color: var(--text); font-size: 17px; margin: 0; }
+.auth-logo { margin-bottom: 32px; }
+.save-indicator {
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  background: var(--deep-purple); color: var(--lavender); padding: 10px 20px;
+  font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 600;
+  border: 2px solid var(--lavender); opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.save-indicator.visible { opacity: 1; }
+.user-bar {
+  background: var(--charcoal); padding: 10px 24px; display: flex;
+  justify-content: space-between; align-items: center;
+}
+.user-bar-email { color: var(--lavender); font-size: 14px; }
+.user-bar-signout { background: none; border: 1px solid rgba(196,181,253,0.3); color: var(--lavender); font-family: 'Bricolage Grotesque', sans-serif; font-size: 13px; padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+.user-bar-signout:hover { border-color: var(--hot-pink); color: var(--hot-pink); }
+
+/* === HEADER === */
+.companion-header { background: var(--deep-purple); padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden; }
+.companion-header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: var(--hot-pink); opacity: 0.15; border-radius: 50%; filter: blur(60px); }
+.companion-header::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px; background: var(--electric-yellow); opacity: 0.12; border-radius: 50%; filter: blur(50px); }
+.header-eyebrow { font-family: 'Caveat', cursive; font-size: 22px; color: var(--electric-yellow); margin-bottom: 8px; position: relative; z-index: 1; }
+.header-logo { position: relative; z-index: 1; margin-bottom: 16px; }
+.header-logo svg { display: block; margin: 0 auto; }
+.header-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: 42px; color: var(--white); line-height: 1.1; margin-bottom: 12px; position: relative; z-index: 1; }
+.header-subtitle { font-size: 18px; color: var(--lavender); font-weight: 300; position: relative; z-index: 1; }
+.header-meta { display: flex; justify-content: center; gap: 24px; margin-top: 20px; font-size: 15px; color: var(--lavender); position: relative; z-index: 1; }
+.squiggle { width: 100%; height: 16px; overflow: hidden; }
+.squiggle svg { width: 100%; height: 16px; }
+
+/* === STEP TRACKER === */
+.step-tracker { display: flex; background: var(--white); border-bottom: 3px solid var(--charcoal); position: sticky; top: 0; z-index: 100; overflow-x: auto; }
+.step-btn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 14px; padding: 16px 16px; border: none; background: transparent; color: var(--text-light); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; }
+.step-btn:hover:not(:disabled) { color: var(--text); background: rgba(232, 52, 107, 0.04); }
+.step-btn.active { color: var(--hot-pink); border-bottom-color: var(--hot-pink); background: rgba(232, 52, 107, 0.04); }
+.step-btn.completed { color: var(--mint); }
+.step-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-size: 12px; font-weight: 800; border: 2px solid currentColor; flex-shrink: 0; }
+.step-btn.completed .step-num { background: var(--mint); border-color: var(--mint); color: white; }
+.step-btn.completed .step-num::after { content: '✓'; }
+.step-btn.completed .step-num span { display: none; }
+
+/* === PANELS === */
+.panel { display: none; padding: 48px 0 64px; animation: fadeUp 0.4s ease; }
+.panel.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.panel-intro { margin-bottom: 40px; }
+.panel-intro h2 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 32px; color: var(--text); margin-bottom: 12px; }
+.panel-intro p { font-size: 18px; color: var(--text-light); max-width: 620px; }
+.section-label { font-family: 'Fraunces', serif; font-weight: 700; font-size: 24px; margin-bottom: 8px; }
+.section-hint { font-family: 'Caveat', cursive; font-size: 20px; color: var(--text-light); margin-bottom: 24px; }
+
+/* === ROADMAP === */
+.roadmap { display: flex; flex-direction: column; gap: 0; margin: 32px 0 40px; }
+.roadmap-step { display: flex; gap: 20px; padding: 28px 0; border-bottom: 2px solid #e8e5ef; align-items: flex-start; }
+.roadmap-step:last-child { border-bottom: none; }
+.roadmap-icon { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--deep-purple); color: var(--white); flex-shrink: 0; }
+.roadmap-content h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 4px; }
+.roadmap-content p { font-size: 16px; color: var(--text-light); line-height: 1.5; }
+.roadmap-content .what-youll-need { font-size: 14px; color: var(--hot-pink); font-weight: 600; margin-top: 6px; }
+.what-you-get { background: var(--deep-purple); padding: 32px; margin: 40px 0; }
+.what-you-get h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--electric-yellow); margin-bottom: 16px; }
+.what-you-get ul { list-style: none; padding: 0; }
+.what-you-get li { color: var(--lavender); font-size: 17px; padding: 8px 0; border-bottom: 1px solid rgba(196, 181, 253, 0.15); }
+.what-you-get li:last-child { border-bottom: none; }
+.what-you-get li::before { content: '✦ '; color: var(--electric-yellow); }
+
+/* === FORK === */
+.fork-options { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+.fork-card { padding: 28px; border: 3px solid #e0dde6; background: var(--white); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.fork-card:hover { border-color: var(--hot-pink); transform: translateX(6px); box-shadow: -4px 4px 0 var(--hot-pink); }
+.fork-card.selected { border-color: var(--hot-pink); background: rgba(232, 52, 107, 0.04); box-shadow: -4px 4px 0 var(--hot-pink); }
+.fork-card h4 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 4px; }
+.fork-card p { font-size: 16px; color: var(--text-light); }
+
+/* === BRAND INPUTS === */
+.brand-inputs { display: none; margin-top: 32px; animation: fadeUp 0.4s ease; }
+.brand-inputs.visible { display: block; }
+.input-group { margin-bottom: 32px; }
+.input-group label { display: block; font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.input-group .input-hint { font-family: 'Caveat', cursive; font-size: 18px; color: var(--text-light); margin-bottom: 12px; }
+.input-group input, .input-group textarea { width: 100%; font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; padding: 16px 20px; border: 3px solid #e0dde6; background: var(--white); color: var(--text); transition: border-color 0.2s ease; }
+.input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--hot-pink); }
+.input-group textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+.color-input-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.color-field { flex: 1; min-width: 200px; }
+.color-field label { font-size: 15px; font-weight: 600; margin-bottom: 8px; display: block; }
+.color-field .color-input-wrap { display: flex; align-items: center; border: 3px solid #e0dde6; background: var(--white); }
+.color-field input[type="color"] { width: 48px; height: 48px; border: none; padding: 0; cursor: pointer; background: none; }
+.color-field input[type="color"]::-webkit-color-swatch-wrapper { padding: 4px; }
+.color-field input[type="color"]::-webkit-color-swatch { border: none; }
+.color-field input[type="text"] { border: none; flex: 1; font-size: 15px; padding: 12px; font-family: monospace; }
+.color-field input[type="text"]:focus { outline: none; }
+
+/* === QUIZ === */
+.progress-bar { width: 100%; height: 6px; background: #e0dde6; margin-bottom: 32px; }
+.progress-fill { height: 100%; background: var(--hot-pink); transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.progress-text { font-family: 'Caveat', cursive; font-size: 18px; color: var(--text-light); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 56px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s ease forwards; }
+.quiz-number { font-family: 'Fraunces', serif; font-weight: 900; font-size: 14px; color: var(--hot-pink); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+.quiz-question h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 24px; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+.quiz-question .hint { font-family: 'Caveat', cursive; font-size: 19px; color: var(--text-light); margin-bottom: 20px; }
+.quiz-options { display: flex; flex-direction: column; gap: 12px; }
+.quiz-option { display: block; width: 100%; text-align: left; font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 400; padding: 20px 24px; border: 3px solid #e0dde6; background: var(--white); color: var(--text); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.quiz-option:hover { border-color: var(--hot-pink); transform: translateX(6px); box-shadow: -4px 4px 0 var(--hot-pink); }
+.quiz-option.selected { border-color: var(--hot-pink); background: rgba(232, 52, 107, 0.06); box-shadow: -4px 4px 0 var(--hot-pink); font-weight: 600; }
+.quiz-option .option-label { font-weight: 600; display: block; margin-bottom: 4px; }
+.quiz-option .option-desc { font-size: 15px; color: var(--text-light); font-weight: 300; }
+.quiz-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.quiz-option-image { position: relative; cursor: pointer; border: 3px solid #e0dde6; overflow: hidden; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.quiz-option-image:hover { border-color: var(--hot-pink); transform: scale(1.02); box-shadow: 0 8px 24px rgba(232, 52, 107, 0.2); }
+.quiz-option-image.selected { border-color: var(--hot-pink); box-shadow: 0 0 0 4px rgba(232, 52, 107, 0.2), 0 8px 24px rgba(232, 52, 107, 0.2); }
+.quiz-option-image.selected::after { content: '✓'; position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: var(--hot-pink); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; z-index: 2; }
+.quiz-option-image img { width: 100%; height: 180px; object-fit: cover; display: block; transition: transform 0.4s ease; }
+.quiz-option-image:hover img { transform: scale(1.05); }
+.quiz-option-image .image-label { padding: 14px 16px; background: var(--white); font-weight: 600; font-size: 15px; }
+.quiz-option-image .image-label small { display: block; font-weight: 300; font-size: 13px; color: var(--text-light); margin-top: 2px; }
+.quiz-options-emoji { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.quiz-option-emoji { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 16px; border: 3px solid #e0dde6; background: var(--white); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.quiz-option-emoji:hover { border-color: var(--hot-pink); transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(232, 52, 107, 0.15); }
+.quiz-option-emoji.selected { border-color: var(--hot-pink); background: rgba(232, 52, 107, 0.06); box-shadow: 0 8px 20px rgba(232, 52, 107, 0.15); }
+.emoji-big { font-size: 48px; line-height: 1; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.quiz-option-emoji:hover .emoji-big { transform: scale(1.2) rotate(5deg); }
+.emoji-label { font-size: 13px; font-weight: 600; color: var(--text-light); text-align: center; }
+
+
+/* === CLICK TO RANK === */
+.rank-list { display: flex; flex-direction: column; gap: 12px; }
+.rank-item {
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 24px; border: 3px solid #e0dde6; background: var(--white);
+  cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+.rank-item:hover { border-color: var(--hot-pink); transform: translateX(4px); }
+.rank-item.ranked { border-color: var(--hot-pink); background: rgba(232,52,107,0.04); box-shadow: -4px 4px 0 var(--hot-pink); }
+.rank-item.ranked:hover { transform: translateX(4px) scale(1.01); }
+.rank-num {
+  width: 36px; height: 36px; border: 2px solid #e0dde6;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif; font-weight: 900; font-size: 18px;
+  color: var(--text-light); flex-shrink: 0; transition: all 0.2s;
+}
+.rank-item.ranked .rank-num {
+  background: var(--hot-pink); border-color: var(--hot-pink); color: white;
+}
+.rank-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; font-weight: 400; flex: 1; }
+.rank-hint { font-family: 'Caveat', cursive; font-size: 18px; color: var(--text-light); margin-bottom: 16px; }
+.rank-reset { font-family: 'Caveat', cursive; font-size: 16px; color: var(--hot-pink); background: none; border: none; cursor: pointer; padding: 0; margin-top: 8px; text-decoration: underline; }
+.rank-progress { font-family: 'Caveat', cursive; font-size: 16px; color: var(--text-light); margin-bottom: 8px; }
+
+/* === REVEAL === */
+.reveal-container { text-align: center; padding: 40px 0; }
+.reveal-eyebrow { font-family: 'Caveat', cursive; font-size: 24px; color: var(--text-light); margin-bottom: 8px; }
+.reveal-archetype { font-family: 'Fraunces', serif; font-weight: 900; font-size: 64px; color: var(--deep-purple); line-height: 1.1; margin-bottom: 8px; animation: revealPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes revealPop { from { opacity: 0; transform: scale(0.8) rotate(-3deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+.reveal-tagline { font-family: 'Caveat', cursive; font-size: 28px; color: var(--hot-pink); margin-bottom: 32px; }
+.reveal-description { font-size: 19px; color: var(--text); max-width: 580px; margin: 0 auto 40px; line-height: 1.7; }
+.reveal-traits { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 40px; }
+.trait-tag { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 15px; padding: 10px 20px; border: 3px solid var(--deep-purple); background: var(--white); color: var(--deep-purple); }
+.reveal-voice { background: var(--deep-purple); padding: 40px; text-align: left; margin: 40px 0; }
+.reveal-voice h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 24px; color: var(--electric-yellow); margin-bottom: 16px; }
+.reveal-voice p { color: var(--lavender); font-size: 17px; line-height: 1.7; margin-bottom: 12px; }
+.reveal-voice .voice-example { font-family: 'Caveat', cursive; font-size: 22px; color: var(--white); padding: 16px 0; border-top: 2px solid rgba(196, 181, 253, 0.2); margin-top: 16px; }
+.next-steps-box { background: rgba(232, 52, 107, 0.06); border: 3px solid var(--hot-pink); padding: 32px; margin: 40px 0; text-align: left; }
+.next-steps-box h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--hot-pink); margin-bottom: 16px; }
+.next-steps-box p { font-size: 16px; color: var(--text); margin-bottom: 8px; padding-left: 24px; position: relative; }
+.next-steps-box p::before { content: '→'; position: absolute; left: 0; color: var(--hot-pink); font-weight: 700; }
+
+/* === CUSTOMIZE === */
+.customize-section { margin-bottom: 56px; }
+.palette-options { display: flex; flex-direction: column; gap: 16px; }
+.palette-card { display: flex; align-items: center; gap: 20px; padding: 20px; border: 3px solid #e0dde6; background: var(--white); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.palette-card:hover { border-color: var(--hot-pink); transform: translateX(6px); box-shadow: -4px 4px 0 var(--hot-pink); }
+.palette-card.selected { border-color: var(--hot-pink); background: rgba(232, 52, 107, 0.04); box-shadow: -4px 4px 0 var(--hot-pink); }
+.palette-swatches { display: flex; gap: 0; flex-shrink: 0; }
+.swatch { width: 48px; height: 48px; }
+.palette-name { font-weight: 600; font-size: 17px; margin-bottom: 2px; }
+.palette-desc { font-size: 14px; color: var(--text-light); }
+.font-options { display: flex; flex-direction: column; gap: 16px; }
+.font-card { padding: 24px; border: 3px solid #e0dde6; background: var(--white); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.font-card:hover { border-color: var(--hot-pink); transform: translateX(6px); box-shadow: -4px 4px 0 var(--hot-pink); }
+.font-card.selected { border-color: var(--hot-pink); background: rgba(232, 52, 107, 0.04); box-shadow: -4px 4px 0 var(--hot-pink); }
+.font-preview-heading { font-size: 28px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
+.font-preview-body { font-size: 16px; color: var(--text-light); margin-bottom: 8px; }
+.font-card-name { font-size: 13px; font-weight: 600; color: var(--hot-pink); text-transform: uppercase; letter-spacing: 1px; }
+.style-toggles { display: flex; flex-direction: column; gap: 20px; }
+.style-toggle { display: flex; align-items: center; gap: 16px; }
+.style-toggle-label { font-weight: 600; font-size: 16px; min-width: 140px; }
+.toggle-options { display: flex; gap: 0; border: 3px solid #e0dde6; }
+.toggle-opt { padding: 12px 24px; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 15px; border: none; background: var(--white); color: var(--text-light); cursor: pointer; transition: all 0.2s ease; border-right: 2px solid #e0dde6; }
+.toggle-opt:last-child { border-right: none; }
+.toggle-opt.selected { background: var(--deep-purple); color: var(--white); }
+.toggle-opt:hover:not(.selected) { background: rgba(30, 16, 56, 0.05); }
+
+/* === PREVIEW === */
+.preview-container { border: 3px solid var(--charcoal); background: var(--white); overflow: hidden; margin: 40px 0; }
+.preview-bar { background: var(--charcoal); padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+.preview-dot { width: 12px; height: 12px; border-radius: 50%; }
+.preview-dot:nth-child(1) { background: var(--coral); }
+.preview-dot:nth-child(2) { background: var(--electric-yellow); }
+.preview-dot:nth-child(3) { background: var(--mint); }
+.preview-bar-title { color: var(--lavender); font-size: 13px; margin-left: 8px; }
+.preview-frame { padding: 40px; }
+.preview-frame .pv-hero { padding: 48px 32px; text-align: center; margin-bottom: 24px; transition: all 0.4s ease; }
+.preview-frame .pv-hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 12px; line-height: 1.15; }
+.preview-frame .pv-hero p { font-size: 17px; margin-bottom: 24px; opacity: 0.8; }
+.preview-frame .pv-btn { display: inline-block; padding: 16px 32px; font-weight: 600; font-size: 16px; border: 3px solid; cursor: default; }
+.preview-frame .pv-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.preview-frame .pv-card { padding: 24px; border: 2px solid; }
+.preview-frame .pv-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.preview-frame .pv-card p { font-size: 14px; opacity: 0.7; }
+.preview-frame .pv-footer { padding: 24px; text-align: center; font-size: 14px; margin-top: 24px; }
+
+/* === WRITING SAMPLE === */
+.writing-sample-area { margin: 24px 0; }
+.writing-sample-area textarea { width: 100%; min-height: 200px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; padding: 20px; border: 3px solid #e0dde6; background: var(--white); color: var(--text); resize: vertical; line-height: 1.6; }
+.writing-sample-area textarea:focus { outline: none; border-color: var(--hot-pink); }
+.sample-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.sample-tag { font-size: 14px; font-weight: 600; padding: 6px 14px; background: rgba(232, 52, 107, 0.08); color: var(--hot-pink); border: none; }
+
+/* === OUTPUT === */
+.output-block { background: var(--charcoal); padding: 32px; margin: 24px 0; position: relative; max-height: 500px; overflow-y: auto; }
+.output-block pre { color: var(--lavender); font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+.copy-btn { position: sticky; top: 0; float: right; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 14px; padding: 10px 20px; border: 2px solid var(--electric-yellow); background: var(--electric-yellow); color: var(--charcoal); cursor: pointer; transition: all 0.2s ease; z-index: 5; }
+.copy-btn:hover { background: var(--hot-pink); border-color: var(--hot-pink); color: white; }
+.copy-btn.copied { background: var(--mint); border-color: var(--mint); }
+.output-label { font-family: 'Caveat', cursive; font-size: 20px; color: var(--text-light); margin-bottom: 8px; }
+.output-note { font-size: 16px; color: var(--text-light); margin-top: 16px; line-height: 1.6; padding: 20px; background: rgba(52, 211, 153, 0.08); border: 2px solid var(--mint); }
+
+/* === BUTTONS === */
+.btn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; padding: 18px 40px; border: 3px solid var(--charcoal); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: inline-block; text-decoration: none; }
+.btn--pink { background: var(--hot-pink); color: white; border-color: var(--hot-pink); }
+.btn--pink:hover { background: #d42a5c; transform: translateY(-3px) rotate(-1deg) scale(1.03); box-shadow: 0 6px 20px rgba(232, 52, 107, 0.3); }
+.btn--yellow { background: var(--electric-yellow); color: var(--charcoal); border-color: var(--electric-yellow); }
+.btn--yellow:hover { transform: translateY(-3px) rotate(1deg) scale(1.03); box-shadow: 0 6px 20px rgba(255, 210, 63, 0.3); }
+.btn--outline { background: transparent; border-color: var(--hot-pink); color: var(--hot-pink); }
+.btn--outline:hover { background: var(--hot-pink); color: white; transform: translateY(-3px) rotate(-1deg) scale(1.03); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn-row { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; }
+
+.companion-footer { background: var(--charcoal); padding: 32px 24px; text-align: center; color: var(--lavender); font-size: 15px; }
+.companion-footer a { color: var(--electric-yellow); text-decoration: none; }
+
+@media (max-width: 640px) {
+  .header-title { font-size: 32px; }
+  .reveal-archetype { font-size: 44px; }
+  .preview-frame .pv-cards { grid-template-columns: 1fr; }
+  .step-btn { font-size: 12px; padding: 12px 10px; }
+  .step-btn .step-label { display: none; }
+  .style-toggle { flex-direction: column; align-items: flex-start; }
+  .btn { width: 100%; text-align: center; }
+  .btn-row { flex-direction: column; }
+  .color-input-row { flex-direction: column; }
+  .quiz-options-grid { grid-template-columns: 1fr; }
+  .quiz-options-emoji { grid-template-columns: repeat(2, 1fr); }
+  .auth-box { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH REDIRECT (shown if not signed in) -->
+<div id="authGate" class="auth-gate">
+  <div class="auth-box">
+    <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:32px">sitein8</div>
+    <h2>Sign in first</h2>
+    <p>You need to sign in through Module 00 before accessing this module. Redirecting you now...</p>
+    <a href="module00.html" style="display:block;background:var(--hot-pink);color:white;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:18px;padding:18px 40px;border:3px solid var(--hot-pink);text-decoration:none;margin-top:8px">Go to Module 00 →</a>
+  </div>
+</div>
+
+<!-- SAVE INDICATOR -->
+<div class="save-indicator" id="saveIndicator">✓ Saved</div>
+
+<!-- MAIN APP (hidden until authenticated) -->
+<div id="mainApp" style="display:none">
+
+<div class="user-bar">
+  <span class="user-bar-email" id="userEmail"></span>
+  <div style="display:flex;gap:12px;align-items:center">
+    <a href="dashboard.html" style="color:var(--electric-yellow);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;text-decoration:none;opacity:0.85">Dashboard</a>
+    <button class="user-bar-signout" onclick="signOut()">Sign out</button>
+  </div>
+</div>
+
+<div class="companion-header">
+  <div class="header-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="64">
+      <circle cx="60" cy="60" r="60" fill="#1E1038"/>
+      <text x="42" y="52" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#E8346B">{</text>
+      <text x="62" y="52" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#FFD23F">}</text>
+      <text x="42" y="82" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#FFD23F">{</text>
+      <text x="62" y="82" font-family="Fraunces, serif" font-size="38" font-weight="900" fill="#E8346B">}</text>
+    </svg>
+  </div>
+  <div class="header-eyebrow">Brand Companion</div>
+  <h1 class="header-title">Module 01: Brand Foundation 🎨</h1>
+  <p class="header-subtitle">Discover your brand archetype and build your design system</p>
+  <div class="header-meta"><span>⏱ 20 min</span><span>📋 6 steps</span></div>
+</div>
+
+<div class="squiggle"><svg viewBox="0 0 1200 16" preserveAspectRatio="none"><path d="M0,8 C50,2 100,14 150,8 C200,2 250,14 300,8 C350,2 400,14 450,8 C500,2 550,14 600,8 C650,2 700,14 750,8 C800,2 850,14 900,8 C950,2 1000,14 1050,8 C1100,2 1150,14 1200,8" fill="none" stroke="#E8346B" stroke-width="3"/></svg></div>
+
+<nav class="step-tracker">
+  <button class="step-btn active" data-step="welcome"><span class="step-num"><span>1</span></span><span class="step-label">Welcome</span></button>
+  <button class="step-btn" data-step="starting" disabled><span class="step-num"><span>2</span></span><span class="step-label">Starting Point</span></button>
+  <button class="step-btn" data-step="quiz" disabled><span class="step-num"><span>3</span></span><span class="step-label">Quiz</span></button>
+  <button class="step-btn" data-step="reveal" disabled><span class="step-num"><span>4</span></span><span class="step-label">Archetype</span></button>
+  <button class="step-btn" data-step="customize" disabled><span class="step-num"><span>5</span></span><span class="step-label">Customize</span></button>
+  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>6</span></span><span class="step-label">Your CSS</span></button>
+</nav>
+
+<main class="companion">
+
+  <!-- WELCOME -->
+  <div class="panel active" id="panel-welcome">
+    <div class="panel-intro">
+      <h2>Before we start, here's the plan 📋</h2>
+      <p>This companion builds your complete brand design system. Here's what we'll do together:</p>
+    </div>
+    <div class="roadmap">
+      <div class="roadmap-step"><div class="roadmap-icon">1</div><div class="roadmap-content"><h3>Starting Point</h3><p>Tell us what platform you're building on, and whether you already have brand colors and fonts or you're starting fresh.</p><div class="what-youll-need">You'll need: your platform choice + hex codes and font names if you have them</div></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">2</div><div class="roadmap-content"><h3>Brand Personality Quiz</h3><p>15 questions about how you think, what you value, and how you move through the world. Non-obvious and worth sitting with. Go with your gut.</p><div class="what-youll-need">You'll need: 10 minutes and honest first reactions</div></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">3</div><div class="roadmap-content"><h3>Your Archetype Reveal</h3><p>Meet your brand archetype - the personality framework that shapes your design and voice.</p></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">4</div><div class="roadmap-content"><h3>Customize Your Design System</h3><p>Choose palettes, fonts, and style details curated for your archetype. See a live preview.</p><div class="what-youll-need">Skipped if you have existing brand colors/fonts</div></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">5</div><div class="roadmap-content"><h3>Writing Sample</h3><p>Paste something you've written so Claude can match your real voice.</p><div class="what-youll-need">You'll need: 1-3 paragraphs of your writing</div></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">6</div><div class="roadmap-content"><h3>Your CSS + Voice Output</h3><p>One-click copy your design system and brand voice. Auto-saved to your account for all future modules.</p></div></div>
+    </div>
+    <div class="what-you-get">
+      <h3>What you'll walk away with</h3>
+      <ul>
+        <li>A complete CSS design system (colors, fonts, buttons, cards, sections, nav, footer)</li>
+        <li>Your brand archetype and what it means</li>
+        <li>Brand voice guidelines with example copy</li>
+        <li>Everything auto-saved — pick up where you left off on any device</li>
+        <li>Auto-loaded into Modules 02-07, no copy-pasting needed</li>
+      </ul>
+    </div>
+    <div class="btn-row"><button class="btn btn--yellow" onclick="goToStep('starting')">Let's Go →</button></div>
+  </div>
+
+  <!-- STARTING POINT -->
+  <div class="panel" id="panel-starting">
+    <div class="panel-intro">
+      <h2>Let's get the basics down</h2>
+      <p>Two quick things before the fun part: where you're building, and what you're working with.</p>
+    </div>
+    <div class="customize-section">
+      <h3 class="section-label">What platform are you building on?</h3>
+      <div class="section-hint">This helps us format the CSS output for your specific setup</div>
+      <div class="quiz-options" id="platformOptions">
+        <button class="quiz-option" onclick="selectPlatform('wordpress-elementor', this)"><span class="option-label">WordPress + Elementor</span><span class="option-desc">Most flexible. This is what I recommend.</span></button>
+        <button class="quiz-option" onclick="selectPlatform('wordpress-divi', this)"><span class="option-label">WordPress + Divi</span><span class="option-desc">Popular builder with its own styling system</span></button>
+        <button class="quiz-option" onclick="selectPlatform('wordpress-other', this)"><span class="option-label">WordPress + other builder</span><span class="option-desc">Beaver Builder, Oxygen, Bricks, etc.</span></button>
+        <button class="quiz-option" onclick="selectPlatform('squarespace', this)"><span class="option-label">Squarespace</span><span class="option-desc">Clean, hosted, limited CSS injection</span></button>
+        <button class="quiz-option" onclick="selectPlatform('showit', this)"><span class="option-label">Showit</span><span class="option-desc">Drag-and-drop, popular with creatives</span></button>
+        <button class="quiz-option" onclick="selectPlatform('webflow', this)"><span class="option-label">Webflow</span><span class="option-desc">Design-forward, code-level control</span></button>
+        <button class="quiz-option" onclick="selectPlatform('framer', this)"><span class="option-label">Framer</span><span class="option-desc">Modern, component-based</span></button>
+        <button class="quiz-option" onclick="selectPlatform('wix', this)"><span class="option-label">Wix</span><span class="option-desc">Beginner-friendly, some CSS limitations</span></button>
+        <button class="quiz-option" onclick="selectPlatform('other', this)"><span class="option-label">Something else</span><span class="option-desc">I'll figure out the CSS part</span></button>
+        <button class="quiz-option" onclick="selectPlatform('undecided', this)"><span class="option-label">I haven't decided yet</span><span class="option-desc">No worries - we'll give you generic CSS that works anywhere</span></button>
+      </div>
+    </div>
+    <div class="customize-section">
+      <h3 class="section-label">Do you have existing brand assets?</h3>
+      <div class="section-hint">Colors, fonts, a look you already love?</div>
+      <div class="fork-options">
+        <div class="fork-card" onclick="selectFork('fresh')"><h4>🌱 Starting fresh</h4><p>I don't have brand colors or fonts yet. Help me pick them.</p></div>
+        <div class="fork-card" onclick="selectFork('existing')"><h4>🎨 I have brand assets</h4><p>I already have colors, fonts, or both. Build around what I've got.</p></div>
+      </div>
+    </div>
+    <div class="brand-inputs" id="brandInputs">
+      <h3 class="section-label" style="margin-top:24px">Your Brand Colors</h3>
+      <div class="section-hint">Share what you've got</div>
+      <div class="color-input-row" style="margin-bottom:16px">
+        <div class="color-field"><label>Primary Color</label><div class="color-input-wrap"><input type="color" id="userColor1" value="#7c3aed" oninput="syncColor('userColor1')"><input type="text" id="userColor1Text" value="#7c3aed" oninput="syncColorText('userColor1')"></div></div>
+        <div class="color-field"><label>Accent Color</label><div class="color-input-wrap"><input type="color" id="userColor2" value="#fbbf24" oninput="syncColor('userColor2')"><input type="text" id="userColor2Text" value="#fbbf24" oninput="syncColorText('userColor2')"></div></div>
+      </div>
+      <div class="color-input-row" style="margin-bottom:24px">
+        <div class="color-field"><label>Dark Background</label><div class="color-input-wrap"><input type="color" id="userColor3" value="#1a0a2e" oninput="syncColor('userColor3')"><input type="text" id="userColor3Text" value="#1a0a2e" oninput="syncColorText('userColor3')"></div></div>
+        <div class="color-field"><label>Light Background</label><div class="color-input-wrap"><input type="color" id="userColor4" value="#fef9ef" oninput="syncColor('userColor4')"><input type="text" id="userColor4Text" value="#fef9ef" oninput="syncColorText('userColor4')"></div></div>
+      </div>
+      <div class="input-group"><label>Heading Font</label><div class="input-hint">e.g. "Playfair Display"</div><input type="text" id="userHeadingFont" placeholder="e.g. Playfair Display" oninput="autoSave()"></div>
+      <div class="input-group"><label>Body Font</label><div class="input-hint">e.g. "Source Sans 3"</div><input type="text" id="userBodyFont" placeholder="e.g. Source Sans 3" oninput="autoSave()"></div>
+      <div class="input-group"><label>Google Fonts Import URL (optional)</label><div class="input-hint">If you have it handy</div><input type="text" id="userFontImport" placeholder='@import url("https://fonts.googleapis.com/css2?family=...")' oninput="autoSave()"></div>
+      <div class="input-group"><label>Anything else?</label><div class="input-hint">Logo colors, specific styles, things you love</div><textarea id="userBrandNotes" placeholder="e.g. I love my logo colors but want the site to feel more modern..." oninput="autoSave()"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn--outline" onclick="goToStep('welcome')">← Back</button>
+      <button class="btn btn--yellow" id="startingNext" disabled onclick="goToStep('quiz')">Next: The Fun Part →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="panel" id="panel-quiz">
+    <div class="panel-intro">
+      <h2>The Brand Personality Quiz 🔮</h2>
+      <p>15 questions. Non-obvious, worth sitting with. Three of them you rank instead of pick. Go with your gut.</p>
+    </div>
+    <div class="progress-text" id="quizProgressText">0 of 20 answered</div>
+    <div class="progress-bar"><div class="progress-fill" id="quizProgress" style="width:0%"></div></div>
+    <div id="quizContainer"></div>
+    <div class="btn-row">
+      <button class="btn btn--outline" onclick="goToStep('starting')">← Back</button>
+      <button class="btn btn--pink" id="quizSubmit" disabled onclick="submitQuiz()">See My Archetype →</button>
+    </div>
+  </div>
+
+  <!-- REVEAL -->
+  <div class="panel" id="panel-reveal">
+    <div class="reveal-container" id="revealContainer"></div>
+    <div class="next-steps-box">
+      <h3>Here's what happens next</h3>
+      <p id="nextStep1"></p>
+      <p>You'll share a writing sample so Claude can match your real voice</p>
+      <p>You'll get your complete CSS + voice guidelines — auto-saved to your account</p>
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn--outline" onclick="goToStep('quiz')">← Retake Quiz</button>
+      <button class="btn btn--yellow" id="revealNextBtn" onclick="goToNextFromReveal()">Next →</button>
+    </div>
+  </div>
+
+  <!-- CUSTOMIZE -->
+  <div class="panel" id="panel-customize">
+    <div class="panel-intro"><h2>Make it yours 🎨</h2><p>Your archetype sets the personality. Now choose the visual details.</p></div>
+    <div class="customize-section"><h3 class="section-label">Color Palette</h3><div class="section-hint">Pick the palette that matches your energy</div><div class="palette-options" id="paletteOptions"></div></div>
+    <div class="customize-section"><h3 class="section-label">Font Pairing</h3><div class="section-hint">How should your words look?</div><div class="font-options" id="fontOptions"></div></div>
+    <div class="customize-section"><h3 class="section-label">Style Details</h3><div class="section-hint">A few finishing touches</div><div class="style-toggles" id="styleToggles"></div></div>
+    <div class="customize-section">
+      <h3 class="section-label">Live Preview</h3><div class="section-hint">This is what your site will feel like ✨</div>
+      <div class="preview-container"><div class="preview-bar"><div class="preview-dot"></div><div class="preview-dot"></div><div class="preview-dot"></div><span class="preview-bar-title">yoursite.com</span></div><div class="preview-frame" id="previewFrame"></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn--outline" onclick="goToStep('reveal')">← Back</button>
+      <button class="btn btn--yellow" onclick="goToStep('writing')">Next: Writing Sample →</button>
+    </div>
+  </div>
+
+  <!-- WRITING SAMPLE -->
+  <div class="panel" id="panel-writing">
+    <div class="panel-intro"><h2>Share your voice ✍️</h2><p>Paste something you've written that sounds like you. This helps Claude match your real voice when it writes your website copy.</p></div>
+    <div class="section-hint">Good things to paste:</div>
+    <div class="sample-suggestions">
+      <span class="sample-tag">Blog post</span><span class="sample-tag">Instagram caption</span><span class="sample-tag">Email to a client</span><span class="sample-tag">About page draft</span><span class="sample-tag">Newsletter</span><span class="sample-tag">Social media bio</span>
+    </div>
+    <div class="writing-sample-area"><textarea id="writingSample" placeholder="Paste 1-3 paragraphs of something you've written that feels most like your voice. It doesn't have to be perfect - it just has to sound like you." oninput="autoSave()"></textarea></div>
+    <div class="section-hint" style="margin-top:8px">Don't have anything handy? Write a few sentences about what you do and who you do it for, like you're texting a friend.</div>
+    <div id="writingNudge" style="display:none;margin-top:20px;padding:20px;background:rgba(255,210,63,0.12);border:3px solid var(--electric-yellow);animation:fadeUp 0.3s ease">
+      <p style="font-weight:600;margin-bottom:8px;font-size:17px">⚡ Your voice guide will be stronger with a writing sample</p>
+      <p style="font-size:15px;color:var(--text-light);margin-bottom:16px">Without it, Claude will use your archetype voice guidelines — which is fine! But a real sample helps Claude nail your specific tone.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn--outline" style="font-size:15px;padding:12px 24px" onclick="document.getElementById('writingNudge').style.display='none';document.getElementById('writingSample').focus()">Let me add one</button>
+        <button class="btn btn--pink" style="font-size:15px;padding:12px 24px" onclick="generateOutput()">Skip it, generate anyway →</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn--outline" id="writingBackBtn" onclick="goToWritingBack()">← Back</button>
+      <button class="btn btn--yellow" onclick="checkWritingSample()">Generate My CSS →</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="panel" id="panel-output">
+    <div class="panel-intro"><h2>Your Brand System is Ready 🎉</h2><p>Your brand foundation is saved to your account — every other module will load it automatically. No copy-pasting needed.</p></div>
+
+    <div style="background:rgba(52,211,153,0.1);border:3px solid var(--mint);padding:20px;margin-bottom:32px;display:flex;align-items:center;gap:16px">
+      <span style="font-size:32px">✓</span>
+      <div>
+        <p style="font-weight:700;font-size:18px;color:var(--text);margin:0">Auto-saved to your account</p>
+        <p style="font-size:15px;color:var(--text-light);margin:4px 0 0">Modules 02-07 will load this automatically. You never need to copy-paste your brand CSS.</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:40px">
+      <button class="btn btn--yellow" onclick="copyAll()" id="copyAllBtn" style="width:100%;text-align:center;font-size:20px;padding:22px 40px;">📋 Copy Everything — CSS + Voice Guide</button>
+    </div>
+
+    <div class="output-label">Your complete CSS design system</div>
+    <div class="output-block" id="cssOutput"></div>
+    <div class="output-label" style="margin-top:40px">Your brand voice + writing sample</div>
+    <div class="output-block" id="voiceOutput"></div>
+    <div id="platformInstructions" style="margin-top:40px"></div>
+    <div class="output-note">👆 Your CSS + voice guide are auto-saved. Every future module loads them automatically. But you can also copy them manually if you want to use them in standalone Claude prompts.</div>
+
+    <div style="background:var(--deep-purple);padding:32px;margin-top:40px">
+      <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">What's next in Module 02: Homepage</h3>
+      <p style="color:var(--lavender);font-size:16px;line-height:1.6;margin-bottom:8px">Module 02 will ask you for:</p>
+      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ Your headline and what you want visitors to feel first</p>
+      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ Your primary CTA (button text + where it links)</p>
+      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ A hero image URL (your headshot or brand photo)</p>
+      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ What makes you different from others in your space</p>
+      <p style="color:var(--lavender);font-size:16px;margin-top:12px;opacity:0.7">Your brand CSS will already be loaded. Just show up and answer the questions.</p>
+    </div>
+
+    <div class="btn-row" style="margin-top:40px">
+      <button class="btn btn--outline" onclick="goToStep('writing')">← Back</button>
+      <a class="btn btn--yellow" href="module02.html">Start Module 02: Homepage →</a>
+    </div>
+  </div>
+
+</main>
+
+<div class="companion-footer">
+  <a href="https://sitein8.com" style="display:block;margin-bottom:16px">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -14 386 100" width="160" style="display:block;margin:0 auto;">
+      <text x="0" y="32" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#E8346B">{</text>
+      <text x="26" y="32" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#FFD23F">}</text>
+      <text x="0" y="68" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#FFD23F">{</text>
+      <text x="26" y="68" font-family="Fraunces, serif" font-size="48" font-weight="900" fill="#E8346B">}</text>
+      <text x="54" y="52" font-family="Fraunces, serif" font-weight="900" font-size="42" fill="#FFFDF7">sitein8</text>
+    </svg>
+  </a>
+  <div style="margin-top:16px">
+    <button onclick="if(confirm('This will erase all your answers and start fresh. Are you sure?')) clearSavedState()" style="background:none;border:none;color:var(--lavender);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;cursor:pointer;opacity:0.6;text-decoration:underline">Clear answers &amp; start over</button>
+  </div>
+</div>
+
+</div><!-- end #mainApp -->
+
+<script>
+/* ============================================
+   SUPABASE INIT
+   ============================================ */
+const SUPABASE_URL = 'https://rcchpjkcrzwezjpqkcmm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjY2hwamtjcnp3ZXpqcHFrY21tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzMyNzMsImV4cCI6MjA4OTM0OTI3M30._cGF2WKJOJ-F9IFsCpXklDnwwy-fnBggXujvEHanBEs';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let projectId = null;
+let saveTimer = null;
+
+/* ============================================
+   AUTH
+   ============================================ */
+async function signOut() {
+  try {
+    await db.auth.signOut();
+  } catch(e) {
+    // If Supabase signOut fails (e.g. CSP blocking), clear manually
+    console.log('signOut error, clearing manually:', e);
+  }
+  // Always clear local storage and redirect regardless
+  try {
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sb-')) localStorage.removeItem(key);
+    });
+  } catch(e) {}
+  window.location.href = 'module00.html';
+}
+
+async function initAuth() {
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (session?.user) {
+      currentUser = session.user;
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      document.getElementById('userEmail').textContent = currentUser.email;
+      await initProject();
+      await loadState();
+    } else {
+      document.getElementById('authGate').style.display = 'flex';
+      document.getElementById('mainApp').style.display = 'none';
+      setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
+    }
+  });
+
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) {
+    document.getElementById('authGate').style.display = 'flex';
+    setTimeout(() => { window.location.href = 'module00.html'; }, 2000);
+  }
+}
+
+async function initProject() {
+  console.log('initProject: getting token...');
+  // Get the session token directly from localStorage — confirmed working
+  let token;
+  try {
+    const stored = localStorage.getItem('sb-rcchpjkcrzwezjpqkcmm-auth-token');
+    token = JSON.parse(stored).access_token;
+  } catch(e) {
+    console.error('Could not get token from localStorage:', e);
+    return;
+  }
+
+  const base = 'https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1';
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  };
+
+  console.log('initProject: selecting project...');
+  try {
+    const r = await fetch(`${base}/projects?user_id=eq.${currentUser.id}&select=id`, { headers });
+    const rows = await r.json();
+    console.log('select result:', r.status, rows);
+    if (rows?.[0]?.id) { projectId = rows[0].id; console.log('projectId set:', projectId); return; }
+  } catch(e) { console.error('select error:', e); }
+
+  console.log('initProject: no existing project, inserting...');
+  try {
+    const r = await fetch(`${base}/projects`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'return=representation' },
+      body: JSON.stringify({ user_id: currentUser.id })
+    });
+    const rows = await r.json();
+    console.log('insert result:', r.status, rows);
+    if (rows?.[0]?.id) { projectId = rows[0].id; console.log('projectId created:', projectId); return; }
+  } catch(e) { console.error('insert error:', e); }
+
+  // Final fallback
+  try {
+    const r = await fetch(`${base}/projects?user_id=eq.${currentUser.id}&select=id`, { headers });
+    const rows = await r.json();
+    if (rows?.[0]?.id) { projectId = rows[0].id; console.log('projectId fallback:', projectId); }
+  } catch(e) { console.error('fallback error:', e); }
+
+  console.log('initProject done. projectId =', projectId);
+}
+/* ============================================
+   SUPABASE SAVE / LOAD
+   ============================================ */
+async function saveToSupabase() {
+  console.log('save called. projectId=', projectId, 'hasCSS=', !!window._cssOutput);
+  if (!projectId) { console.warn('no projectId — skipping save'); return; }
+
+  let token;
+  try {
+    token = JSON.parse(localStorage.getItem('sb-rcchpjkcrzwezjpqkcmm-auth-token')).access_token;
+  } catch(e) { console.error('no token for save:', e); return; }
+
+  const state = buildStateObject();
+  if (currentUser?.email) state.userEmail = currentUser.email;
+  const outputValue = (window._cssOutput && window._voiceOutput)
+    ? JSON.stringify({ css: window._cssOutput, voice: window._voiceOutput })
+    : null;
+
+  const body = {
+    project_id: projectId,
+    module_key: 'module01',
+    data: state,
+    output: outputValue,
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    // Use POST with upsert (merge-duplicates handles conflicts automatically)
+    const r = await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify(body)
+    });
+    console.log('upsert result:', r.status, r.statusText);
+    if (r.ok || r.status === 201 || r.status === 204) {
+      console.log('saved OK. output set:', !!outputValue);
+      showSaveIndicator();
+    } else {
+      const err = await r.text();
+      console.error('save error:', r.status, err);
+    }
+  } catch(e) { console.error('save fetch error:', e); }
+}
+
+async function loadState() {
+  if (!projectId) return;
+  const { data } = await db.from('module_data').select('data,output').eq('project_id', projectId).eq('module_key', 'module01').single();
+  if (!data?.data) return;
+  restoreFromState(data.data);
+  if (data.output) {
+    try {
+      const out = JSON.parse(data.output);
+      if (out.css && out.voice) {
+        window._cssOutput = out.css;
+        window._voiceOutput = out.voice;
+        document.getElementById('cssOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(out.css)}</pre>`;
+        document.getElementById('voiceOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'voice')">Copy Voice Guide</button><pre>${esc(out.voice)}</pre>`;
+        renderPlatformInstructions();
+        document.querySelector('[data-step="output"]').disabled = false;
+      }
+    } catch(e) {}
+  }
+}
+
+function buildStateObject() {
+  return {
+    brandPath,
+    selectedPlatform,
+    quizAnswers,
+    resultArchetype,
+    selectedPalette,
+    selectedFont,
+    styleChoices,
+    writingSample: document.getElementById('writingSample')?.value || '',
+    userColors: {
+      c1: document.getElementById('userColor1')?.value,
+      c2: document.getElementById('userColor2')?.value,
+      c3: document.getElementById('userColor3')?.value,
+      c4: document.getElementById('userColor4')?.value
+    },
+    userFonts: {
+      heading: document.getElementById('userHeadingFont')?.value || '',
+      body: document.getElementById('userBodyFont')?.value || '',
+      import: document.getElementById('userFontImport')?.value || ''
+    },
+    userBrandNotes: document.getElementById('userBrandNotes')?.value || ''
+  };
+}
+
+function restoreFromState(s) {
+  if (s.selectedPlatform) {
+    selectedPlatform = s.selectedPlatform;
+    const btn = document.querySelector(`#platformOptions .quiz-option[onclick*="${s.selectedPlatform}"]`);
+    if (btn) btn.classList.add('selected');
+  }
+  if (s.brandPath) {
+    brandPath = s.brandPath;
+    document.querySelectorAll('.fork-card').forEach(c => {
+      if ((s.brandPath==='fresh' && c.querySelector('h4').textContent.includes('fresh')) ||
+          (s.brandPath==='existing' && c.querySelector('h4').textContent.includes('brand assets'))) c.classList.add('selected');
+    });
+    if (s.brandPath==='existing') document.getElementById('brandInputs').classList.add('visible');
+    if (selectedPlatform && brandPath) document.getElementById('startingNext').disabled = false;
+  }
+  if (s.userColors) {
+    ['c1','c2','c3','c4'].forEach((k,i) => {
+      const id = `userColor${i+1}`;
+      if (s.userColors[k]) { document.getElementById(id).value = s.userColors[k]; document.getElementById(id+'Text').value = s.userColors[k]; }
+    });
+  }
+  if (s.userFonts) {
+    if (s.userFonts.heading) document.getElementById('userHeadingFont').value = s.userFonts.heading;
+    if (s.userFonts.body) document.getElementById('userBodyFont').value = s.userFonts.body;
+    if (s.userFonts.import) document.getElementById('userFontImport').value = s.userFonts.import;
+  }
+  if (s.userBrandNotes) document.getElementById('userBrandNotes').value = s.userBrandNotes;
+  if (s.quizAnswers?.length) {
+    quizAnswers = s.quizAnswers;
+    s.quizAnswers.forEach((answer, qi) => {
+      if (answer === undefined || answer === null) return;
+      if (answer?.type === 'rank' && answer.order?.length) {
+        // Restore click-to-rank
+        answer.order.forEach((ai, pos) => {
+          const item = document.querySelector(`[data-q="${qi}"][data-a="${ai}"]`);
+          if (item) {
+            item.classList.add('ranked');
+            const numEl = document.getElementById(`rank-num-${qi}-${ai}`);
+            if (numEl) numEl.textContent = pos + 1;
+          }
+        });
+        const prog = document.getElementById(`rank-progress-${qi}`);
+        if (prog) prog.textContent = `${answer.order.length} of ${Q[qi].options.length} ranked`;
+      } else if (typeof answer === 'number') {
+        const el = document.querySelector(`[data-q="${qi}"][data-a="${answer}"]`);
+        if (el) el.classList.add('selected');
+      }
+    });
+    const answered = quizAnswers.filter(a => {
+      if (a === undefined || a === null) return false;
+      if (a?.type === 'rank') return a.order?.length === 4;
+      return true;
+    }).length;
+    document.getElementById('quizProgress').style.width = (answered/Q.length*100)+'%';
+    document.getElementById('quizProgressText').textContent = `${answered} of ${Q.length} answered`;
+    if (answered===Q.length) document.getElementById('quizSubmit').disabled = false;
+  }
+  if (s.resultArchetype) {
+    resultArchetype = s.resultArchetype;
+    selectedPalette = s.selectedPalette || 0;
+    selectedFont = s.selectedFont || 0;
+    styleChoices = s.styleChoices || styleChoices;
+    renderReveal();
+    if (archetypes[resultArchetype]?.palettes) renderCustomization();
+  }
+  if (s.writingSample) document.getElementById('writingSample').value = s.writingSample;
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('saveIndicator');
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+function autoSave() {
+  // Disabled timer saves — only save explicitly on generateOutput
+  // This prevents null output from overwriting the real output
+}
+
+async function clearSavedState() {
+  if (!projectId) return;
+  await db.from('module_data').delete().eq('project_id', projectId).eq('module_key', 'module01');
+  location.reload();
+}
+
+/* ============================================
+   STATE
+   ============================================ */
+let brandPath = null;
+let selectedPlatform = null;
+let quizAnswers = [];
+let scores = {};
+let resultArchetype = null;
+let selectedPalette = 0;
+let selectedFont = 0;
+let styleChoices = { corners: "0px", density: "balanced", animation: "expressive" };
+
+/* ============================================
+   QUIZ QUESTIONS
+   ============================================ */
+const Q = [
+  // Q1 - The Abandoned Project
+  { question: "You started something a year ago and never finished it. What is the most honest reason why?",
+    hint: "Be honest, not aspirational.",
+    type: "text", options: [
+    { label: "I got what I needed from starting it. The finish line was never the point.", scores: { explorer:3, creator:2 } },
+    { label: "Something more urgent took over and I never found my way back.", scores: { caregiver:2, everyperson:2, hero:1 } },
+    { label: "I realized it was not mine to build. It belonged to a different version of me.", scores: { magician:3, sage:1 } },
+    { label: "It is not abandoned. It is just waiting.", scores: { creator:3, magician:1 } }
+  ]},
+
+  // Q2 - The Room
+  { question: "You walk into a room and immediately change the energy. What actually happened?",
+    hint: "Not what you did. What people felt.",
+    type: "text", options: [
+    { label: "People felt like they could relax.", scores: { caregiver:3, innocent:1, everyperson:1 } },
+    { label: "People felt like something interesting was about to happen.", scores: { magician:3, jester:1 } },
+    { label: "People felt like someone finally knew what they were doing.", scores: { ruler:3, sage:1, hero:1 } },
+    { label: "People felt like the rules were suddenly optional.", scores: { rebel:3, explorer:1 } }
+  ]},
+
+  // Q3 - The Hard Conversation
+  { question: "Someone needs to hear something difficult. You are the one who has to say it. How do you approach it?",
+    hint: "Your actual instinct, not the ideal version.",
+    type: "text", options: [
+    { label: "I find the gentlest true version of it.", scores: { caregiver:3, lover:1 } },
+    { label: "I say it plainly and let them sit with it.", scores: { sage:3, ruler:1 } },
+    { label: "I frame it around what becomes possible once they hear it.", scores: { magician:3, hero:1 } },
+    { label: "I ask a question that makes them say it themselves.", scores: { sage:2, magician:2, creator:1 } }
+  ]},
+
+  // Q4 - The Empty Calendar
+  { question: "A week with nothing scheduled. No obligations, no guilt. By day three, what are you actually doing?",
+    hint: "No shoulds allowed.",
+    type: "text", options: [
+    { label: "Building or making something I have had in my head for months.", scores: { creator:3, magician:1 } },
+    { label: "Being deeply present with the people I love most.", scores: { caregiver:3, lover:2 } },
+    { label: "Researching something that has nothing to do with my work. Yet.", scores: { sage:3, explorer:1 } },
+    { label: "Moving. Somewhere new. I do not plan, I just go.", scores: { explorer:3, rebel:2 } }
+  ]},
+
+  // Q5 - The Texture (DRAG TO RANK)
+  { question: "Rank these from most to least like you.",
+    hint: "Go with the pull, not the meaning.",
+    type: "rank", options: [
+    { label: "Raw concrete. Imperfect, permanent, honest.", scores: { hero:3, ruler:2, everyperson:1 } },
+    { label: "Old leather. Worn in, earned, irreplaceable.", scores: { explorer:3, rebel:2, sage:1 } },
+    { label: "Still water. Calm on top, everything happening underneath.", scores: { magician:3, lover:2, sage:1 } },
+    { label: "Uncut fabric. Pure potential, has not become anything yet.", scores: { creator:3, innocent:2, magician:1 } }
+  ]},
+
+  // Q6 - The Failure
+  { question: "Your biggest professional failure. What is the version of that story you actually believe?",
+    hint: "Not the lesson you tell people. The one you actually hold.",
+    type: "text", options: [
+    { label: "It taught me something nothing else could have.", scores: { sage:3, hero:1 } },
+    { label: "It happened because I cared too much about the wrong thing.", scores: { caregiver:2, lover:2, magician:1 } },
+    { label: "It was the necessary cost of trying something real.", scores: { rebel:3, explorer:1, hero:1 } },
+    { label: "It still stings. And that is fine. It should.", scores: { creator:2, hero:2, everyperson:1 } }
+  ]},
+
+  // Q7 - The Client
+  { question: "A client gets incredible results but gives all the credit to themselves. You feel:",
+    hint: "Your first reaction, before you manage it.",
+    type: "text", options: [
+    { label: "Genuinely happy. Their win is the whole point.", scores: { caregiver:3, innocent:1 } },
+    { label: "Quietly satisfied. I know what I contributed.", scores: { ruler:2, sage:2, magician:1 } },
+    { label: "Curious about what made this one land so well.", scores: { sage:3, creator:1 } },
+    { label: "A little annoyed, honestly. Then I let it go.", scores: { hero:2, rebel:2, everyperson:1 } }
+  ]},
+
+  // Q8 - The Object
+  { question: "One of these is sitting on your desk. Which one?",
+    hint: "The one that already feels true.",
+    type: "text", options: [
+    { label: "A single plant you have kept alive for years.", scores: { caregiver:3, innocent:2 } },
+    { label: "A notebook with the spine broken from use.", scores: { creator:3, sage:1 } },
+    { label: "Something that does not belong there but you keep anyway.", scores: { magician:2, rebel:2, lover:1 } },
+    { label: "Nothing. A clear surface is a clear mind.", scores: { ruler:3, sage:1 } }
+  ]},
+
+  // Q9 - The Boundary
+  { question: "Someone pushes past a limit you have set. What actually happens inside you?",
+    hint: "Before you respond. The internal thing.",
+    type: "text", options: [
+    { label: "Disappointment. I expected better from them.", scores: { caregiver:2, innocent:2, lover:1 } },
+    { label: "Resolve. It just got clearer, not harder.", scores: { hero:3, ruler:2 } },
+    { label: "Curiosity. What made them think that was okay?", scores: { sage:3, magician:1 } },
+    { label: "A very quiet, very final decision.", scores: { rebel:3, ruler:1 } }
+  ]},
+
+  // Q10 - The Work
+  { question: "You are in the middle of the best work of your life. What does it feel like?",
+    hint: "Not what it produces. What it feels like from inside.",
+    type: "text", options: [
+    { label: "Like I am translating something that already exists somewhere.", scores: { magician:3, creator:1 } },
+    { label: "Like I am solving a puzzle that keeps revealing new layers.", scores: { sage:3, creator:2 } },
+    { label: "Like I am building something that will outlast me.", scores: { ruler:3, hero:2 } },
+    { label: "Like I finally stopped pretending and just went.", scores: { rebel:3, explorer:2 } }
+  ]},
+
+  // Q11 - The Compliment
+  { question: "Someone says something about you that stops you cold, in the best way. What did they say?",
+    hint: "The one that would actually land.",
+    type: "text", options: [
+    { label: '"You made me feel like I could actually do this."', scores: { caregiver:3, magician:1, hero:1 } },
+    { label: '"I do not know how you saw that coming."', scores: { magician:3, sage:2 } },
+    { label: '"You changed how I think about this."', scores: { sage:3, magician:1, creator:1 } },
+    { label: '"I have never met anyone who just goes for it like that."', scores: { rebel:3, explorer:2 } }
+  ]},
+
+  // Q12 - The Light
+  { question: "Pick one.",
+    hint: "The one that pulls at something.",
+    type: "text", options: [
+    { label: "Candlelight. Warm, intimate, slightly dangerous.", scores: { magician:2, lover:3 } },
+    { label: "Morning light. Clear, honest, full of possibility.", scores: { innocent:3, hero:1, sage:1 } },
+    { label: "Golden hour. Fleeting, beautiful, worth stopping for.", scores: { lover:2, creator:2, explorer:1 } },
+    { label: "Overcast. Even, diffuse, everything visible.", scores: { sage:2, ruler:2, everyperson:1 } }
+  ]},
+
+  // Q13 - The Decision
+  { question: "You are at a fork. Both paths are good. How do you choose?",
+    hint: "Your actual method, not the wise version.",
+    type: "text", options: [
+    { label: "I follow the one that scares me slightly more.", scores: { hero:3, rebel:2, explorer:1 } },
+    { label: "I choose the one that serves the most people.", scores: { caregiver:3, ruler:1 } },
+    { label: "I choose the one I can commit to completely.", scores: { ruler:3, hero:1, lover:1 } },
+    { label: "I sit with it until one of them stops feeling like a choice.", scores: { magician:3, sage:2 } }
+  ]},
+
+  // Q14 - The Legacy (DRAG TO RANK)
+  { question: "Not what you will be remembered for. What do you want to have been true?",
+    hint: "Rank all four. Most true to least true.",
+    type: "rank", options: [
+    { label: "That I made people feel less alone.", scores: { caregiver:3, lover:2, everyperson:1 } },
+    { label: "That I built something that kept working after I stopped.", scores: { ruler:3, hero:2, creator:1 } },
+    { label: "That I told the truth when it would have been easier not to.", scores: { sage:3, rebel:2, innocent:1 } },
+    { label: "That I lived like the rules were suggestions and the world got bigger for it.", scores: { rebel:3, explorer:2, magician:1 } }
+  ]},
+
+  // Q15 - The Last One (DRAG TO RANK)
+  { question: "You are describing your work to someone who has never heard of you. Rank these from most to least true.",
+    hint: "All four, in order. Most you to least you.",
+    type: "rank", options: [
+    { label: '"I help people become who they were already trying to be."', scores: { magician:3, caregiver:2 } },
+    { label: '"I build things that work the way they are supposed to."', scores: { ruler:3, hero:2, sage:1 } },
+    { label: '"I make the complicated feel possible."', scores: { sage:3, creator:2, innocent:1 } },
+    { label: '"I do what other people decided was not allowed."', scores: { rebel:3, explorer:2 } }
+  ]}
+];
+
+/* ============================================
+   ARCHETYPE DATA
+   ============================================ */
+const archetypes = {
+  magician:{ name:"The Magician", emoji:"🔮", tagline:"\"You make the impossible feel inevitable.\"",
+    description:"Your brand is built on transformation. You don't just deliver a service — you shift how people see themselves and what's possible. Clients come in with a messy pile of ideas and leave with something they didn't know they were capable of creating.",
+    traits:["Transformative","Visionary","Intuitive","Mysterious","Confident","Catalytic"],
+    voice:{ description:"Your voice is knowing without being arrogant. You speak to what's possible. Use evocative, sensory language. Short sentences for impact. Longer ones to cast a spell.", examples:["\"You already have everything you need. I just help you see it.\"","\"What if the thing you're avoiding is exactly where the magic is?\"","\"This isn't a website. It's a portal.\""] },
+    palettes:[
+      { name:"Midnight Alchemy", desc:"Deep, rich, luxurious — like a jewel box at midnight", colors:["#1a0a2e","#7c3aed","#c084fc","#fbbf24","#fef3c7"], tokens:{bg_dark:"#1a0a2e",bg_light:"#fef9ef",primary:"#7c3aed",accent:"#fbbf24",text_on_dark:"#e8e0f0",text_on_light:"#1a0a2e",subtle:"#c084fc",card_bg:"#fef3c7"} },
+      { name:"Mystic Ember", desc:"Warm, smoldering, magnetic", colors:["#1c1917","#dc2626","#f59e0b","#fef2f2","#fffbeb"], tokens:{bg_dark:"#1c1917",bg_light:"#fffbeb",primary:"#dc2626",accent:"#f59e0b",text_on_dark:"#fef2f2",text_on_light:"#1c1917",subtle:"#f59e0b",card_bg:"#fef2f2"} },
+      { name:"Ethereal Depths", desc:"Oceanic, otherworldly — moonlight on deep water", colors:["#0f172a","#6366f1","#818cf8","#06b6d4","#f0f9ff"], tokens:{bg_dark:"#0f172a",bg_light:"#f0f9ff",primary:"#6366f1",accent:"#06b6d4",text_on_dark:"#cbd5e1",text_on_light:"#0f172a",subtle:"#818cf8",card_bg:"#eff6ff"} }
+    ],
+    fonts:[
+      { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap");', previewHeading:"Transform Everything", previewBody:"Classic elegance meets modern clarity." },
+      { name:"Cormorant + Work Sans", heading:"'Cormorant Garamond', serif", body:"'Work Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap");', previewHeading:"Transform Everything", previewBody:"Refined, editorial, a little magical." },
+      { name:"DM Serif + Inter", heading:"'DM Serif Display', serif", body:"'Inter', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap");', previewHeading:"Transform Everything", previewBody:"Bold, confident, contemporary." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  creator:{ name:"The Creator", emoji:"🎨", tagline:"\"You build worlds that didn't exist before you.\"",
+    description:"Your brand is an expression of something genuinely original. You don't follow templates — you make the templates. Your work carries a signature that's undeniably yours, and clients come to you because they want something that couldn't have come from anyone else.",
+    traits:["Imaginative","Original","Expressive","Authentic","Visionary","Passionate"],
+    voice:{ description:"Your voice is rich and specific. You use concrete details and sensory language. You're not afraid of opinion. Your writing feels handmade, not generated. Let your genuine perspective show.", examples:["\"I don't do generic. Everything I make starts with what makes you, you.\"","\"There's a version of this that's never been done before. That's the one we're building.\"","\"Your brand shouldn't look like anyone else's. Because it isn't anyone else's.\""] },
+    palettes:[
+      { name:"Studio Walls", desc:"Bold, expressive, slightly unexpected", colors:["#1a0533","#e11d48","#f97316","#fef9c3","#fff7ed"], tokens:{bg_dark:"#1a0533",bg_light:"#fff7ed",primary:"#e11d48",accent:"#f97316",text_on_dark:"#fce7f3",text_on_light:"#1a0533",subtle:"#f97316",card_bg:"#fef9c3"} },
+      { name:"Ink and Gold", desc:"Editorial, luxurious, unforgettable", colors:["#0c0a09","#92400e","#d97706","#fef3c7","#fffbeb"], tokens:{bg_dark:"#0c0a09",bg_light:"#fffbeb",primary:"#92400e",accent:"#d97706",text_on_dark:"#fef3c7",text_on_light:"#0c0a09",subtle:"#d97706",card_bg:"#fef3c7"} },
+      { name:"Fresh Canvas", desc:"Clean, bright, full of potential", colors:["#1e3a5f","#2563eb","#60a5fa","#fef08a","#f0f9ff"], tokens:{bg_dark:"#1e3a5f",bg_light:"#f0f9ff",primary:"#2563eb",accent:"#fef08a",text_on_dark:"#dbeafe",text_on_light:"#1e3a5f",subtle:"#60a5fa",card_bg:"#eff6ff"} }
+    ],
+    fonts:[
+      { name:"Abril Fatface + Lato", heading:"'Abril Fatface', cursive", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Made by Hand", previewBody:"Bold personality, clean execution." },
+      { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Made by Hand", previewBody:"Editorial, distinctive, confident." },
+      { name:"Space Grotesk + Libre Baskerville", heading:"'Space Grotesk', sans-serif", body:"'Libre Baskerville', serif", import:'@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Libre+Baskerville:wght@400;700&display=swap");', previewHeading:"Made by Hand", previewBody:"Modern meets classic." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  sage:{ name:"The Sage", emoji:"📚", tagline:"\"You turn confusion into clarity.\"",
+    description:"Your brand is built on trust and expertise. People come to you because you know things — and more importantly, you can explain them. You don't overwhelm, you illuminate. Your clients leave conversations feeling smarter, not smaller.",
+    traits:["Knowledgeable","Thoughtful","Analytical","Trustworthy","Clear","Strategic"],
+    voice:{ description:"Your voice is precise and confident. You explain without condescending. You use data, examples, and analogies that make the complicated feel accessible. No fluff — every word earns its place.", examples:["\"Here's what's actually happening — and why it matters for you.\"","\"Most people get this wrong. Here's the clearer way to think about it.\"","\"I don't just give you answers. I give you the framework to find your own.\""] },
+    palettes:[
+      { name:"Deep Knowledge", desc:"Authoritative, trustworthy, substantial", colors:["#0f2027","#155e75","#0891b2","#e0f2fe","#f0f9ff"], tokens:{bg_dark:"#0f2027",bg_light:"#f0f9ff",primary:"#155e75",accent:"#0891b2",text_on_dark:"#e0f2fe",text_on_light:"#0f2027",subtle:"#0891b2",card_bg:"#e0f2fe"} },
+      { name:"Warm Scholar", desc:"Intelligent but approachable, like a great professor", colors:["#1c1917","#44403c","#78716c","#fef3c7","#fffbeb"], tokens:{bg_dark:"#1c1917",bg_light:"#fffbeb",primary:"#44403c",accent:"#d97706",text_on_dark:"#fef3c7",text_on_light:"#1c1917",subtle:"#78716c",card_bg:"#fef3c7"} },
+      { name:"Clear Signal", desc:"Clean, modern, credible", colors:["#0f172a","#1d4ed8","#3b82f6","#dbeafe","#f8fafc"], tokens:{bg_dark:"#0f172a",bg_light:"#f8fafc",primary:"#1d4ed8",accent:"#3b82f6",text_on_dark:"#dbeafe",text_on_light:"#0f172a",subtle:"#3b82f6",card_bg:"#dbeafe"} }
+    ],
+    fonts:[
+      { name:"Merriweather + Open Sans", heading:"'Merriweather', serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Clarity in Every Word", previewBody:"Readable, trustworthy, grounded." },
+      { name:"Lora + Source Sans", heading:"'Lora', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Clarity in Every Word", previewBody:"Warm expertise, modern clarity." },
+      { name:"IBM Plex Serif + IBM Plex Sans", heading:"'IBM Plex Serif', serif", body:"'IBM Plex Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap");', previewHeading:"Clarity in Every Word", previewBody:"Precise, technical, trustworthy." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  hero:{ name:"The Hero", emoji:"⚔️", tagline:"\"You rise to every challenge and bring others with you.\"",
+    description:"Your brand is built on results and resilience. You don't promise — you deliver. Clients come to you when the stakes are real and they need someone who won't fold. You've done the work, paid the price, and you're here to help others do the same.",
+    traits:["Determined","Courageous","Disciplined","Inspiring","Results-driven","Resilient"],
+    voice:{ description:"Your voice is direct and energizing. You don't waste words. You talk about outcomes, not process. You're honest about the hard parts but unwavering about what's possible. Short, punchy sentences. Call people to action.", examples:["\"This isn't easy work. That's exactly why it's worth doing.\"","\"You already have what it takes. You just haven't used it at full capacity yet.\"","\"Results don't lie. Here's what we built together.\""] },
+    palettes:[
+      { name:"Forge", desc:"Strong, earned, no-nonsense", colors:["#0c0a09","#b91c1c","#dc2626","#fef2f2","#fff5f5"], tokens:{bg_dark:"#0c0a09",bg_light:"#fff5f5",primary:"#b91c1c",accent:"#dc2626",text_on_dark:"#fee2e2",text_on_light:"#0c0a09",subtle:"#dc2626",card_bg:"#fef2f2"} },
+      { name:"Command", desc:"Authoritative, powerful, trustworthy", colors:["#0f172a","#1e40af","#3b82f6","#f8fafc","#eff6ff"], tokens:{bg_dark:"#0f172a",bg_light:"#f8fafc",primary:"#1e40af",accent:"#3b82f6",text_on_dark:"#e0e7ff",text_on_light:"#0f172a",subtle:"#3b82f6",card_bg:"#eff6ff"} },
+      { name:"Iron and Gold", desc:"Achievement, excellence, earned", colors:["#1c1917","#92400e","#f59e0b","#fffbeb","#fef3c7"], tokens:{bg_dark:"#1c1917",bg_light:"#fffbeb",primary:"#92400e",accent:"#f59e0b",text_on_dark:"#fef3c7",text_on_light:"#1c1917",subtle:"#f59e0b",card_bg:"#fef3c7"} }
+    ],
+    fonts:[
+      { name:"Oswald + Source Sans", heading:"'Oswald', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Built to Last", previewBody:"Strong, direct, no wasted words." },
+      { name:"Barlow Condensed + Barlow", heading:"'Barlow Condensed', sans-serif", body:"'Barlow', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap");', previewHeading:"Built to Last", previewBody:"Disciplined, focused, confident." },
+      { name:"Playfair + Lato", heading:"'Playfair Display', serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Built to Last", previewBody:"Classic strength, modern clarity." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  rebel:{ name:"The Rebel", emoji:"🔥", tagline:"\"You break the rules that needed breaking.\"",
+    description:"Your brand is built on disruption and authenticity. You say the thing everyone else is thinking but not saying. You challenge the way things have always been done — not for shock value, but because the old way isn't working. Clients come to you when they're ready to stop playing it safe.",
+    traits:["Disruptive","Bold","Unapologetic","Revolutionary","Authentic","Fearless"],
+    voice:{ description:"Your voice is direct, a little provocative, and completely honest. You don't soften hard truths. You call things what they are. Short sentences with real impact. Opinions, not hedges. Your writing should feel like someone finally said it.", examples:["\"The industry is broken. That's not cynicism — it's a business opportunity.\"","\"Everyone else is doing it that way. That's exactly why we're not.\"","\"I don't want your approval. I want your results.\""] },
+    palettes:[
+      { name:"Burn Bright", desc:"Bold, confrontational, unapologetic", colors:["#0c0a09","#dc2626","#f97316","#fff7ed","#fef2f2"], tokens:{bg_dark:"#0c0a09",bg_light:"#fff7ed",primary:"#dc2626",accent:"#f97316",text_on_dark:"#fef2f2",text_on_light:"#0c0a09",subtle:"#f97316",card_bg:"#fff7ed"} },
+      { name:"Static", desc:"Raw, electric, high contrast", colors:["#09090b","#7c3aed","#a78bfa","#fafafa","#f4f4f5"], tokens:{bg_dark:"#09090b",bg_light:"#fafafa",primary:"#7c3aed",accent:"#a78bfa",text_on_dark:"#f4f4f5",text_on_light:"#09090b",subtle:"#a78bfa",card_bg:"#f4f4f5"} },
+      { name:"Concrete and Neon", desc:"Industrial edge with electric accent", colors:["#1c1917","#065f46","#10b981","#ecfdf5","#f0fdf4"], tokens:{bg_dark:"#1c1917",bg_light:"#f0fdf4",primary:"#065f46",accent:"#10b981",text_on_dark:"#d1fae5",text_on_light:"#1c1917",subtle:"#10b981",card_bg:"#ecfdf5"} }
+    ],
+    fonts:[
+      { name:"Bebas Neue + Inter", heading:"'Bebas Neue', cursive", body:"'Inter', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap");', previewHeading:"Break the Rules", previewBody:"Loud where it counts, clean everywhere else." },
+      { name:"Space Grotesk + Space Grotesk", heading:"'Space Grotesk', sans-serif", body:"'Space Grotesk', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");', previewHeading:"Break the Rules", previewBody:"Modern, edgy, completely itself." },
+      { name:"Barlow Condensed + Source Sans", heading:"'Barlow Condensed', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap");', previewHeading:"Break the Rules", previewBody:"Tight, direct, no wasted space." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  explorer:{ name:"The Explorer", emoji:"🧭", tagline:"\"You forge your own path and invite others to follow.\"",
+    description:"Your brand is built on independence and possibility. You don't follow maps — you make them. Clients come to you when they want to go somewhere they haven't been before, and they need someone who's already comfortable with the unknown.",
+    traits:["Adventurous","Independent","Curious","Ambitious","Free-spirited","Pioneering"],
+    voice:{ description:"Your voice is expansive and inviting. You talk about what's possible, not what's prescribed. You use journey and discovery language naturally. You're enthusiastic without being over the top. Your writing should feel like an invitation.", examples:["\"There's a version of your business that doesn't exist yet. Let's find it.\"","\"I don't believe in one right way. I believe in your way.\"","\"The best paths are the ones nobody's walked before. I'll walk with you.\""] },
+    palettes:[
+      { name:"Horizon", desc:"Open, expansive, full of possibility", colors:["#0c1445","#1d4ed8","#38bdf8","#f0f9ff","#e0f2fe"], tokens:{bg_dark:"#0c1445",bg_light:"#f0f9ff",primary:"#1d4ed8",accent:"#38bdf8",text_on_dark:"#e0f2fe",text_on_light:"#0c1445",subtle:"#38bdf8",card_bg:"#e0f2fe"} },
+      { name:"Terrain", desc:"Earthy, grounded, adventurous", colors:["#1c1207","#92400e","#d97706","#fef3c7","#fffbeb"], tokens:{bg_dark:"#1c1207",bg_light:"#fffbeb",primary:"#92400e",accent:"#d97706",text_on_dark:"#fef3c7",text_on_light:"#1c1207",subtle:"#d97706",card_bg:"#fef3c7"} },
+      { name:"Wilderness", desc:"Natural, independent, alive", colors:["#0f2010","#166534","#4ade80","#f0fdf4","#dcfce7"], tokens:{bg_dark:"#0f2010",bg_light:"#f0fdf4",primary:"#166534",accent:"#4ade80",text_on_dark:"#dcfce7",text_on_light:"#0f2010",subtle:"#4ade80",card_bg:"#dcfce7"} }
+    ],
+    fonts:[
+      { name:"Josefin Sans + Lato", heading:"'Josefin Sans', sans-serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Beyond the Map", previewBody:"Clean, open, forward-moving." },
+      { name:"Raleway + Source Sans", heading:"'Raleway', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Beyond the Map", previewBody:"Elegant movement, clear purpose." },
+      { name:"Montserrat + Open Sans", heading:"'Montserrat', sans-serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Beyond the Map", previewBody:"Modern, mobile, adventurous." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  caregiver:{ name:"The Caregiver", emoji:"🤲", tagline:"\"You make people feel safe enough to grow.\"",
+    description:"Your brand is built on warmth and genuine service. You don't just do a job — you hold space. Clients feel taken care of from the very first interaction. They come back not just for the results, but for how you make them feel while getting there.",
+    traits:["Nurturing","Generous","Compassionate","Reliable","Warm","Protective"],
+    voice:{ description:"Your voice is warm and reassuring without being saccharine. You're genuinely interested in people. You use inclusive language and ask good questions. Your writing feels like a hand on the shoulder — present, steady, real.", examples:["\"You don't have to figure this out alone. That's exactly what I'm here for.\"","\"I'll take care of the details so you can focus on what only you can do.\"","\"Every client I work with feels like a collaboration, not a transaction.\""] },
+    palettes:[
+      { name:"Warm Welcome", desc:"Inviting, safe, genuinely warm", colors:["#1c0a00","#9a3412","#f97316","#fff7ed","#fef3c7"], tokens:{bg_dark:"#1c0a00",bg_light:"#fff7ed",primary:"#9a3412",accent:"#f97316",text_on_dark:"#fef3c7",text_on_light:"#1c0a00",subtle:"#f97316",card_bg:"#fef3c7"} },
+      { name:"Sage and Stone", desc:"Calm, grounded, restorative", colors:["#0f1c0f","#166534","#86efac","#f0fdf4","#dcfce7"], tokens:{bg_dark:"#0f1c0f",bg_light:"#f0fdf4",primary:"#166534",accent:"#86efac",text_on_dark:"#dcfce7",text_on_light:"#0f1c0f",subtle:"#86efac",card_bg:"#dcfce7"} },
+      { name:"Blush and Cream", desc:"Gentle, caring, beautiful", colors:["#1c0614","#9d174d","#f9a8d4","#fdf2f8","#fce7f3"], tokens:{bg_dark:"#1c0614",bg_light:"#fdf2f8",primary:"#9d174d",accent:"#f9a8d4",text_on_dark:"#fce7f3",text_on_light:"#1c0614",subtle:"#f9a8d4",card_bg:"#fce7f3"} }
+    ],
+    fonts:[
+      { name:"Nunito + Nunito", heading:"'Nunito', sans-serif", body:"'Nunito', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap");', previewHeading:"Here for You", previewBody:"Rounded, friendly, genuinely warm." },
+      { name:"Lora + Open Sans", heading:"'Lora', serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Here for You", previewBody:"Warm, approachable, trustworthy." },
+      { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Here for You", previewBody:"Caring with elegance." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  ruler:{ name:"The Ruler", emoji:"👑", tagline:"\"You build empires with precision and vision.\"",
+    description:"Your brand is built on authority and excellence. You don't do mediocre. Every detail is intentional, every system is designed, every result is trackable. Clients come to you when they're serious — about their business, their brand, and their results.",
+    traits:["Commanding","Organized","Confident","Responsible","Authoritative","Strategic"],
+    voice:{ description:"Your voice is commanding without being cold. You're precise, structured, and confident. You don't hedge. Every claim is backed up. Your writing reflects someone who has thought everything through and is ready to lead.", examples:["\"Excellence isn't accidental. Here's the system that makes it inevitable.\"","\"I don't do approximations. I build things that work exactly as planned.\"","\"Your brand should command the room. Let's make sure it does.\""] },
+    palettes:[
+      { name:"The Crown", desc:"Authoritative, premium, commanding", colors:["#0a0a0a","#1e3a5f","#c9a84c","#fafaf9","#f5f0e8"], tokens:{bg_dark:"#0a0a0a",bg_light:"#fafaf9",primary:"#1e3a5f",accent:"#c9a84c",text_on_dark:"#f5f0e8",text_on_light:"#0a0a0a",subtle:"#c9a84c",card_bg:"#f5f0e8"} },
+      { name:"Empire", desc:"Deep, powerful, unmistakable", colors:["#1e0a2e","#6b21a8","#a855f7","#faf5ff","#f3e8ff"], tokens:{bg_dark:"#1e0a2e",bg_light:"#faf5ff",primary:"#6b21a8",accent:"#a855f7",text_on_dark:"#f3e8ff",text_on_light:"#1e0a2e",subtle:"#a855f7",card_bg:"#f3e8ff"} },
+      { name:"Slate and Steel", desc:"Clean authority, modern precision", colors:["#0f172a","#334155","#64748b","#f8fafc","#f1f5f9"], tokens:{bg_dark:"#0f172a",bg_light:"#f8fafc",primary:"#334155",accent:"#64748b",text_on_dark:"#f1f5f9",text_on_light:"#0f172a",subtle:"#64748b",card_bg:"#f1f5f9"} }
+    ],
+    fonts:[
+      { name:"Cinzel + Libre Baskerville", heading:"'Cinzel', serif", body:"'Libre Baskerville', serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Libre+Baskerville:wght@400;700&display=swap");', previewHeading:"Built to Lead", previewBody:"Commanding, elegant, timeless." },
+      { name:"Playfair + Lato", heading:"'Playfair Display', serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Built to Lead", previewBody:"Authority with refinement." },
+      { name:"Cormorant + Inter", heading:"'Cormorant Garamond', serif", body:"'Inter', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&display=swap");', previewHeading:"Built to Lead", previewBody:"Precise, structured, premium." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"4px"},{label:"Rounded",value:"8px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  lover:{ name:"The Lover", emoji:"💎", tagline:"\"You create beauty and deep connection in everything.\"",
+    description:"Your brand is built on intimacy and aesthetics. You care deeply — about your clients, your craft, and the way things feel. Every touchpoint is considered. Clients come to you not just for results, but for the experience of working with you.",
+    traits:["Passionate","Sensual","Devoted","Aesthetic","Intimate","Magnetic"],
+    voice:{ description:"Your voice is intimate and evocative. You write like you're speaking to one person. You use beautiful, specific language. You're never clinical. Your writing should feel like it was written just for the reader.", examples:["\"This isn't just a website. It's the first impression of a love story.\"","\"I want your clients to feel something the moment they land on your page.\"","\"Beauty isn't a luxury. It's the thing that makes people stay.\""] },
+    palettes:[
+      { name:"Deep Rose", desc:"Sensual, warm, unforgettable", colors:["#1a0010","#9d174d","#ec4899","#fdf2f8","#fce7f3"], tokens:{bg_dark:"#1a0010",bg_light:"#fdf2f8",primary:"#9d174d",accent:"#ec4899",text_on_dark:"#fce7f3",text_on_light:"#1a0010",subtle:"#ec4899",card_bg:"#fce7f3"} },
+      { name:"Velvet and Gold", desc:"Luxurious, intimate, magnetic", colors:["#1c0a14","#7c2d52","#d97706","#fffbeb","#fef9ef"], tokens:{bg_dark:"#1c0a14",bg_light:"#fef9ef",primary:"#7c2d52",accent:"#d97706",text_on_dark:"#fce7f3",text_on_light:"#1c0a14",subtle:"#d97706",card_bg:"#fffbeb"} },
+      { name:"Dusk", desc:"Moody, beautiful, deeply felt", colors:["#0f0a1e","#6d28d9","#c084fc","#faf5ff","#f3e8ff"], tokens:{bg_dark:"#0f0a1e",bg_light:"#faf5ff",primary:"#6d28d9",accent:"#c084fc",text_on_dark:"#f3e8ff",text_on_light:"#0f0a1e",subtle:"#c084fc",card_bg:"#f3e8ff"} }
+    ],
+    fonts:[
+      { name:"Cormorant + Lato", heading:"'Cormorant Garamond', serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap");', previewHeading:"For the Feeling", previewBody:"Romantic, elegant, intimate." },
+      { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"For the Feeling", previewBody:"Beautiful, considered, warm." },
+      { name:"DM Serif + DM Sans", heading:"'DM Serif Display', serif", body:"'DM Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap");', previewHeading:"For the Feeling", previewBody:"Soft, modern, deeply personal." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  jester:{ name:"The Jester", emoji:"🎪", tagline:"\"You turn the serious into something people actually enjoy.\"",
+    description:"Your brand is built on joy and wit. You make the complicated feel light without making it feel unimportant. Clients come to you when they want results and they want to actually enjoy the process. You deliver both.",
+    traits:["Playful","Witty","Joyful","Irreverent","Entertaining","Optimistic"],
+    voice:{ description:"Your voice is fun without being flippant. You use humor to make people comfortable and engaged. You're self-aware, a little irreverent, and genuinely warm. Your writing should feel like a conversation with the smartest, funniest person in the room.", examples:["\"Yes, your brand can be both professional and actually interesting. Wild concept.\"","\"I make hard things easier to look at. Then we fix them.\"","\"Work doesn't have to be painful. I've checked. It's not in the contract.\""] },
+    palettes:[
+      { name:"Electric Playground", desc:"Bold, joyful, impossible to ignore", colors:["#0c0a09","#d97706","#fbbf24","#fffbeb","#fef9c3"], tokens:{bg_dark:"#0c0a09",bg_light:"#fffbeb",primary:"#d97706",accent:"#fbbf24",text_on_dark:"#fef9c3",text_on_light:"#0c0a09",subtle:"#fbbf24",card_bg:"#fef9c3"} },
+      { name:"Neon Circus", desc:"High energy, playful, unforgettable", colors:["#0f0f23","#7c3aed","#f59e0b","#fafaf9","#fef9ef"], tokens:{bg_dark:"#0f0f23",bg_light:"#fafaf9",primary:"#7c3aed",accent:"#f59e0b",text_on_dark:"#fafaf9",text_on_light:"#0f0f23",subtle:"#f59e0b",card_bg:"#fef9ef"} },
+      { name:"Candy Shop", desc:"Fun, bright, genuinely delightful", colors:["#0c0014","#be185d","#f472b6","#fdf2f8","#fce7f3"], tokens:{bg_dark:"#0c0014",bg_light:"#fdf2f8",primary:"#be185d",accent:"#f472b6",text_on_dark:"#fce7f3",text_on_light:"#0c0014",subtle:"#f472b6",card_bg:"#fce7f3"} }
+    ],
+    fonts:[
+      { name:"Nunito + Nunito", heading:"'Nunito', sans-serif", body:"'Nunito', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");', previewHeading:"Let's Have Fun with This", previewBody:"Friendly, energetic, impossible to ignore." },
+      { name:"Fredoka + Quicksand", heading:"'Fredoka One', cursive", body:"'Quicksand', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;500;600;700&display=swap");', previewHeading:"Let's Have Fun with This", previewBody:"Playful, warm, approachable." },
+      { name:"Poppins + Poppins", heading:"'Poppins', sans-serif", body:"'Poppins', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");', previewHeading:"Let's Have Fun with This", previewBody:"Modern joy, clean energy." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  innocent:{ name:"The Innocent", emoji:"🌿", tagline:"\"You remind people that simplicity is the ultimate sophistication.\"",
+    description:"Your brand is built on clarity, honesty, and ease. You don't complicate things. You strip away the noise and get to what actually matters. Clients come to you when they're exhausted by everything being harder than it needs to be.",
+    traits:["Optimistic","Honest","Pure","Wholesome","Simple","Trustworthy"],
+    voice:{ description:"Your voice is clear, warm, and unpretentious. No jargon, no complexity for its own sake. You say what you mean. Your writing is easy to read and hard to distrust. It feels like relief.", examples:["\"There's a simpler way. I'll show you.\"","\"No tricks, no upsells, no surprises. Just good work.\"","\"I believe that when things are done right, they feel effortless.\""] },
+    palettes:[
+      { name:"First Light", desc:"Clean, optimistic, naturally beautiful", colors:["#0f1f0f","#166534","#86efac","#f0fdf4","#dcfce7"], tokens:{bg_dark:"#0f1f0f",bg_light:"#f0fdf4",primary:"#166534",accent:"#86efac",text_on_dark:"#dcfce7",text_on_light:"#0f1f0f",subtle:"#86efac",card_bg:"#dcfce7"} },
+      { name:"Soft Morning", desc:"Gentle, honest, easy to trust", colors:["#1c1008","#92400e","#fbbf24","#fffbeb","#fef9c3"], tokens:{bg_dark:"#1c1008",bg_light:"#fffbeb",primary:"#92400e",accent:"#fbbf24",text_on_dark:"#fef9c3",text_on_light:"#1c1008",subtle:"#fbbf24",card_bg:"#fef9c3"} },
+      { name:"Sky and Cloud", desc:"Open, light, utterly simple", colors:["#0c1a2e","#0369a1","#7dd3fc","#f0f9ff","#e0f2fe"], tokens:{bg_dark:"#0c1a2e",bg_light:"#f0f9ff",primary:"#0369a1",accent:"#7dd3fc",text_on_dark:"#e0f2fe",text_on_light:"#0c1a2e",subtle:"#7dd3fc",card_bg:"#e0f2fe"} }
+    ],
+    fonts:[
+      { name:"Nunito + Open Sans", heading:"'Nunito', sans-serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Keep It Simple", previewBody:"Friendly, clear, easy to trust." },
+      { name:"Quicksand + Lato", heading:"'Quicksand', sans-serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Keep It Simple", previewBody:"Light, clean, unpretentious." },
+      { name:"Poppins + Source Sans", heading:"'Poppins', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Keep It Simple", previewBody:"Modern simplicity, warm clarity." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  },
+
+  everyperson:{ name:"The Everyperson", emoji:"🤝", tagline:"\"You make people feel like they belong.\"",
+    description:"Your brand is built on relatability and trust. You're not performing — you're just genuinely yourself, and that's what people connect with. Clients come to you because they feel like they actually know you before they've even met you.",
+    traits:["Relatable","Grounded","Friendly","Honest","Down-to-earth","Inclusive"],
+    voice:{ description:"Your voice is conversational and real. You write the way you talk — warm, direct, unpretentious. You use contractions. You make jokes that land. Your writing should feel like a text from a friend who also happens to be really good at what they do.", examples:["\"Honestly? I just care about doing good work for good people.\"","\"No complicated packages, no confusing pricing. Here's what I do and what it costs.\"","\"I'm not trying to impress you. I'm trying to help you.\""] },
+    palettes:[
+      { name:"Everyday", desc:"Grounded, real, warmly familiar", colors:["#1c1008","#78350f","#f59e0b","#fffbeb","#fef3c7"], tokens:{bg_dark:"#1c1008",bg_light:"#fffbeb",primary:"#78350f",accent:"#f59e0b",text_on_dark:"#fef3c7",text_on_light:"#1c1008",subtle:"#f59e0b",card_bg:"#fef3c7"} },
+      { name:"Honest Blue", desc:"Trustworthy, open, genuine", colors:["#0c1e30","#1e40af","#60a5fa","#eff6ff","#dbeafe"], tokens:{bg_dark:"#0c1e30",bg_light:"#eff6ff",primary:"#1e40af",accent:"#60a5fa",text_on_dark:"#dbeafe",text_on_light:"#0c1e30",subtle:"#60a5fa",card_bg:"#dbeafe"} },
+      { name:"Good People", desc:"Warm, inclusive, feels like home", colors:["#0f1c0f","#14532d","#4ade80","#f0fdf4","#dcfce7"], tokens:{bg_dark:"#0f1c0f",bg_light:"#f0fdf4",primary:"#14532d",accent:"#4ade80",text_on_dark:"#dcfce7",text_on_light:"#0f1c0f",subtle:"#4ade80",card_bg:"#dcfce7"} }
+    ],
+    fonts:[
+      { name:"Nunito + Open Sans", heading:"'Nunito', sans-serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Just Real People", previewBody:"Warm, friendly, genuinely approachable." },
+      { name:"Poppins + Lato", heading:"'Poppins', sans-serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Just Real People", previewBody:"Clean, modern, totally unpretentious." },
+      { name:"Raleway + Source Sans", heading:"'Raleway', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Just Real People", previewBody:"Welcoming, clear, down to earth." }
+    ],
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+  }
+};
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+const stepOrder = ['welcome','starting','quiz','reveal','customize','writing','output'];
+function goToStep(id) {
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  const mapped = (id==='writing')?'customize':id;
+  const btn = document.querySelector(`[data-step="${mapped}"]`);
+  if(btn){ btn.classList.add('active'); btn.disabled=false; }
+  const ci = stepOrder.indexOf(id);
+  stepOrder.forEach((s,i)=>{ if(i<ci){ const b2=document.querySelector(`[data-step="${s==='writing'?'customize':s}"]`); if(b2) b2.classList.add('completed'); }});
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`panel-${id}`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectPlatform(platform, btn) {
+  selectedPlatform=platform;
+  document.querySelectorAll('#platformOptions .quiz-option').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  checkStartingReady(); autoSave();
+}
+function selectFork(p) {
+  brandPath=p;
+  document.querySelectorAll('.fork-card').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('brandInputs').classList.toggle('visible',p==='existing');
+  checkStartingReady(); autoSave();
+}
+function checkStartingReady() { document.getElementById('startingNext').disabled=!(selectedPlatform&&brandPath); }
+function syncColor(id) { document.getElementById(id+'Text').value=document.getElementById(id).value; autoSave(); }
+function syncColorText(id) { const v=document.getElementById(id+'Text').value; if(/^#[0-9a-fA-F]{6}$/.test(v)) document.getElementById(id).value=v; autoSave(); }
+
+/* === QUIZ === */
+function renderQuiz() {
+  const c=document.getElementById('quizContainer'); c.innerHTML='';
+  Q.forEach((q,i)=>{
+    const div=document.createElement('div'); div.className='quiz-question';
+    let html='';
+    if(q.type==='rank') {
+      html=`<div class="rank-hint">Click to rank from most to least like you</div>
+      <div class="rank-progress" id="rank-progress-${i}">0 of 4 ranked</div>
+      <div class="rank-list" id="rank-${i}" data-qi="${i}">
+        ${q.options.map((o,j)=>`
+        <div class="rank-item" onclick="clickRank(${i},${j})" data-q="${i}" data-a="${j}">
+          <div class="rank-num" id="rank-num-${i}-${j}">?</div>
+          <div class="rank-text">${o.label}</div>
+        </div>`).join('')}
+      </div>
+      <button class="rank-reset" onclick="resetRank(${i})">Reset ranking</button>`;
+    } else {
+      html=`<div class="quiz-options">${q.options.map((o,j)=>`<button class="quiz-option" onclick="selectAnswer(${i},${j})" data-q="${i}" data-a="${j}"><span class="option-label">${o.label}</span>${o.desc?`<span class="option-desc">${o.desc}</span>`:''}</button>`).join('')}</div>`;
+    }
+    div.innerHTML=`<div class="quiz-number">Question ${i+1} of ${Q.length}</div><h3>${q.question}</h3><div class="hint">${q.hint}</div>${html}`;
+    c.appendChild(div);
+  });
+  initDragRank();
+}
+
+/* ============================================
+   DRAG TO RANK
+   ============================================ */
+function initDragRank() {
+  // Replaced by clickRank — nothing to init
+  // Default order saved when first rank question is rendered
+  Q.forEach((q, qi) => {
+    if (q.type === 'rank' && quizAnswers[qi] === undefined) {
+      quizAnswers[qi] = { type:'rank', order:[] };
+    }
+  });
+}
+
+function clickRank(qi, ai) {
+  if (!quizAnswers[qi] || quizAnswers[qi].type !== 'rank') {
+    quizAnswers[qi] = { type:'rank', order:[] };
+  }
+  const order = quizAnswers[qi].order;
+  const alreadyIdx = order.indexOf(ai);
+
+  if (alreadyIdx >= 0) {
+    // Already ranked — remove it and re-number everything after
+    order.splice(alreadyIdx, 1);
+  } else {
+    // Not ranked yet — add to end if less than 4
+    if (order.length < Q[qi].options.length) {
+      order.push(ai);
+    }
+  }
+
+  // Update UI
+  const list = document.getElementById(`rank-${qi}`);
+  const items = list.querySelectorAll('.rank-item');
+  items.forEach(item => {
+    const a = parseInt(item.dataset.a);
+    const pos = order.indexOf(a);
+    const numEl = document.getElementById(`rank-num-${qi}-${a}`);
+    if (pos >= 0) {
+      item.classList.add('ranked');
+      numEl.textContent = pos + 1;
+    } else {
+      item.classList.remove('ranked');
+      numEl.textContent = '?';
+    }
+  });
+
+  // Update progress text
+  const prog = document.getElementById(`rank-progress-${qi}`);
+  if (prog) prog.textContent = `${order.length} of ${Q[qi].options.length} ranked`;
+
+  // If all 4 ranked, mark as answered
+  if (order.length === Q[qi].options.length) {
+    quizAnswers[qi] = { type:'rank', order:[...order] };
+  }
+
+  updateQuizProgress();
+  autoSave();
+}
+
+function resetRank(qi) {
+  quizAnswers[qi] = { type:'rank', order:[] };
+  const list = document.getElementById(`rank-${qi}`);
+  list.querySelectorAll('.rank-item').forEach(item => {
+    item.classList.remove('ranked');
+    const a = parseInt(item.dataset.a);
+    document.getElementById(`rank-num-${qi}-${a}`).textContent = '?';
+  });
+  const prog = document.getElementById(`rank-progress-${qi}`);
+  if (prog) prog.textContent = `0 of ${Q[qi].options.length} ranked`;
+  updateQuizProgress();
+  autoSave();
+}
+
+function saveRankOrder(list, qi) { /* not used */ }
+function updateRankUI(list, order) { /* not used */ }
+
+
+function updateQuizProgress() {
+  const answered = quizAnswers.filter(a => {
+    if (a === undefined || a === null) return false;
+    if (a?.type === 'rank') return a.order?.length === 4; // all 4 must be ranked
+    return true;
+  }).length;
+  document.getElementById('quizProgress').style.width = (answered/Q.length*100)+'%';
+  document.getElementById('quizProgressText').textContent = `${answered} of ${Q.length} answered`;
+  if(answered === Q.length) document.getElementById('quizSubmit').disabled = false;
+}
+
+function selectAnswer(qi,ai) {
+  quizAnswers[qi]=ai;
+  document.querySelectorAll(`[data-q="${qi}"]`).forEach(b=>b.classList.remove('selected'));
+  document.querySelector(`[data-q="${qi}"][data-a="${ai}"]`).classList.add('selected');
+  updateQuizProgress();
+  autoSave();
+}
+
+function submitQuiz() {
+  scores={};
+  quizAnswers.forEach((answer,qi)=>{
+    const q=Q[qi];
+    if(q.type==='rank' && answer?.type==='rank') {
+      // Rank: 1st=3pts, 2nd=2pts, 3rd=1pt, 4th=0pts — distributed across all archetypes in each option
+      answer.order.forEach((optIdx, pos) => {
+        const mult = [3,2,1,0][pos];
+        if(mult===0) return;
+        const opt=q.options[optIdx];
+        Object.entries(opt.scores).forEach(([a,s])=>{ scores[a]=(scores[a]||0)+(s*mult/3); });
+      });
+    } else if(typeof answer === 'number') {
+      const opt=Q[qi].options[answer];
+      Object.entries(opt.scores).forEach(([a,s])=>{ scores[a]=(scores[a]||0)+s; });
+    }
+  });
+  resultArchetype=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  renderReveal(); goToStep('reveal'); autoSave();
+}
+
+/* === REVEAL === */
+function renderReveal() {
+  const a=archetypes[resultArchetype];
+  let h=`<div class="reveal-eyebrow">Your brand archetype is...</div><div class="reveal-archetype">${a.emoji} ${a.name}</div><div class="reveal-tagline">${a.tagline}</div>`;
+  if(a.description) h+=`<p class="reveal-description">${a.description}</p>`;
+  if(a.traits) h+=`<div class="reveal-traits">${a.traits.map(t=>`<span class="trait-tag">${t}</span>`).join('')}</div>`;
+  if(a.voice) h+=`<div class="reveal-voice"><h3>Your Brand Voice</h3><p>${a.voice.description}</p>${a.voice.examples.map(e=>`<div class="voice-example">${e}</div>`).join('')}</div>`;
+  document.getElementById('revealContainer').innerHTML=h;
+  const ns=document.getElementById('nextStep1');
+  if(brandPath==='fresh'&&a.palettes){ ns.textContent="You'll choose colors, fonts, and style details curated for your archetype"; document.getElementById('revealNextBtn').textContent="Next: Customize →"; }
+  else{ ns.textContent="We'll use your existing brand colors and fonts to build your CSS system"; document.getElementById('revealNextBtn').textContent="Next: Writing Sample →"; }
+  if(a.palettes) renderCustomization();
+}
+
+function goToNextFromReveal() { goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'writing'); }
+function goToWritingBack() { goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'reveal'); }
+
+/* === CUSTOMIZATION === */
+function renderCustomization() {
+  const a=archetypes[resultArchetype]; if(!a.palettes) return;
+  a.fonts.forEach(f=>{ const s=document.createElement('style'); s.textContent=f.import; document.head.appendChild(s); });
+  document.getElementById('paletteOptions').innerHTML=a.palettes.map((p,i)=>`<div class="palette-card ${i===selectedPalette?'selected':''}" onclick="selectPalette(${i})"><div class="palette-swatches">${p.colors.map(c=>`<div class="swatch" style="background:${c}"></div>`).join('')}</div><div><div class="palette-name">${p.name}</div><div class="palette-desc">${p.desc}</div></div></div>`).join('');
+  document.getElementById('fontOptions').innerHTML=a.fonts.map((f,i)=>`<div class="font-card ${i===selectedFont?'selected':''}" onclick="selectFont(${i})"><div class="font-preview-heading" style="font-family:${f.heading}">${f.previewHeading}</div><div class="font-preview-body" style="font-family:${f.body}">${f.previewBody}</div><div class="font-card-name">${f.name}</div></div>`).join('');
+  const tc=document.getElementById('styleToggles'); tc.innerHTML='';
+  Object.entries(a.styleOptions).forEach(([k,opts])=>{ tc.innerHTML+=`<div class="style-toggle"><span class="style-toggle-label">${k.charAt(0).toUpperCase()+k.slice(1)}</span><div class="toggle-options">${opts.map(o=>`<button class="toggle-opt ${styleChoices[k]===o.value?'selected':''}" onclick="selectStyle('${k}','${o.value}',this)">${o.label}</button>`).join('')}</div></div>`; });
+  updatePreview();
+}
+
+function selectPalette(i) { selectedPalette=i; document.querySelectorAll('.palette-card').forEach((c,j)=>c.classList.toggle('selected',j===i)); updatePreview(); autoSave(); }
+function selectFont(i) { selectedFont=i; document.querySelectorAll('.font-card').forEach((c,j)=>c.classList.toggle('selected',j===i)); updatePreview(); autoSave(); }
+function selectStyle(k,v,btn) { styleChoices[k]=v; btn.parentNode.querySelectorAll('.toggle-opt').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); updatePreview(); autoSave(); }
+
+function updatePreview() {
+  const a=archetypes[resultArchetype]; if(!a.palettes) return;
+  const p=a.palettes[selectedPalette],f=a.fonts[selectedFont],t=p.tokens,r=styleChoices.corners;
+  const pad={airy:'48px',balanced:'32px',dense:'20px'}[styleChoices.density];
+  document.getElementById('previewFrame').innerHTML=`<div class="pv-hero" style="background:${t.bg_dark};color:${t.text_on_dark};padding:${pad};border-radius:${r}"><h1 style="font-family:${f.heading};color:${t.text_on_dark}">Transform Everything</h1><p style="font-family:${f.body};color:${t.text_on_dark};opacity:.8">Your brand creates transformation. Your website should feel like a portal.</p><span class="pv-btn" style="background:${t.accent};color:${t.bg_dark};border-color:${t.accent};border-radius:${r};font-family:${f.body}">Start Your Journey</span></div><div class="pv-cards">${['Strategy','Design','Launch'].map(title=>`<div class="pv-card" style="border-color:${t.subtle};border-radius:${r};background:${t.card_bg};padding:${pad}"><h4 style="font-family:${f.heading};color:${t.primary}">${title}</h4><p style="font-family:${f.body};color:${t.text_on_light}">Every detail, intentional.</p></div>`).join('')}</div><div class="pv-footer" style="background:${t.bg_dark};color:${t.text_on_dark};border-radius:${r};font-family:${f.body}">yoursite.com · Built with magic ✨</div>`;
+}
+
+/* === OUTPUT === */
+async function generateOutput() {
+  const a=archetypes[resultArchetype],ws=document.getElementById('writingSample').value.trim();
+  let fontImport,hFont,bFont,tokens;
+  if(brandPath==='existing') {
+    const hf=document.getElementById('userHeadingFont').value.trim()||'Georgia',bf=document.getElementById('userBodyFont').value.trim()||'sans-serif';
+    fontImport=document.getElementById('userFontImport').value.trim()||'/* Add your Google Fonts import */';
+    hFont=`'${hf}', serif`; bFont=`'${bf}', sans-serif`;
+    tokens={bg_dark:document.getElementById('userColor3').value,bg_light:document.getElementById('userColor4').value,primary:document.getElementById('userColor1').value,accent:document.getElementById('userColor2').value,text_on_dark:'#f0f0f0',text_on_light:document.getElementById('userColor3').value,subtle:document.getElementById('userColor1').value+'80',card_bg:document.getElementById('userColor4').value};
+  } else {
+    const pl=a.palettes[selectedPalette],fn=a.fonts[selectedFont];
+    fontImport=fn.import; hFont=fn.heading; bFont=fn.body; tokens=pl.tokens;
+  }
+  const sp={airy:{section:'120px',element:'48px',card:'40px'},balanced:{section:'80px',element:'32px',card:'28px'},dense:{section:'56px',element:'20px',card:'20px'}}[styleChoices.density];
+  const anim=styleChoices.animation==='expressive'?'--transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);\n  --transition-speed: 0.3s;\n  --hover-lift: translateY(-4px);\n  --hover-scale: scale(1.02);':'--transition-bounce: ease;\n  --transition-speed: 0.2s;\n  --hover-lift: translateY(-2px);\n  --hover-scale: scale(1.01);';
+  const platformLabels={'wordpress-elementor':'WordPress + Elementor','wordpress-divi':'WordPress + Divi','wordpress-other':'WordPress + Other Builder','squarespace':'Squarespace','showit':'Showit','webflow':'Webflow','framer':'Framer','wix':'Wix','other':'Other Platform','undecided':'Platform TBD'};
+
+  const css=`/* ===========================================
+   ${a.name.toUpperCase()} BRAND DESIGN SYSTEM
+   Platform: ${platformLabels[selectedPlatform]||'Not specified'}
+   Generated by sitein8 Brand Foundation
+   =========================================== */
+
+${fontImport}
+
+:root {
+  --color-bg-dark: ${tokens.bg_dark};
+  --color-bg-light: ${tokens.bg_light};
+  --color-primary: ${tokens.primary};
+  --color-accent: ${tokens.accent};
+  --color-text-on-dark: ${tokens.text_on_dark};
+  --color-text-on-light: ${tokens.text_on_light};
+  --color-subtle: ${tokens.subtle};
+  --color-card-bg: ${tokens.card_bg};
+  --font-heading: ${hFont};
+  --font-body: ${bFont};
+  --spacing-section: ${sp.section};
+  --spacing-element: ${sp.element};
+  --spacing-card: ${sp.card};
+  --border-radius: ${styleChoices.corners};
+  ${anim}
+}
+
+body { font-family: var(--font-body); color: var(--color-text-on-light); background: var(--color-bg-light); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-heading); line-height: 1.15; }
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; }
+h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; }
+h3 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600; }
+h4 { font-size: 1.25rem; font-weight: 600; }
+p { font-size: 1.125rem; max-width: 65ch; }
+
+.hero { background: var(--color-bg-dark); color: var(--color-text-on-dark); padding: var(--spacing-section) 5%; text-align: center; }
+.hero h1 { color: var(--color-text-on-dark); margin-bottom: 1rem; }
+.hero p { color: var(--color-text-on-dark); opacity: 0.85; margin: 0 auto 2rem; }
+
+.btn-primary { display: inline-block; padding: 18px 40px; background: var(--color-accent); color: var(--color-bg-dark); font-family: var(--font-body); font-weight: 600; font-size: 1.125rem; border: 3px solid var(--color-accent); border-radius: var(--border-radius); text-decoration: none; cursor: pointer; transition: all var(--transition-speed) var(--transition-bounce); }
+.btn-primary:hover { transform: var(--hover-lift); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+.btn-secondary { display: inline-block; padding: 18px 40px; background: transparent; color: var(--color-primary); font-family: var(--font-body); font-weight: 600; font-size: 1.125rem; border: 3px solid var(--color-primary); border-radius: var(--border-radius); text-decoration: none; cursor: pointer; transition: all var(--transition-speed) var(--transition-bounce); }
+.btn-secondary:hover { background: var(--color-primary); color: var(--color-bg-light); transform: var(--hover-lift); }
+
+.card { background: var(--color-card-bg); border: 2px solid var(--color-subtle); border-radius: var(--border-radius); padding: var(--spacing-card); transition: all var(--transition-speed) var(--transition-bounce); }
+.card:hover { transform: var(--hover-scale); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+.card h3, .card h4 { color: var(--color-primary); }
+
+.section-light { background: var(--color-bg-light); padding: var(--spacing-section) 5%; }
+.section-dark { background: var(--color-bg-dark); color: var(--color-text-on-dark); padding: var(--spacing-section) 5%; }
+.section-dark h2, .section-dark h3 { color: var(--color-accent); }
+.section-dark p { color: var(--color-text-on-dark); opacity: 0.85; }
+
+nav { background: var(--color-bg-dark); padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; }
+nav a { color: var(--color-text-on-dark); text-decoration: none; font-family: var(--font-body); font-weight: 500; transition: color 0.2s ease; }
+nav a:hover { color: var(--color-accent); }
+
+footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); padding: var(--spacing-element) 5%; text-align: center; font-size: 0.9rem; opacity: 0.8; }
+.testimonial { border-left: 4px solid var(--color-primary); padding: var(--spacing-card); background: var(--color-card-bg); border-radius: var(--border-radius); font-style: italic; font-size: 1.125rem; }
+.testimonial cite { display: block; margin-top: 1rem; font-style: normal; font-weight: 600; color: var(--color-primary); }`;
+
+  let voice=`BRAND VOICE GUIDELINES — ${a.name.toUpperCase()}\n\nArchetype: ${a.name}\nPlatform: ${platformLabels[selectedPlatform]||'Not specified'}\nPersonality: ${a.traits?a.traits.join(', '):'See archetype description'}`;
+  if(a.voice) voice+=`\n\nVoice Description:\n${a.voice.description}\n\nExample Copy:\n${a.voice.examples.join('\n')}`;
+  voice+=`\n\nTone Rules:\n- Write in first person\n- Use contractions\n- Keep sentences punchy - mix short with long\n- Be specific over generic\n- Lead with transformation, not features\n- Use sensory language when possible`;
+  if(ws) voice+=`\n\nWRITING SAMPLE (match this voice):\n---\n${ws}\n---\nMatch the tone, rhythm, and personality of the sample above.`;
+  if(brandPath==='existing'){ const n=document.getElementById('userBrandNotes').value.trim(); if(n) voice+=`\n\nADDITIONAL BRAND NOTES:\n${n}`; }
+
+  window._cssOutput=css; window._voiceOutput=voice;
+  document.getElementById('cssOutput').innerHTML=`<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(css)}</pre>`;
+  document.getElementById('voiceOutput').innerHTML=`<button class="copy-btn" onclick="copyBlock(this,'voice')">Copy Voice Guide</button><pre>${esc(voice)}</pre>`;
+  renderPlatformInstructions();
+  document.querySelector('[data-step="output"]').disabled=false;
+  await saveToSupabase(); goToStep('output');
+}
+
+function copyBlock(btn,t) {
+  navigator.clipboard.writeText(t==='css'?window._cssOutput:window._voiceOutput).then(()=>{
+    btn.textContent='Copied! ✓'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent=t==='css'?'Copy CSS':'Copy Voice Guide'; btn.classList.remove('copied'); },2000);
+  });
+}
+function copyAll() {
+  const combined=`${window._cssOutput}\n\n/* =========================================== */\n\n${window._voiceOutput}`;
+  navigator.clipboard.writeText(combined).then(()=>{
+    const btn=document.getElementById('copyAllBtn');
+    btn.textContent='✓ Everything Copied!'; btn.style.background='var(--mint)'; btn.style.borderColor='var(--mint)';
+    setTimeout(()=>{ btn.textContent='📋 Copy Everything — CSS + Voice Guide'; btn.style.background=''; btn.style.borderColor=''; },2500);
+  });
+}
+function checkWritingSample() {
+  const ws=document.getElementById('writingSample').value.trim();
+  if(!ws){ document.getElementById('writingNudge').style.display='block'; document.getElementById('writingNudge').scrollIntoView({behavior:'smooth',block:'center'}); }
+  else generateOutput();
+}
+
+function renderPlatformInstructions() {
+  const instructions={'wordpress-elementor':{title:'How to paste in WordPress + Elementor',steps:['Open your WordPress dashboard','Go to Appearance → Customize → Additional CSS','Paste your CSS there and hit Publish','For the Google Fonts import: paste the @import line at the very top of the Additional CSS box','When Claude gives you HTML in later modules, use an Elementor HTML widget to paste it in']},'wordpress-divi':{title:'How to paste in WordPress + Divi',steps:['Open your WordPress dashboard','Go to Divi → Theme Options → General → Custom CSS','Paste your CSS there and save','For the Google Fonts import: paste the @import line at the very top','When Claude gives you HTML, use a Divi Code Module to paste it in']}};
+  const pi=instructions[selectedPlatform];
+  const container=document.getElementById('platformInstructions');
+  if(pi){ container.innerHTML=`<div style="background:var(--deep-purple);padding:32px;margin-bottom:24px"><h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--electric-yellow);margin-bottom:16px">${pi.title}</h3>${pi.steps.map((s,i)=>`<p style="color:var(--lavender);font-size:16px;padding:8px 0;border-bottom:1px solid rgba(196,181,253,0.15)"><span style="color:var(--electric-yellow);font-weight:700">${i+1}.</span> ${s}</p>`).join('')}</div>`; }
+  else container.innerHTML='';
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{ if(!b.disabled) goToStep(b.dataset.step); }));
+renderQuiz();
+initAuth();
+</script>
+</body>
+</html>
