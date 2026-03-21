@@ -457,7 +457,7 @@ async function handleForgotPassword(e) {
   }
   try {
     const { error } = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/module00.html'
+      redirectTo: window.location.origin + '/index.html'
     });
     if (error) {
       showAuthMsg('Something went wrong: ' + error.message, 'error');
@@ -520,18 +520,8 @@ async function initAuth() {
   db.auth.onAuthStateChange((event, session) => {
     if (DEV_MODE) return;
     if (event === 'PASSWORD_RECOVERY' && session?.user) {
-      // User clicked password reset link — prompt for new password
-      const newPassword = prompt('Enter your new password (min 6 characters):');
-      if (newPassword && newPassword.length >= 6) {
-        db.auth.updateUser({ password: newPassword }).then(({ error }) => {
-          if (error) {
-            alert('Could not update password: ' + error.message);
-          } else {
-            alert('Password updated! You are now signed in.');
-            window.location.href = 'index.html';
-          }
-        });
-      }
+      // Redirect to dashboard which has the proper recovery form
+      window.location.href = 'index.html#type=recovery';
       return;
     } else if (event === 'SIGNED_IN' && session?.user) {
       // Fresh sign-in — go to dashboard
