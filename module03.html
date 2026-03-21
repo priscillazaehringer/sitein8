@@ -48,7 +48,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 </head>
 <body>
 
-<div id="authGate" class="auth-gate">
+<div id="authGate" class="auth-gate" style="display:none">
   <div class="auth-box">
     <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:32px">sitein8</div>
     <h2>Sign in first</h2>
@@ -59,7 +59,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 
 <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
 
-<div id="mainApp" style="display:none">
+<div id="mainApp">
 <div class="user-bar">
   <span class="user-bar-email" id="userEmail"></span>
   <div style="display:flex;gap:12px;align-items:center">
@@ -164,7 +164,7 @@ async function savePlaceholder(){
   }catch(e){console.error('save error:',e);}
 }
 
-initAuth();
+// initAuth();
 </script>
 </body>
 </html>
