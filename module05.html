@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://rcchpjkcrzwezjpqkcmm.supabase.co https://*.supabase.co; img-src 'self' data: https:; frame-src 'self' blob:">
 <title>Module 05: Privacy &amp; Terms &middot; sitein8</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,500;1,9..144,700&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -107,6 +108,7 @@ async function signOut(){
 }
 
 async function initAuth(){
+  if(!db){document.getElementById('authGate').style.display='flex';return;}
   if(DEV_MODE){
     currentUser={id:'dev-user-id',email:'dev@sitein8.com'};
     document.getElementById('authGate').style.display='none';
@@ -163,7 +165,7 @@ async function savePlaceholder(){
   }catch(e){console.error('save error:',e);}
 }
 
-initAuth();
+initAuth().catch(e => { console.error('initAuth failed:', e); document.getElementById('authGate').style.display = 'flex'; });
 </script>
 </body>
 </html>
