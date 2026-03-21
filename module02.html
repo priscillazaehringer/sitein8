@@ -350,9 +350,10 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
     <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">Next up: Module 03 &mdash; Sales &amp; Services</h3>
     <p style="color:var(--lavender);font-size:16px;line-height:1.6">Build a full services page with pricing, outcomes, and CTAs that convert.</p>
   </div>
-  <div class="btn-row" style="margin-top:40px">
-    <button class="btn btn--outline" onclick="goToStep('copy')">&larr; Back</button>
-    <a class="btn btn--yellow" href="module03.html">Start Module 03: Sales &amp; Services &rarr;</a>
+  <div class="btn-row" style="margin-top:40px;flex-direction:column;align-items:center">
+    <a class="btn btn--yellow" href="module03.html" style="width:100%;text-align:center">Continue to Module 03: Sales &amp; Services &rarr;</a>
+    <a href="index.html" style="font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);text-decoration:none;transition:color 0.2s">or go back to Dashboard</a>
+    <button class="btn btn--outline" onclick="goToStep('copy')" style="align-self:flex-start">&larr; Back to Copy Review</button>
   </div>
 </div>
 
@@ -447,21 +448,30 @@ function showMissingBrand(banner){banner.innerHTML=`<div class="brand-banner bra
 function getArchetypeName(k){const n={magician:'The Magician',creator:'The Creator',sage:'The Sage',hero:'The Hero',rebel:'The Rebel',explorer:'The Explorer',caregiver:'The Caregiver',ruler:'The Ruler',lover:'The Lover',jester:'The Jester',innocent:'The Innocent',everyperson:'The Everyperson'};return n[k]||'Your Brand';}
 function getBrandPlatform(d){if(!d?.selectedPlatform)return'';const l={'wordpress-elementor':'&middot; WordPress + Elementor','wordpress-divi':'&middot; WordPress + Divi','webflow':'&middot; Webflow','squarespace':'&middot; Squarespace','framer':'&middot; Framer'};return l[d.selectedPlatform]||'';}
 
-/* SAVE - raw fetch */
+/* SAVE - raw fetch, PATCH with INSERT fallback */
 async function saveToSupabase(){
   if(!projectId)return;
   let token;
   try{token=JSON.parse(localStorage.getItem('sb-rcchpjkcrzwezjpqkcmm-auth-token')).access_token;}
   catch(e){console.error('no token:',e);return;}
-  const body={project_id:projectId,module_key:'module02',data:buildState(),output:window._htmlOutput||null,updated_at:new Date().toISOString()};
+  const base='https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1';
+  const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'return=minimal'};
+  const body={data:buildState(),output:window._htmlOutput||null,updated_at:new Date().toISOString()};
   try{
-    const r=await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data',{
-      method:'POST',
-      headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify(body)
+    const r=await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module02`,{
+      method:'PATCH',headers,body:JSON.stringify(body)
     });
-    if(r.ok||r.status===201||r.status===204)showSaveIndicator();
-    else console.error('save error:',r.status,await r.text());
+    if(r.ok||r.status===204){
+      // PATCH 204 can mean 0 rows matched — check if row exists
+      const check=await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module02&select=project_id`,{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+token}});
+      const rows=await check.json();
+      if(!rows?.length){
+        console.log('No existing row, inserting...');
+        const ins=await fetch(`${base}/module_data`,{method:'POST',headers,body:JSON.stringify({project_id:projectId,module_key:'module02',...body})});
+        if(!ins.ok&&ins.status!==201){console.error('save INSERT error:',ins.status,await ins.text());return;}
+      }
+      showSaveIndicator();
+    } else console.error('save PATCH error:',r.status,await r.text());
   }catch(e){console.error('save fetch error:',e);}
 }
 
@@ -486,7 +496,8 @@ async function loadState(){
 }
 function buildState(){return{heroLayout:selectedLayout,heroHeadline:v('heroHeadline'),heroSub:v('heroSub'),heroCTA:v('heroCTA'),heroCTALink:v('heroCTALink'),heroSecondaryCTA:v('heroSecondaryCTA'),heroSecondaryCTALink:v('heroSecondaryCTALink'),heroImage:v('heroImage'),selectedSections,contentData,polishedCopy,chatTranscript,chatHistory,interviewComplete,interviewSummary:window._interviewSummary||null};}
 function showSaveIndicator(){const el=document.getElementById('saveIndicator');el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2000);}
-function autoSave(){}
+let _autoSaveTimer=null;
+function autoSave(){clearTimeout(_autoSaveTimer);_autoSaveTimer=setTimeout(()=>saveToSupabase(),2000);}
 
 /* NAV */
 const stepOrder=['hero','sections','content','copy','output'];
@@ -888,6 +899,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled)goToStep(b.dataset.step);}));
 document.getElementById('heroHeadline').addEventListener('input',checkHeroReady);
+['heroHeadline','heroSub','heroCTA','heroCTALink','heroSecondaryCTA','heroSecondaryCTALink','heroImage'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',autoSave);});
 checkHeroReady();
 initAuth().catch(e => { console.error('initAuth failed:', e); document.getElementById('authGate').style.display = 'flex'; });
 </script>
