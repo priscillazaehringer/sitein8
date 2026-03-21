@@ -126,10 +126,34 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 .btn-row{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
 .companion-footer{background:var(--charcoal);padding:32px 24px;text-align:center;color:var(--lavender);font-size:15px}
 .companion-footer a{color:var(--electric-yellow);text-decoration:none}
+/* CHAT UI */
+.chat-container{display:flex;flex-direction:column;height:520px;border:3px solid var(--deep-purple);background:var(--white);overflow:hidden}
+.chat-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px}
+.chat-bubble{max-width:78%;padding:16px 20px;font-size:16px;line-height:1.6;animation:fadeUp 0.3s ease}
+.chat-bubble-ai{align-self:flex-start;background:var(--deep-purple);color:var(--lavender);border:none;border-radius:0 16px 16px 16px;display:flex;gap:14px;align-items:flex-start}
+.chat-bubble-ai .chat-avatar{width:32px;height:32px;background:var(--hot-pink);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:white;font-weight:800}
+.chat-bubble-ai .chat-text{flex:1}
+.chat-bubble-user{align-self:flex-end;background:rgba(232,52,107,0.08);color:var(--text);border:2px solid var(--hot-pink);border-radius:16px 0 16px 16px}
+.chat-input-row{display:flex;gap:0;border-top:3px solid var(--deep-purple);background:var(--off-white)}
+.chat-input-row input{flex:1;font-family:'Bricolage Grotesque',sans-serif;font-size:17px;padding:18px 20px;border:none;background:transparent;color:var(--text);outline:none}
+.chat-input-row input::placeholder{color:var(--text-light)}
+.chat-input-row button{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;padding:18px 28px;background:var(--hot-pink);color:white;border:none;cursor:pointer;transition:background 0.2s}
+.chat-input-row button:hover{background:#d42a5c}
+.chat-input-row button:disabled{opacity:0.4;cursor:not-allowed}
+.chat-typing{align-self:flex-start;display:flex;gap:14px;align-items:flex-start;max-width:78%;padding:16px 20px;background:var(--deep-purple);border-radius:0 16px 16px 16px}
+.chat-typing .chat-avatar{width:32px;height:32px;background:var(--hot-pink);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:white;font-weight:800}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing-dots span{width:8px;height:8px;background:var(--lavender);border-radius:50%;animation:typingBounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-ready-btn{display:inline-block;margin-top:12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:14px 28px;background:var(--electric-yellow);color:var(--charcoal);border:3px solid var(--electric-yellow);cursor:pointer;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1)}
+.chat-ready-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 20px rgba(255,210,63,0.3)}
 @media(max-width:640px){
   .header-title{font-size:32px}.input-row{grid-template-columns:1fr}.layout-options{grid-template-columns:1fr}
   .step-btn{font-size:12px;padding:12px 8px}.step-btn .step-label{display:none}
   .btn{width:100%;text-align:center}.btn-row{flex-direction:column}.looks-good-box{flex-direction:column}
+  .chat-container{height:460px}.chat-bubble{max-width:90%}
 }
 </style>
 </head>
@@ -169,7 +193,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 <nav class="step-tracker">
   <button class="step-btn active" data-step="hero"><span class="step-num"><span>1</span></span><span class="step-label">Hero</span></button>
   <button class="step-btn" data-step="sections" disabled><span class="step-num"><span>2</span></span><span class="step-label">Sections</span></button>
-  <button class="step-btn" data-step="content" disabled><span class="step-num"><span>3</span></span><span class="step-label">Your Notes</span></button>
+  <button class="step-btn" data-step="content" disabled><span class="step-num"><span>3</span></span><span class="step-label">Interview</span></button>
   <button class="step-btn" data-step="copy" disabled><span class="step-num"><span>4</span></span><span class="step-label">Your Copy</span></button>
   <button class="step-btn" data-step="output" disabled><span class="step-num"><span>5</span></span><span class="step-label">Your HTML</span></button>
 </nav>
@@ -247,20 +271,25 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
   </div>
 </div>
 
-<!-- STEP 3: CONTENT (rough notes) -->
+<!-- STEP 3: CHAT INTERVIEW -->
 <div class="panel" id="panel-content">
   <div class="panel-intro">
-    <h2>Drop your rough notes &#9997;&#65039;</h2>
-    <p>Don't overthink this. Keywords, bullet points, half-sentences &mdash; all fine. Claude transforms these into polished copy that sounds like you.</p>
+    <h2>Let's chat about your business &#128172;</h2>
+    <p>Have a quick conversation with Claude. Answer naturally &mdash; Claude will ask you everything needed to write your homepage copy.</p>
   </div>
-  <div style="background:rgba(255,210,63,0.12);border:3px solid var(--electric-yellow);padding:20px;margin-bottom:40px;display:flex;gap:16px;align-items:flex-start">
+  <div style="background:rgba(255,210,63,0.12);border:3px solid var(--electric-yellow);padding:20px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start">
     <span style="font-size:24px;flex-shrink:0">&#10024;</span>
-    <p style="font-size:16px;color:var(--text);margin:0;line-height:1.6">Your brand voice from Module 01 is loaded. Claude will write in <strong id="archetypeNameHint">your brand voice</strong> &mdash; so just give it something to work with.</p>
+    <p style="font-size:16px;color:var(--text);margin:0;line-height:1.6">Your brand voice from Module 01 is loaded. Just talk naturally &mdash; Claude will use <strong id="archetypeNameHint">your brand voice</strong> when writing the final copy.</p>
   </div>
-  <div id="contentForms"></div>
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+      <button id="chatSendBtn" onclick="sendChat()">Send</button>
+    </div>
+  </div>
   <div class="btn-row">
     <button class="btn btn--outline" onclick="goToStep('sections')">&larr; Back</button>
-    <button class="btn btn--pink" onclick="polishCopy()">Polish My Copy with Claude &rarr;</button>
   </div>
 </div>
 
@@ -282,7 +311,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
     </div>
     <div id="copyFields"></div>
     <div class="btn-row">
-      <button class="btn btn--outline" onclick="goToStep('content')">&larr; Back to Notes</button>
+      <button class="btn btn--outline" onclick="goToStep('content')">&larr; Back to Interview</button>
       <button class="btn btn--yellow" onclick="generateHomepage()">Build My Homepage &rarr;</button>
     </div>
   </div>
@@ -445,11 +474,15 @@ async function loadState(){
   if(s.selectedSections)selectedSections=s.selectedSections;
   if(s.contentData)contentData=s.contentData;
   if(s.polishedCopy)polishedCopy=s.polishedCopy;
+  if(s.chatTranscript)chatTranscript=s.chatTranscript;
+  if(s.chatHistory)chatHistory=s.chatHistory;
+  if(s.interviewComplete)interviewComplete=s.interviewComplete;
+  if(s.interviewSummary)window._interviewSummary=s.interviewSummary;
   document.querySelectorAll('.check-option[data-section]').forEach(el=>{el.classList.toggle('checked',!!selectedSections[el.dataset.section]);});
   checkHeroReady();
   if(data.output){window._htmlOutput=data.output;document.getElementById('htmlOutput').innerHTML=`<button class="copy-btn" onclick="copyOutput()">Copy HTML</button><pre>${esc(data.output)}</pre>`;document.querySelector('[data-step="output"]').disabled=false;}
 }
-function buildState(){return{heroLayout:selectedLayout,heroHeadline:v('heroHeadline'),heroSub:v('heroSub'),heroCTA:v('heroCTA'),heroCTALink:v('heroCTALink'),heroSecondaryCTA:v('heroSecondaryCTA'),heroSecondaryCTALink:v('heroSecondaryCTALink'),heroImage:v('heroImage'),selectedSections,contentData,polishedCopy};}
+function buildState(){return{heroLayout:selectedLayout,heroHeadline:v('heroHeadline'),heroSub:v('heroSub'),heroCTA:v('heroCTA'),heroCTALink:v('heroCTALink'),heroSecondaryCTA:v('heroSecondaryCTA'),heroSecondaryCTALink:v('heroSecondaryCTALink'),heroImage:v('heroImage'),selectedSections,contentData,polishedCopy,chatTranscript,chatHistory,interviewComplete,interviewSummary:window._interviewSummary||null};}
 function showSaveIndicator(){const el=document.getElementById('saveIndicator');el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),2000);}
 function autoSave(){}
 
@@ -472,120 +505,210 @@ function selectLayout(layout,card){
 function checkHeroReady(){document.getElementById('heroNext').disabled=!v('heroHeadline');}
 function toggleSection(key,el){selectedSections[key]=!selectedSections[key];el.classList.toggle('checked',selectedSections[key]);}
 
-/* CONTENT FORMS */
+/* CHAT INTERVIEW */
+let chatHistory=[];
+let chatTranscript=[];
+let interviewComplete=false;
+let chatBusy=false;
+
+const INTERVIEW_SYSTEM_PROMPT=`You are a friendly website copywriter interviewing a business owner to gather everything needed to write their homepage copy. Ask ONE question at a time. React warmly to their answers. Ask natural follow-ups if something is vague. Cover: what they do, who they help, the transformation they provide, their services, what makes them different, client results/testimonials, their process, and their call to action. When you have enough detail on all sections, end with exactly this phrase so the app knows to proceed: [INTERVIEW_COMPLETE] followed by a JSON summary of everything collected. Keep your tone warm, curious, and encouraging. Never say 'Great!' to start every message — vary your reactions.
+
+IMPORTANT RULES:
+- Ask ONE question at a time, never multiple
+- React genuinely to what they said before asking the next question
+- If an answer is vague, ask a follow-up before moving on
+- Keep it conversational — this should feel like chatting with a friend, not filling out a form
+- You need to cover these homepage sections the user selected: SELECTED_SECTIONS
+- Their hero info so far: HERO_INFO
+- When done, output [INTERVIEW_COMPLETE] then a JSON object with keys: businessDescription, targetAudience, transformation, problemStatement, solutionStatement, services (array of {name, description}), uniqueDifferentiator, testimonials (array of {quote, name}), process (array of {label, description}), aboutSnippet, ctaHeadline, ctaButtonText, faqItems (array of {question, answer}), trustProof`;
+
 function buildContentForms(){
-  const container=document.getElementById('contentForms');container.innerHTML='';
-  const defs={
-    trust:{title:'Trust / Social Proof',fields:[{id:'trustText',label:'Quick social proof notes',hint:'Numbers, names, client types',type:'text',placeholder:'e.g. 50+ clients, 5 years experience, worked with coaches therapists consultants'}]},
-    problem:{title:'Problem + Solution',fields:[{id:'problemStatement',label:'What problem do your clients have?',hint:"Use their words if you can",type:'textarea',placeholder:"e.g. They've been meaning to get a website for ages but don't know where to start"},{id:'solutionStatement',label:'How do you solve it?',type:'textarea',placeholder:'e.g. I walk them through it step by step, handle the tech, done in a weekend'}]},
-    services:{title:'Services',fields:[{id:'service1Name',label:'Service 1 name',type:'text',placeholder:'e.g. Brand Strategy Session'},{id:'service1Desc',label:'Service 1 — what they get',type:'text',placeholder:'e.g. 90 min call, walk away with clear positioning'},{id:'service2Name',label:'Service 2 name',type:'text',placeholder:'e.g. Full Website Build'},{id:'service2Desc',label:'Service 2 — what they get',type:'text',placeholder:'e.g. Complete website, 8 pages, done in a week'},{id:'service3Name',label:'Service 3 name (optional)',type:'text',placeholder:''},{id:'service3Desc',label:'Service 3 — what they get (optional)',type:'text',placeholder:''}]},
-    about:{title:'About Snippet',fields:[{id:'aboutSnippet',label:'A few notes about you',hint:'Who you are, background, why you do this',type:'textarea',placeholder:'e.g. Former corporate designer, left to help small businesses, 6 years, based in Austin'},{id:'aboutPhoto',label:'Your photo URL (optional)',type:'text',placeholder:'https://yoursite.com/photo.jpg'}]},
-    testimonials:{title:'Testimonials',fields:[{id:'t1Quote',label:'Testimonial 1 — paste the exact quote',type:'textarea',placeholder:'Paste the actual words the client said'},{id:'t1Name',label:'Client name + title',type:'text',placeholder:'e.g. Sarah T., Brand Photographer'},{id:'t2Quote',label:'Testimonial 2',type:'textarea',placeholder:''},{id:'t2Name',label:'Client name + title',type:'text',placeholder:''},{id:'t3Quote',label:'Testimonial 3 (optional)',type:'textarea',placeholder:''},{id:'t3Name',label:'Client name (optional)',type:'text',placeholder:''}]},
-    process:{title:'My Process',fields:[{id:'step1',label:'Step 1',hint:'Label — what happens',type:'text',placeholder:'e.g. Discovery call — 30 min to understand your goals'},{id:'step2',label:'Step 2',type:'text',placeholder:'e.g. Brand foundation — colors, fonts, personality'},{id:'step3',label:'Step 3',type:'text',placeholder:'e.g. Build — full site in 5 days'},{id:'step4',label:'Step 4 (optional)',type:'text',placeholder:'e.g. Launch and handoff'}]},
-    portfolio:{title:'Portfolio / Results',fields:[{id:'portfolio1Title',label:'Project 1 title',type:'text',placeholder:'e.g. The Brand Collective'},{id:'portfolio1Img',label:'Project 1 image URL',type:'text',placeholder:'https://...'},{id:'portfolio2Title',label:'Project 2 title',type:'text',placeholder:''},{id:'portfolio2Img',label:'Project 2 image URL',type:'text',placeholder:''},{id:'portfolio3Title',label:'Project 3 title (optional)',type:'text',placeholder:''},{id:'portfolio3Img',label:'Project 3 image URL (optional)',type:'text',placeholder:''}]},
-    faq:{title:'FAQ',fields:[{id:'faq1Q',label:'Q1',type:'text',placeholder:'e.g. How long does it take?'},{id:'faq1A',label:'A1 — rough answer',type:'textarea',placeholder:'e.g. Usually 5-7 days once we get started'},{id:'faq2Q',label:'Q2',type:'text',placeholder:''},{id:'faq2A',label:'A2',type:'textarea',placeholder:''},{id:'faq3Q',label:'Q3 (optional)',type:'text',placeholder:''},{id:'faq3A',label:'A3 (optional)',type:'textarea',placeholder:''}]},
-    cta:{title:'Final CTA',fields:[{id:'ctaHeadline',label:'What should the closing feel like?',hint:'The vibe, not necessarily exact words',type:'text',placeholder:'e.g. Warm and encouraging, help them take the next step'},{id:'ctaButtonText',label:'Button text',type:'text',placeholder:"e.g. Let's Do This"},{id:'ctaButtonLink',label:'Button link',type:'text',placeholder:'e.g. /contact or mailto:you@email.com'}]}
-  };
-  Object.entries(selectedSections).forEach(([key,active])=>{
-    if(!active)return;const def=defs[key];if(!def)return;
-    const section=document.createElement('div');section.style.marginBottom='48px';
-    section.innerHTML=`<h3 class="section-label" style="margin-bottom:4px">${def.title}</h3><div class="section-hint" style="margin-bottom:20px">Rough notes only &mdash; Claude does the writing</div>`;
-    def.fields.forEach(f=>{
-      const ig=document.createElement('div');ig.className='input-group';
-      ig.innerHTML=`<label>${f.label}</label>${f.hint?`<div class="input-hint">${f.hint}</div>`:''}${f.type==='textarea'?`<textarea id="${f.id}" placeholder="${f.placeholder||''}" oninput="contentData['${f.id}']=this.value"></textarea>`:`<input type="text" id="${f.id}" placeholder="${f.placeholder||''}" oninput="contentData['${f.id}']=this.value">`}`;
-      section.appendChild(ig);
-    });
-    container.appendChild(section);
-    def.fields.forEach(f=>{if(contentData[f.id]){const el=document.getElementById(f.id);if(el)el.value=contentData[f.id];}});
-  });
   goToStep('content');
-}
-
-/* CLAUDE API - COPY POLISH */
-function checkInputLength(){
-  // Count total characters across all filled content fields
-  const allNotes=[
-    v('heroHeadline'),v('heroSub'),
-    contentData.trustText,contentData.problemStatement,contentData.solutionStatement,
-    contentData.service1Name,contentData.service1Desc,contentData.service2Name,contentData.service2Desc,
-    contentData.aboutSnippet,contentData.t1Quote,contentData.t2Quote,
-    contentData.step1,contentData.step2,contentData.step3,
-    contentData.faq1Q,contentData.faq1A,contentData.faq2Q,contentData.faq2A,
-    contentData.ctaHeadline
-  ].filter(Boolean).join(' ');
-  return allNotes.trim().length;
-}
-
-async function polishCopy(){
-  // Warn if notes are very thin — Claude needs something to work with
-  const totalChars=checkInputLength();
-  if(totalChars < 80){
-    const goAnyway=confirm("Your notes are pretty short — Claude will do its best, but more detail means better copy.\n\nTip: Even one sentence per section (what they get, how it feels, who it's for) makes a big difference.\n\nGo ahead with what you've got?");
-    if(!goAnyway)return;
+  if(chatTranscript.length>0){
+    // Restore previous chat
+    const msgEl=document.getElementById('chatMessages');
+    msgEl.innerHTML='';
+    chatTranscript.forEach(m=>addChatBubble(m.role,m.content,false));
+    if(interviewComplete){
+      disableChatInput();
+    }
+    return;
   }
+  startInterview();
+}
+
+function startInterview(){
+  chatHistory=[];
+  chatTranscript=[];
+  interviewComplete=false;
+  document.getElementById('chatMessages').innerHTML='';
+
+  const activeSections=Object.entries(selectedSections).filter(([,v])=>v).map(([k])=>k);
+  const sectionNames=activeSections.join(', ');
+  const heroInfo=`What they do: ${v('heroHeadline')||'(not yet provided)'}. Who they help: ${v('heroSub')||'(not yet provided)'}`;
+
+  const systemPrompt=INTERVIEW_SYSTEM_PROMPT
+    .replace('SELECTED_SECTIONS',sectionNames)
+    .replace('HERO_INFO',heroInfo);
+
+  chatHistory.push({role:'user',content:`[SYSTEM CONTEXT — do not repeat this to the user]\nSystem prompt: ${systemPrompt}\n\nNow start the interview. Greet them warmly and ask your first question. The user's hero notes say: "${v('heroHeadline')||''}" and they help: "${v('heroSub')||''}". Use this as context but ask them to tell you more in their own words.`});
+
+  sendToClaudeChat();
+}
+
+function addChatBubble(role,text,animate=true){
+  const msgEl=document.getElementById('chatMessages');
+  const bubble=document.createElement('div');
+  bubble.className=`chat-bubble chat-bubble-${role==='assistant'?'ai':'user'}`;
+  if(role==='assistant'){
+    // Strip [INTERVIEW_COMPLETE] and JSON from display
+    let displayText=text.replace(/\[INTERVIEW_COMPLETE\][\s\S]*/,'').trim();
+    bubble.innerHTML=`<div class="chat-avatar">C</div><div class="chat-text">${formatChatText(displayText)}</div>`;
+  } else {
+    bubble.textContent=text;
+  }
+  if(!animate)bubble.style.animation='none';
+  msgEl.appendChild(bubble);
+  msgEl.scrollTop=msgEl.scrollHeight;
+}
+
+function formatChatText(text){
+  return text.replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>').replace(/^/,'<p>').replace(/$/,'</p>');
+}
+
+function showTypingIndicator(){
+  const msgEl=document.getElementById('chatMessages');
+  const typing=document.createElement('div');
+  typing.className='chat-typing';
+  typing.id='typingIndicator';
+  typing.innerHTML=`<div class="chat-avatar">C</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  msgEl.appendChild(typing);
+  msgEl.scrollTop=msgEl.scrollHeight;
+}
+
+function removeTypingIndicator(){
+  const el=document.getElementById('typingIndicator');
+  if(el)el.remove();
+}
+
+function sendChat(){
+  if(chatBusy||interviewComplete)return;
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
+  addChatBubble('user',text);
+  chatTranscript.push({role:'user',content:text});
+  chatHistory.push({role:'user',content:text});
+  sendToClaudeChat();
+}
+
+async function sendToClaudeChat(){
+  chatBusy=true;
+  document.getElementById('chatSendBtn').disabled=true;
+  showTypingIndicator();
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:800,
+        system:INTERVIEW_SYSTEM_PROMPT
+          .replace('SELECTED_SECTIONS',Object.entries(selectedSections).filter(([,v])=>v).map(([k])=>k).join(', '))
+          .replace('HERO_INFO',`What they do: ${v('heroHeadline')||'(not provided)'}. Who they help: ${v('heroSub')||'(not provided)'}`),
+        messages:chatHistory.length>0&&chatHistory[0].role==='user'?chatHistory:chatHistory.slice(1)
+      })
+    });
+    const data=await response.json();
+    const aiText=data.content?.find(b=>b.type==='text')?.text||"Sorry, I had a moment — could you repeat that?";
+
+    removeTypingIndicator();
+    chatHistory.push({role:'assistant',content:aiText});
+    chatTranscript.push({role:'assistant',content:aiText});
+    addChatBubble('assistant',aiText);
+
+    // Check for interview complete
+    if(aiText.includes('[INTERVIEW_COMPLETE]')){
+      interviewComplete=true;
+      // Extract JSON summary
+      const jsonMatch=aiText.match(/\[INTERVIEW_COMPLETE\]\s*([\s\S]*)/);
+      if(jsonMatch){
+        try{
+          const summary=JSON.parse(jsonMatch[1].trim());
+          window._interviewSummary=summary;
+        }catch(e){
+          console.warn('Could not parse interview summary JSON:',e);
+          window._interviewSummary=null;
+        }
+      }
+      disableChatInput();
+      // Add proceed button inside chat
+      const msgEl=document.getElementById('chatMessages');
+      const btnDiv=document.createElement('div');
+      btnDiv.style.cssText='align-self:center;margin-top:12px';
+      btnDiv.innerHTML=`<button class="chat-ready-btn" onclick="polishCopyFromInterview()">See My Copy &rarr;</button>`;
+      msgEl.appendChild(btnDiv);
+      msgEl.scrollTop=msgEl.scrollHeight;
+    }
+
+    saveToSupabase();
+  }catch(e){
+    removeTypingIndicator();
+    console.error('Chat error:',e);
+    addChatBubble('assistant',"Hmm, something went wrong on my end. Could you try sending that again?");
+  }
+  chatBusy=false;
+  document.getElementById('chatSendBtn').disabled=false;
+}
+
+function disableChatInput(){
+  document.getElementById('chatInput').disabled=true;
+  document.getElementById('chatInput').placeholder='Interview complete!';
+  document.getElementById('chatSendBtn').disabled=true;
+}
+
+/* CLAUDE API - COPY FROM INTERVIEW TRANSCRIPT */
+async function polishCopyFromInterview(){
   goToStep('copy');
   document.getElementById('generatingState').style.display='block';
   document.getElementById('copyReviewState').style.display='none';
-  const sections=Object.entries(selectedSections).filter(([,v])=>v).map(([k])=>k);
-  const sectionNotes=sections.map(key=>{
-    const notes=getSectionNotes(key);
-    return notes?`=== ${key.toUpperCase()} ===\n${notes}`:null;
-  }).filter(Boolean).join('\n\n');
-  const voiceContext=brandVoice?`BRAND VOICE GUIDELINES — match this voice precisely:\n${brandVoice}`:'Voice: warm, direct, genuine. Sounds like a real person, not a template.';
-  const heroNotes=v('heroHeadline');
-  const heroSubNotes=v('heroSub')||'(not provided — infer from context)';
 
-  const systemInstruction=`You are a professional website copywriter. Take raw notes and write polished homepage copy from scratch — do NOT echo back or lightly edit the notes. Use them as raw material only. Write FRESH copy. Every line must earn its place. Return ONLY valid JSON, no preamble, no markdown, no code fences.
+  const transcript=chatTranscript.map(m=>`${m.role==='user'?'BUSINESS OWNER':'INTERVIEWER'}: ${m.content}`).join('\n\n');
+  const voiceContext=brandVoice?`BRAND VOICE GUIDELINES — match this voice precisely:\n${brandVoice}`:'Voice: warm, direct, genuine. Sounds like a real person, not a template.';
+  const sections=Object.entries(selectedSections).filter(([,v])=>v).map(([k])=>k);
+
+  const systemInstruction=`You are a professional website copywriter. Here is a full interview transcript with a business owner. Extract all the relevant details and write polished, conversion-focused homepage copy. Never restate their words — rewrite everything fresh. Return ONLY valid JSON, no preamble, no markdown, no code fences.
 
 RULES:
-- Hero headline: punchy, specific, stops someone mid-scroll. Max 10 words. Never a restatement.
+- Hero headline: punchy, specific, stops someone mid-scroll. Max 10 words.
 - Hero subheadline: one sentence that makes the ideal client feel seen.
 - Problem: emotional language — the feeling of the problem, not just the facts.
 - Solution: confident and warm, positions them as the specific answer.
 - Services: lead with outcome the client gets, not features.
 - About: first person, warm, specific — sounds like them not a bio.
 - CTA headline: makes them want to act now, specific not generic.
-- Testimonials: VERBATIM always — never rewrite.
-- If notes are sparse, infer from context and write something compelling anyway.
-${voiceContext}`;
+- Testimonials: VERBATIM always — never rewrite client quotes.
+- If info is missing for a section, write something compelling based on context.
+${voiceContext}
 
-  // CALL 1: Hero, problem, services, trust
+The homepage needs these sections: ${sections.join(', ')}`;
+
   const prompt1=`${systemInstruction}
 
-BUSINESS OWNER NOTES:
-What they do: ${heroNotes}
-Who they help: ${heroSubNotes}
-Trust/proof: ${contentData.trustText||''}
-Problem clients face: ${contentData.problemStatement||''}
-How they solve it: ${contentData.solutionStatement||''}
-Service 1: ${contentData.service1Name||''} — ${contentData.service1Desc||''}
-Service 2: ${contentData.service2Name||''} — ${contentData.service2Desc||''}
-Service 3: ${contentData.service3Name||''} — ${contentData.service3Desc||''}
-About them: ${contentData.aboutSnippet||''}
+INTERVIEW TRANSCRIPT:
+${transcript}
 
-Return JSON with exactly these keys (empty string if no notes provided):
+Return JSON with exactly these keys (empty string if section not selected or info not gathered):
 {"heroHeadline":"","heroSubheadline":"","trustText":"","problemHeadline":"","problemBody":"","solutionBody":"","service1Name":"","service1Desc":"","service2Name":"","service2Desc":"","service3Name":"","service3Desc":"","aboutBody":""}`;
 
-  // CALL 2: Testimonials, process, FAQ, CTA
   const prompt2=`${systemInstruction}
 
-BUSINESS OWNER NOTES:
-What they do: ${heroNotes}
-Who they help: ${heroSubNotes}
-Testimonial 1: ${contentData.t1Quote||''} — ${contentData.t1Name||''}
-Testimonial 2: ${contentData.t2Quote||''} — ${contentData.t2Name||''}
-Testimonial 3: ${contentData.t3Quote||''} — ${contentData.t3Name||''}
-Process step 1: ${contentData.step1||''}
-Process step 2: ${contentData.step2||''}
-Process step 3: ${contentData.step3||''}
-Process step 4: ${contentData.step4||''}
-FAQ Q1: ${contentData.faq1Q||''} A1: ${contentData.faq1A||''}
-FAQ Q2: ${contentData.faq2Q||''} A2: ${contentData.faq2A||''}
-FAQ Q3: ${contentData.faq3Q||''} A3: ${contentData.faq3A||''}
-CTA vibe: ${contentData.ctaHeadline||''}
-CTA button: ${contentData.ctaButtonText||''}
+INTERVIEW TRANSCRIPT:
+${transcript}
 
-Return JSON with exactly these keys (empty string if no notes provided):
+Return JSON with exactly these keys (empty string if section not selected or info not gathered):
 {"t1Quote":"","t1Name":"","t2Quote":"","t2Name":"","t3Quote":"","t3Name":"","step1Label":"","step1Desc":"","step2Label":"","step2Desc":"","step3Label":"","step3Desc":"","step4Label":"","step4Desc":"","faq1Q":"","faq1A":"","faq2Q":"","faq2A":"","faq3Q":"","faq3A":"","ctaHeadline":"","ctaButtonText":""}`;
 
   async function callClaude(prompt){
@@ -600,34 +723,47 @@ Return JSON with exactly these keys (empty string if no notes provided):
   }
 
   try{
-    // Fire both calls in parallel
     const[result1,result2]=await Promise.all([callClaude(prompt1),callClaude(prompt2)]);
     polishedCopy={...result1,...result2};
     renderCopyReview();
   }catch(e){
     console.error('Claude API error:',e);
-    polishedCopy=buildFallbackCopy();
+    // Fallback: try to use interview summary if available
+    polishedCopy=buildFallbackFromInterview();
     renderCopyReview();
   }
 }
 
-function getSectionNotes(key){
-  const m={
-    trust:contentData.trustText,
-    problem:[contentData.problemStatement,contentData.solutionStatement].filter(Boolean).join('\n'),
-    services:[contentData.service1Name,contentData.service1Desc,contentData.service2Name,contentData.service2Desc,contentData.service3Name,contentData.service3Desc].filter(Boolean).join('\n'),
-    about:contentData.aboutSnippet,
-    testimonials:[contentData.t1Quote,contentData.t1Name,contentData.t2Quote,contentData.t2Name,contentData.t3Quote,contentData.t3Name].filter(Boolean).join('\n'),
-    process:[contentData.step1,contentData.step2,contentData.step3,contentData.step4].filter(Boolean).join('\n'),
-    portfolio:[contentData.portfolio1Title,contentData.portfolio2Title,contentData.portfolio3Title].filter(Boolean).join('\n'),
-    faq:[contentData.faq1Q,contentData.faq1A,contentData.faq2Q,contentData.faq2A,contentData.faq3Q,contentData.faq3A].filter(Boolean).join('\n'),
-    cta:[contentData.ctaHeadline,contentData.ctaButtonText].filter(Boolean).join('\n')
+function buildFallbackFromInterview(){
+  const s=window._interviewSummary||{};
+  const svcs=s.services||[];
+  const tests=s.testimonials||[];
+  const steps=s.process||[];
+  const faqs=s.faqItems||[];
+  return{
+    heroHeadline:v('heroHeadline')||s.businessDescription||'',
+    heroSubheadline:v('heroSub')||s.targetAudience||'',
+    trustText:s.trustProof||'',
+    problemHeadline:'Sound familiar?',
+    problemBody:s.problemStatement||'',
+    solutionBody:s.solutionStatement||'',
+    service1Name:svcs[0]?.name||'',service1Desc:svcs[0]?.description||'',
+    service2Name:svcs[1]?.name||'',service2Desc:svcs[1]?.description||'',
+    service3Name:svcs[2]?.name||'',service3Desc:svcs[2]?.description||'',
+    aboutBody:s.aboutSnippet||'',
+    t1Quote:tests[0]?.quote||'',t1Name:tests[0]?.name||'',
+    t2Quote:tests[1]?.quote||'',t2Name:tests[1]?.name||'',
+    t3Quote:tests[2]?.quote||'',t3Name:tests[2]?.name||'',
+    step1Label:steps[0]?.label||'',step1Desc:steps[0]?.description||'',
+    step2Label:steps[1]?.label||'',step2Desc:steps[1]?.description||'',
+    step3Label:steps[2]?.label||'',step3Desc:steps[2]?.description||'',
+    step4Label:steps[3]?.label||'',step4Desc:steps[3]?.description||'',
+    faq1Q:faqs[0]?.question||'',faq1A:faqs[0]?.answer||'',
+    faq2Q:faqs[1]?.question||'',faq2A:faqs[1]?.answer||'',
+    faq3Q:faqs[2]?.question||'',faq3A:faqs[2]?.answer||'',
+    ctaHeadline:s.ctaHeadline||'Ready to get started?',
+    ctaButtonText:s.ctaButtonText||"Let's Do This"
   };
-  return m[key]||'';
-}
-
-function buildFallbackCopy(){
-  return{heroHeadline:v('heroHeadline'),heroSubheadline:v('heroSub'),problemHeadline:'Sound familiar?',problemBody:contentData.problemStatement||'',solutionBody:contentData.solutionStatement||'',service1Name:contentData.service1Name||'',service1Desc:contentData.service1Desc||'',service2Name:contentData.service2Name||'',service2Desc:contentData.service2Desc||'',service3Name:contentData.service3Name||'',service3Desc:contentData.service3Desc||'',aboutBody:contentData.aboutSnippet||'',t1Quote:contentData.t1Quote||'',t1Name:contentData.t1Name||'',t2Quote:contentData.t2Quote||'',t2Name:contentData.t2Name||'',t3Quote:contentData.t3Quote||'',t3Name:contentData.t3Name||'',step1Label:'',step1Desc:contentData.step1||'',step2Label:'',step2Desc:contentData.step2||'',step3Label:'',step3Desc:contentData.step3||'',step4Label:'',step4Desc:contentData.step4||'',trustText:contentData.trustText||'',faq1Q:contentData.faq1Q||'',faq1A:contentData.faq1A||'',faq2Q:contentData.faq2Q||'',faq2A:contentData.faq2A||'',faq3Q:contentData.faq3Q||'',faq3A:contentData.faq3A||'',ctaHeadline:contentData.ctaHeadline||'Ready to get started?',ctaButtonText:contentData.ctaButtonText||"Let's Do This"};
 }
 
 /* RENDER COPY REVIEW */
@@ -667,12 +803,13 @@ function renderCopyReview(){
     if(pc.faq3Q){ff.push({label:'Q3',id:'pc_faq3Q',value:pc.faq3Q,type:'input'});ff.push({label:'A3',id:'pc_faq3A',value:pc.faq3A||'',type:'textarea'});}
     sections.push({key:'faq',title:'&#10067; FAQ',fields:ff});
   }
-  if(selectedSections.cta&&pc.ctaHeadline)sections.push({key:'cta',title:'&#128640; Final CTA',fields:[{label:'Closing headline',id:'pc_ctaHeadline',value:pc.ctaHeadline,type:'input'},{label:'Button text',id:'pc_ctaButtonText',value:pc.ctaButtonText||contentData.ctaButtonText||"Let's Do This",type:'input'}]});
+  if(selectedSections.cta&&pc.ctaHeadline)sections.push({key:'cta',title:'&#128640; Final CTA',fields:[{label:'Closing headline',id:'pc_ctaHeadline',value:pc.ctaHeadline,type:'input'},{label:'Button text',id:'pc_ctaButtonText',value:pc.ctaButtonText||"Let's Do This",type:'input'}]});
 
   sections.forEach(sec=>{
     // "You said" = first field's raw note from contentData
     // Map each section to its most meaningful "you said" note and "claude wrote" output
-    const rawNoteMap={hero:v('heroHeadline'),trust:contentData.trustText,problem:contentData.problemStatement,services:contentData.service1Name+' — '+(contentData.service1Desc||''),about:contentData.aboutSnippet,testimonials:contentData.t1Quote,process:contentData.step1,faq:contentData.faq1Q,cta:contentData.ctaHeadline};
+    const is=window._interviewSummary||{};
+    const rawNoteMap={hero:v('heroHeadline'),trust:is.trustProof||'',problem:is.problemStatement||'',services:is.services?is.services.map(s=>s.name).join(', '):'',about:is.aboutSnippet||'',testimonials:is.testimonials?.[0]?.quote||'',process:is.process?.[0]?.label||'',faq:is.faqItems?.[0]?.question||'',cta:is.ctaHeadline||''};
     const claudeWroteMap={hero:pc.heroHeadline,trust:pc.trustText,problem:pc.problemBody,services:pc.service1Desc,about:pc.aboutBody,testimonials:pc.t1Quote,process:pc.step1Desc,faq:pc.faq1A,cta:pc.ctaHeadline};
     const youSaid=(rawNoteMap[sec.key]||'').trim();
     const claudeWrote=(claudeWroteMap[sec.key]||sec.fields[0]?.value||'').trim();
@@ -718,12 +855,12 @@ function generateHomepage(){
   if(selectedSections.trust&&pc.trustText)html+=`<section style="background:var(--color-bg-dark);padding:24px 5%;border-top:2px solid rgba(255,255,255,0.1)"><p style="color:var(--color-accent);font-weight:700;text-align:center;font-size:1.125rem;margin:0">${pc.trustText}</p></section>\n\n`;
   if(selectedSections.problem&&(pc.problemBody||pc.solutionBody))html+=`<section class="section-light"><div style="max-width:800px;margin:0 auto"><h2 style="color:var(--color-primary);margin-bottom:1rem">${pc.problemHeadline||'Sound familiar?'}</h2>${pc.problemBody?`<p style="font-size:1.25rem;margin-bottom:2rem">${pc.problemBody}</p>`:''}${pc.solutionBody?`<div style="background:var(--color-bg-dark);color:var(--color-text-on-dark);padding:32px;border-radius:var(--border-radius)"><p style="opacity:.9;font-size:1.125rem;margin:0">${pc.solutionBody}</p></div>`:''}</div></section>\n\n`;
   if(selectedSections.services&&pc.service1Name){const svcs=[[pc.service1Name,pc.service1Desc],[pc.service2Name,pc.service2Desc],[pc.service3Name,pc.service3Desc]].filter(([n])=>n);html+=`<section class="section-dark"><div style="max-width:1200px;margin:0 auto"><h2 style="color:var(--color-accent);text-align:center;margin-bottom:2rem">What I Do</h2><div class="services-grid">${svcs.map(([name,desc])=>`<div class="card"><h3 style="color:var(--color-primary);margin-bottom:.75rem">${name}</h3><p style="opacity:.85;margin:0">${desc||''}</p></div>`).join('')}</div></div></section>\n\n`;}
-  if(selectedSections.about&&pc.aboutBody)html+=`<section class="section-light"><div style="max-width:800px;margin:0 auto;display:flex;gap:40px;align-items:center">${contentData.aboutPhoto?`<img src="${contentData.aboutPhoto}" alt="" style="width:160px;height:160px;object-fit:cover;border-radius:var(--border-radius);flex-shrink:0">`:''}<div><h2 style="margin-bottom:1rem">About Me</h2><p style="font-size:1.125rem;margin-bottom:1.5rem">${pc.aboutBody}</p><a href="/about" class="btn-secondary" style="font-size:1rem;padding:12px 24px">Read More &rarr;</a></div></div></section>\n\n`;
+  if(selectedSections.about&&pc.aboutBody)html+=`<section class="section-light"><div style="max-width:800px;margin:0 auto"><h2 style="margin-bottom:1rem">About Me</h2><p style="font-size:1.125rem;margin-bottom:1.5rem">${pc.aboutBody}</p><a href="/about" class="btn-secondary" style="font-size:1rem;padding:12px 24px">Read More &rarr;</a></div></section>\n\n`;
   if(selectedSections.testimonials&&(pc.t1Quote||pc.t2Quote)){const ts=[[pc.t1Quote,pc.t1Name],[pc.t2Quote,pc.t2Name],[pc.t3Quote,pc.t3Name]].filter(([q])=>q);html+=`<section class="section-dark"><div style="max-width:1200px;margin:0 auto"><h2 style="color:var(--color-accent);text-align:center;margin-bottom:2rem">What Clients Say</h2><div class="testimonials-grid">${ts.map(([q,n])=>`<div class="testimonial"><p style="margin:0 0 1rem">&ldquo;${q}&rdquo;</p>${n?`<cite style="display:block;font-style:normal;font-weight:700;color:var(--color-primary)">&mdash; ${n}</cite>`:''}</div>`).join('')}</div></div></section>\n\n`;}
   if(selectedSections.process&&pc.step1Desc){const steps=[[pc.step1Label,pc.step1Desc],[pc.step2Label,pc.step2Desc],[pc.step3Label,pc.step3Desc],[pc.step4Label,pc.step4Desc]].filter(([,d])=>d);html+=`<section class="section-light"><div style="max-width:1200px;margin:0 auto"><h2 style="text-align:center;margin-bottom:2rem;color:var(--color-primary)">How It Works</h2><div class="process-steps">${steps.map(([label,desc],i)=>`<div class="process-step"><div class="process-number">0${i+1}</div><h4 style="margin:12px 0 8px">${label||''}</h4><p style="font-size:.95rem;opacity:.8;margin:0">${desc}</p></div>`).join('')}</div></div></section>\n\n`;}
-  if(selectedSections.portfolio&&contentData.portfolio1Title){const items=[[contentData.portfolio1Title,contentData.portfolio1Img],[contentData.portfolio2Title,contentData.portfolio2Img],[contentData.portfolio3Title,contentData.portfolio3Img]].filter(([t])=>t);html+=`<section class="section-dark"><div style="max-width:1200px;margin:0 auto"><h2 style="color:var(--color-accent);text-align:center;margin-bottom:2rem">My Work</h2><div class="portfolio-grid">${items.map(([title,img])=>`<div>${img?`<img src="${img}" alt="${title}" style="width:100%;aspect-ratio:4/3;object-fit:cover">`:`<div style="aspect-ratio:4/3;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4)">Add image</div>`}<div class="portfolio-item-label" style="color:var(--color-text-on-dark)">${title}</div></div>`).join('')}</div></div></section>\n\n`;}
+  if(selectedSections.portfolio){const portfolioData=contentData.portfolio1Title?[[contentData.portfolio1Title,contentData.portfolio1Img],[contentData.portfolio2Title,contentData.portfolio2Img],[contentData.portfolio3Title,contentData.portfolio3Img]].filter(([t])=>t):[];if(portfolioData.length)html+=`<section class="section-dark"><div style="max-width:1200px;margin:0 auto"><h2 style="color:var(--color-accent);text-align:center;margin-bottom:2rem">My Work</h2><div class="portfolio-grid">${portfolioData.map(([title,img])=>`<div>${img?`<img src="${img}" alt="${title}" style="width:100%;aspect-ratio:4/3;object-fit:cover">`:`<div style="aspect-ratio:4/3;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4)">Add image</div>`}<div class="portfolio-item-label" style="color:var(--color-text-on-dark)">${title}</div></div>`).join('')}</div></div></section>\n\n`;}
   if(selectedSections.faq&&pc.faq1Q){const faqs=[[pc.faq1Q,pc.faq1A],[pc.faq2Q,pc.faq2A],[pc.faq3Q,pc.faq3A]].filter(([q])=>q);html+=`<section class="section-light"><div style="max-width:800px;margin:0 auto"><h2 style="text-align:center;margin-bottom:2rem;color:var(--color-primary)">Frequently Asked Questions</h2>${faqs.map(([q,a])=>`<div class="faq-item"><div class="faq-q">${q}</div><div class="faq-a">${a||''}</div></div>`).join('')}</div></section>\n\n`;}
-  if(selectedSections.cta&&pc.ctaHeadline){const ctaBtn=pc.ctaButtonText||contentData.ctaButtonText||"Let's Talk";const ctaLink=contentData.ctaButtonLink||'#contact';html+=`<section class="cta-section"><h2>${pc.ctaHeadline}</h2><a href="${ctaLink}" style="display:inline-block;padding:18px 48px;background:white;color:var(--color-primary);font-weight:700;font-size:1.125rem;border-radius:var(--border-radius);text-decoration:none;margin-top:1rem">${ctaBtn}</a></section>\n\n`;}
+  if(selectedSections.cta&&pc.ctaHeadline){const ctaBtn=pc.ctaButtonText||"Let's Talk";const ctaLink='#contact';html+=`<section class="cta-section"><h2>${pc.ctaHeadline}</h2><a href="${ctaLink}" style="display:inline-block;padding:18px 48px;background:white;color:var(--color-primary);font-weight:700;font-size:1.125rem;border-radius:var(--border-radius);text-decoration:none;margin-top:1rem">${ctaBtn}</a></section>\n\n`;}
 
   html+=`<footer class="site-footer"><p>&copy; ${new Date().getFullYear()} Your Name &middot; All rights reserved</p></footer>\n\n</body>\n</html>`;
 
