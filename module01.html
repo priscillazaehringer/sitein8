@@ -307,7 +307,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <body>
 
 <!-- AUTH REDIRECT (shown if not signed in) -->
-<div id="authGate" class="auth-gate">
+<div id="authGate" class="auth-gate" style="display:none">
   <div class="auth-box">
     <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:32px">sitein8</div>
     <h2>Sign in first</h2>
@@ -320,7 +320,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <div class="save-indicator" id="saveIndicator">✓ Saved</div>
 
 <!-- MAIN APP (hidden until authenticated) -->
-<div id="mainApp" style="display:none">
+<div id="mainApp">
 
 <div class="user-bar">
   <span class="user-bar-email" id="userEmail"></span>
@@ -1756,7 +1756,7 @@ function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/
 
 document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{ if(!b.disabled) goToStep(b.dataset.step); }));
 renderQuiz();
-initAuth();
+// initAuth();
 </script>
 </body>
 </html>

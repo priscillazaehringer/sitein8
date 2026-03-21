@@ -170,7 +170,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <!-- ============================================
      AUTH GATE — shown until signed in
      ============================================ -->
-<div id="authGate" class="auth-gate">
+<div id="authGate" class="auth-gate" style="display:none">
   <div class="auth-box">
     <div class="auth-wordmark">sitein8</div>
     <h2 id="authTitle">Sign In</h2>
@@ -192,7 +192,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <!-- ============================================
      MAIN APP — shown after sign in
      ============================================ -->
-<div id="mainApp" style="display:none">
+<div id="mainApp">
 
 <div class="user-bar">
   <span class="user-bar-email" id="userEmail"></span>
@@ -652,7 +652,7 @@ function showSaveIndicator() {
   setTimeout(() => el.classList.remove('visible'), 2000);
 }
 
-initAuth();
+// initAuth();
 </script>
 </body>
 </html>

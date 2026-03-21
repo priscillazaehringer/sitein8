@@ -135,7 +135,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 </head>
 <body>
 
-<div id="authGate" class="auth-gate">
+<div id="authGate" class="auth-gate" style="display:none">
   <div class="auth-box">
     <div style="font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:32px">sitein8</div>
     <h2>Sign in first</h2>
@@ -146,7 +146,7 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 
 <div class="save-indicator" id="saveIndicator">&#10003; Saved</div>
 
-<div id="mainApp" style="display:none">
+<div id="mainApp">
 <div class="user-bar">
   <span class="user-bar-email" id="userEmail"></span>
   <div style="display:flex;gap:12px;align-items:center">
@@ -749,7 +749,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled)goToStep(b.dataset.step);}));
 document.getElementById('heroHeadline').addEventListener('input',checkHeroReady);
 checkHeroReady();
-initAuth();
+// initAuth();
 </script>
 </body>
 </html>
