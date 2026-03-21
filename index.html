@@ -349,6 +349,12 @@ async function initAuth() {
     return;
   }
 
+  if (!db) {
+    console.error('Supabase client not available');
+    showAuthGate();
+    return;
+  }
+
   // Listen for auth changes FIRST (catches magic link token in URL hash)
   db.auth.onAuthStateChange((event, session) => {
     // If this is a password recovery flow, show the recovery form
@@ -792,7 +798,10 @@ function copyHex(swatch, hex) {
 // ============================================================
 // START
 // ============================================================
-initAuth();
+initAuth().catch(e => {
+  console.error('initAuth failed:', e);
+  showAuthGate();
+});
 </script>
 </body>
 </html>
