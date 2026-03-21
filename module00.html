@@ -516,28 +516,14 @@ async function initAuth() {
     return;
   }
 
-  // Register listener FIRST — catches sign-in events
-  db.auth.onAuthStateChange((event, session) => {
-    if (DEV_MODE) return;
-    if (event === 'PASSWORD_RECOVERY' && session?.user) {
-      // Redirect to dashboard which has the proper recovery form
-      window.location.href = 'index.html#type=recovery';
-      return;
-    } else if (event === 'SIGNED_IN' && session?.user) {
-      // Fresh sign-in — go to dashboard
-      window.location.href = 'index.html';
-    } else if (event === 'SIGNED_OUT') {
-      document.getElementById('authGate').style.display = 'flex';
-      document.getElementById('mainApp').style.display = 'none';
-    }
-  });
+  // Check existing session FIRST so we know whether this is a
+  // returning user or someone who just signed in via the form.
+  const { data: { session: existingSession } } = await db.auth.getSession();
+  const hadSessionOnLoad = !!(existingSession?.user);
 
-  // Check existing session
-  const { data: { session } } = await db.auth.getSession();
-  if (session?.user) {
-    // Already signed in — show module00 normally (don't redirect)
-    // User came here intentionally
-    currentUser = session.user;
+  if (hadSessionOnLoad) {
+    // Already signed in — show module00 normally (user came here intentionally)
+    currentUser = existingSession.user;
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('userEmail').textContent = currentUser.email;
@@ -547,6 +533,24 @@ async function initAuth() {
     // Not signed in — show sign-in form
     document.getElementById('authGate').style.display = 'flex';
   }
+
+  // Listen for auth changes AFTER checking existing session.
+  // Only redirect on SIGNED_IN if the user didn't already have a session
+  // (i.e., they just completed a fresh sign-in from the form).
+  db.auth.onAuthStateChange((event, session) => {
+    if (DEV_MODE) return;
+    if (event === 'PASSWORD_RECOVERY' && session?.user) {
+      // Redirect to dashboard which has the proper recovery form
+      window.location.href = 'index.html#type=recovery';
+      return;
+    } else if (event === 'SIGNED_IN' && session?.user && !hadSessionOnLoad) {
+      // Fresh sign-in from the form — go to dashboard
+      window.location.href = 'index.html';
+    } else if (event === 'SIGNED_OUT') {
+      document.getElementById('authGate').style.display = 'flex';
+      document.getElementById('mainApp').style.display = 'none';
+    }
+  });
 }
 
 /* ============================================
