@@ -447,7 +447,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
     </div>
     <div class="btn-row">
       <button class="btn btn--outline" onclick="goToStep('reveal')">← Back</button>
-      <button class="btn btn--yellow" onclick="generateOutput()">Generate My Brand System →</button>
+      <button class="btn btn--yellow" onclick="generateOutput().catch(e=>{console.error(e);alert('Something went wrong. Please try again.')})">Generate My Brand System →</button>
     </div>
   </div>
 
@@ -470,7 +470,10 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 
     <div class="btn-row" style="margin-top:40px">
       <button class="btn btn--outline" onclick="goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'reveal')">← Back</button>
-      <a class="btn btn--yellow" href="index.html">Back to Dashboard →</a>
+      <a class="btn btn--pink" href="module02.html">Continue to Module 02: Homepage →</a>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <a href="index.html" style="font-size:15px;color:var(--text-light);text-decoration:underline">or go back to Dashboard</a>
     </div>
   </div>
 
@@ -631,32 +634,49 @@ async function saveToSupabase() {
     : null;
 
   const body = {
-    project_id: projectId,
-    module_key: 'module01',
     data: state,
     output: outputValue,
     updated_at: new Date().toISOString()
   };
 
+  const base = 'https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1';
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+
   try {
-    // Use POST with upsert (merge-duplicates handles conflicts automatically)
-    const r = await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify(body)
+    // First try PATCH on existing row (created by autoSave)
+    const r = await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module01`, {
+      method: 'PATCH', headers, body: JSON.stringify(body)
     });
-    console.log('upsert result:', r.status, r.statusText);
-    if (r.ok || r.status === 201 || r.status === 204) {
+    console.log('save PATCH result:', r.status, r.statusText);
+
+    if (r.ok || r.status === 204) {
+      // PATCH 204 can mean 0 rows matched — check if row exists
+      const check = await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module01&select=project_id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token } });
+      const rows = await check.json();
+      if (!rows?.length) {
+        // No row yet — create one with full payload
+        console.log('No existing row, inserting...');
+        const ins = await fetch(`${base}/module_data`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ project_id: projectId, module_key: 'module01', ...body })
+        });
+        console.log('save INSERT result:', ins.status, ins.statusText);
+        if (!ins.ok && ins.status !== 201) {
+          const err = await ins.text();
+          console.error('save INSERT error:', ins.status, err);
+          return;
+        }
+      }
       console.log('saved OK. output set:', !!outputValue);
       showSaveIndicator();
     } else {
       const err = await r.text();
-      console.error('save error:', r.status, err);
+      console.error('save PATCH error:', r.status, err);
     }
   } catch(e) { console.error('save fetch error:', e); }
 }
@@ -1424,7 +1444,7 @@ function renderReveal() {
 
 function goToNextFromReveal() {
   if(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes) goToStep('customize');
-  else generateOutput();
+  else generateOutput().catch(e => { console.error('generateOutput error:', e); alert('Something went wrong generating your brand system. Please try again.'); });
 }
 
 /* === CUSTOMIZATION === */
@@ -1571,7 +1591,9 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
 
   renderOutputPanel();
   document.querySelector('[data-step="output"]').disabled=false;
-  await saveToSupabase(); goToStep('output');
+  goToStep('output');
+  // Save after navigating so user sees the Done panel immediately
+  try { await saveToSupabase(); } catch(e) { console.error('save failed after output:', e); }
 }
 
 function renderOutputPanel() {
