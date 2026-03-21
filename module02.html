@@ -886,7 +886,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled)goToStep(b.dataset.step);}));
 document.getElementById('heroHeadline').addEventListener('input',checkHeroReady);
 checkHeroReady();
-// initAuth();
+initAuth();
 </script>
 </body>
 </html>
