@@ -15,6 +15,8 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 .auth-box h2{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);margin-bottom:10px}
 .auth-box p{font-size:16px;color:var(--text-light);margin-bottom:28px}
 .auth-wordmark{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);letter-spacing:-1px;margin-bottom:28px}
+.auth-input{width:100%;padding:18px 20px;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;border:3px solid #e0dde6;background:var(--white);color:var(--text);margin-bottom:16px;transition:border-color 0.2s}
+.auth-input:focus{outline:none;border-color:var(--hot-pink)}
 .user-bar{background:var(--charcoal);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
 .user-bar-email{color:var(--lavender);font-size:14px}
 .user-bar-right{display:flex;gap:12px;align-items:center}
@@ -113,6 +115,17 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
     <h2>Sign in first</h2>
     <p>Sign in through Module 00 to access your dashboard. Redirecting now...</p>
     <a href="module00.html" style="display:block;background:var(--hot-pink);color:white;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:17px;padding:16px 32px;border:3px solid var(--hot-pink);text-decoration:none;margin-top:8px">Go to Module 00</a>
+  </div>
+</div>
+
+<div id="recoveryGate" class="auth-gate" style="display:none">
+  <div class="auth-box">
+    <div class="auth-wordmark">sitein8</div>
+    <h2>Set a new password</h2>
+    <p>Enter your new password below. Must be at least 6 characters.</p>
+    <input type="password" id="recoveryPassword" class="auth-input" placeholder="New password (min 6 characters)" onkeydown="if(event.key==='Enter')handlePasswordUpdate()">
+    <button class="btn btn-pink" style="width:100%" onclick="handlePasswordUpdate()" id="recoveryBtn">Update Password</button>
+    <div id="recoveryMessage"></div>
   </div>
 </div>
 
@@ -242,6 +255,50 @@ async function signOut() {
   window.location.href = 'module00.html';
 }
 
+function isRecoveryFlow() {
+  return window.location.hash.includes('type=recovery');
+}
+
+function showRecoveryGate() {
+  document.getElementById('pageLoader').style.display = 'none';
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('recoveryGate').style.display = 'flex';
+  document.getElementById('recoveryPassword').focus();
+}
+
+async function handlePasswordUpdate() {
+  const password = document.getElementById('recoveryPassword').value;
+  const msgEl = document.getElementById('recoveryMessage');
+  const btn = document.getElementById('recoveryBtn');
+
+  if (!password || password.length < 6) {
+    msgEl.innerHTML = '<p style="margin-top:16px;color:var(--hot-pink);font-size:15px">Password must be at least 6 characters.</p>';
+    return;
+  }
+
+  btn.textContent = 'Updating...';
+  btn.disabled = true;
+
+  const { error } = await db.auth.updateUser({ password });
+  if (error) {
+    msgEl.innerHTML = '<p style="margin-top:16px;color:var(--hot-pink);font-size:15px">Could not update password: ' + error.message + '</p>';
+    btn.textContent = 'Update Password';
+    btn.disabled = false;
+  } else {
+    msgEl.innerHTML = '<p style="margin-top:16px;color:var(--mint);font-size:15px">Password updated! Redirecting to your dashboard...</p>';
+    btn.textContent = 'Done ✓';
+    btn.style.background = 'var(--mint)';
+    btn.style.borderColor = 'var(--mint)';
+    // Clear the hash so we don't re-trigger recovery on reload
+    history.replaceState(null, '', window.location.pathname);
+    setTimeout(() => {
+      document.getElementById('recoveryGate').style.display = 'none';
+      showApp();
+    }, 1500);
+  }
+}
+
 async function initAuth() {
   if (DEV_MODE) {
     currentUser = { id: 'dev-user-id', email: 'dev@sitein8.com' };
@@ -256,9 +313,20 @@ async function initAuth() {
 
   // Listen for auth changes FIRST (catches magic link token in URL hash)
   db.auth.onAuthStateChange((event, session) => {
+    // If this is a password recovery flow, show the recovery form
+    if (event === 'PASSWORD_RECOVERY' && session?.user) {
+      currentUser = session.user;
+      showRecoveryGate();
+      return;
+    }
     if (session && session.user && !currentUser) {
       currentUser = session.user;
-      showApp();
+      // If the URL hash has type=recovery, show recovery form instead of dashboard
+      if (isRecoveryFlow()) {
+        showRecoveryGate();
+      } else {
+        showApp();
+      }
     } else if (event === 'SIGNED_OUT') {
       showAuthGate();
     }
