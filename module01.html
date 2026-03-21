@@ -447,7 +447,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
     </div>
     <div class="btn-row">
       <button class="btn btn--outline" onclick="goToStep('reveal')">← Back</button>
-      <button class="btn btn--yellow" onclick="generateOutput()">Generate My Brand System →</button>
+      <button class="btn btn--yellow" onclick="generateOutput().catch(e=>{console.error(e);alert('Something went wrong. Please try again.')})">Generate My Brand System →</button>
     </div>
   </div>
 
@@ -470,7 +470,10 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 
     <div class="btn-row" style="margin-top:40px">
       <button class="btn btn--outline" onclick="goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'reveal')">← Back</button>
-      <a class="btn btn--yellow" href="index.html">Back to Dashboard →</a>
+      <a class="btn btn--pink" href="module02.html">Continue to Module 02: Homepage →</a>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <a href="index.html" style="font-size:15px;color:var(--text-light);text-decoration:underline">or go back to Dashboard</a>
     </div>
   </div>
 
@@ -1424,7 +1427,7 @@ function renderReveal() {
 
 function goToNextFromReveal() {
   if(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes) goToStep('customize');
-  else generateOutput();
+  else generateOutput().catch(e => { console.error('generateOutput error:', e); alert('Something went wrong generating your brand system. Please try again.'); });
 }
 
 /* === CUSTOMIZATION === */
@@ -1571,7 +1574,9 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
 
   renderOutputPanel();
   document.querySelector('[data-step="output"]').disabled=false;
-  await saveToSupabase(); goToStep('output');
+  goToStep('output');
+  // Save after navigating so user sees the Done panel immediately
+  try { await saveToSupabase(); } catch(e) { console.error('save failed after output:', e); }
 }
 
 function renderOutputPanel() {
