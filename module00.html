@@ -179,7 +179,10 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
     <input type="password" id="authPassword" class="auth-input" placeholder="Password (min 6 characters)" onkeydown="if(event.key==='Enter')handleAuth()">
     <button class="btn btn--pink" style="width:100%" onclick="handleAuth()" id="authBtn">Sign In →</button>
     <div id="authMessage"></div>
-    <p style="margin-top:20px;font-size:15px;color:var(--text-light)">
+    <p id="forgotPasswordRow" style="margin-top:12px;font-size:14px">
+      <a href="#" onclick="handleForgotPassword(event)" style="color:var(--text-light);text-decoration:none">Forgot password?</a>
+    </p>
+    <p style="margin-top:12px;font-size:15px;color:var(--text-light)">
       <span id="authToggleText">Don't have an account?</span>
       <a href="#" onclick="toggleAuthMode(event)" id="authToggleLink" style="color:var(--hot-pink);font-weight:600;text-decoration:none">Sign up</a>
     </p>
@@ -194,7 +197,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 <div class="user-bar">
   <span class="user-bar-email" id="userEmail"></span>
   <div style="display:flex;gap:12px;align-items:center">
-    <a href="dashboard.html" style="color:var(--electric-yellow);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;text-decoration:none;opacity:0.8">← Dashboard</a>
+    <a href="index.html" style="color:var(--electric-yellow);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;text-decoration:none;opacity:0.8">← Dashboard</a>
     <button class="user-bar-signout" onclick="signOut()">Sign out</button>
   </div>
 </div>
@@ -445,6 +448,27 @@ async function handleAuth() {
   }
 }
 
+async function handleForgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email || !email.includes('@')) {
+    showAuthMsg('Enter your email above, then click "Forgot password?" again.', 'error');
+    return;
+  }
+  try {
+    const { error } = await db.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/module00.html'
+    });
+    if (error) {
+      showAuthMsg('Something went wrong: ' + error.message, 'error');
+    } else {
+      showAuthMsg('Password reset link sent to ' + email + '. Check your inbox.', 'success');
+    }
+  } catch(err) {
+    showAuthMsg('Could not send reset email. Please try again.', 'error');
+  }
+}
+
 function showAuthMsg(msg, type) {
   document.getElementById('authMessage').innerHTML = `<p style="margin-top:16px;color:${type === 'error' ? 'var(--hot-pink)' : 'var(--mint)'};font-size:15px">${msg}</p>`;
 }
@@ -495,9 +519,23 @@ async function initAuth() {
   // Register listener FIRST — catches sign-in events
   db.auth.onAuthStateChange((event, session) => {
     if (DEV_MODE) return;
-    if (event === 'SIGNED_IN' && session?.user) {
+    if (event === 'PASSWORD_RECOVERY' && session?.user) {
+      // User clicked password reset link — prompt for new password
+      const newPassword = prompt('Enter your new password (min 6 characters):');
+      if (newPassword && newPassword.length >= 6) {
+        db.auth.updateUser({ password: newPassword }).then(({ error }) => {
+          if (error) {
+            alert('Could not update password: ' + error.message);
+          } else {
+            alert('Password updated! You are now signed in.');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+      return;
+    } else if (event === 'SIGNED_IN' && session?.user) {
       // Fresh sign-in — go to dashboard
-      window.location.href = 'dashboard.html';
+      window.location.href = 'index.html';
     } else if (event === 'SIGNED_OUT') {
       document.getElementById('authGate').style.display = 'flex';
       document.getElementById('mainApp').style.display = 'none';
