@@ -354,7 +354,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
   <button class="step-btn" data-step="quiz" disabled><span class="step-num"><span>3</span></span><span class="step-label">Quiz</span></button>
   <button class="step-btn" data-step="reveal" disabled><span class="step-num"><span>4</span></span><span class="step-label">Archetype</span></button>
   <button class="step-btn" data-step="customize" disabled><span class="step-num"><span>5</span></span><span class="step-label">Customize</span></button>
-  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>6</span></span><span class="step-label">Your CSS</span></button>
+  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>6</span></span><span class="step-label">Your System</span></button>
 </nav>
 
 <main class="companion">
@@ -444,7 +444,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
       <h2>The Brand Personality Quiz 🔮</h2>
       <p>15 questions. Non-obvious, worth sitting with. Three of them you rank instead of pick. Go with your gut.</p>
     </div>
-    <div class="progress-text" id="quizProgressText">0 of 20 answered</div>
+    <div class="progress-text" id="quizProgressText">0 of 15 answered</div>
     <div class="progress-bar"><div class="progress-fill" id="quizProgress" style="width:0%"></div></div>
     <div id="quizContainer"></div>
     <div class="btn-row">
@@ -884,8 +884,58 @@ function showSaveIndicator() {
 }
 
 function autoSave() {
-  // Disabled timer saves — only save explicitly on generateOutput
-  // This prevents null output from overwriting the real output
+  // Save progress (data only) without touching the output column
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveProgressOnly, 2000);
+}
+
+async function saveProgressOnly() {
+  if (!projectId) return;
+  let token;
+  try {
+    token = JSON.parse(localStorage.getItem('sb-rcchpjkcrzwezjpqkcmm-auth-token')).access_token;
+  } catch(e) { return; }
+
+  const state = buildStateObject();
+  if (currentUser?.email) state.userEmail = currentUser.email;
+
+  // Only save data — preserve any existing output
+  const body = {
+    project_id: projectId,
+    module_key: 'module01',
+    data: state,
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    // PATCH existing row to update data without touching output
+    const r = await fetch(`https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data?project_id=eq.${projectId}&module_key=eq.module01`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(body)
+    });
+    // If no row exists yet (first visit), create one without output
+    if (r.status === 404 || r.status === 204) {
+      // 204 = success (even if 0 rows matched). Try insert if truly new.
+      const check = await fetch(`https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data?project_id=eq.${projectId}&module_key=eq.module01&select=project_id`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
+      });
+      const rows = await check.json();
+      if (!rows?.length) {
+        await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify(body)
+        });
+      }
+    }
+    if (r.ok || r.status === 204) showSaveIndicator();
+  } catch(e) { console.error('auto-save error:', e); }
 }
 
 async function clearSavedState() {

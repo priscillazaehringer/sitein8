@@ -97,7 +97,43 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 .brand-card-guide h4:first-child{margin-top:0}
 .brand-card-guide p{color:var(--lavender);font-size:15px;line-height:1.7;padding:3px 0}
 @keyframes brandFadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:640px){.dash-title{font-size:30px}.stats-grid{grid-template-columns:1fr 1fr}.resume-card{flex-direction:column}.upsell{flex-direction:column}.auth-box{padding:32px 24px}.brand-card-fonts{flex-direction:column;gap:8px}}
+/* Copy buttons */
+.brand-card-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.copy-asset-btn{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;padding:10px 20px;border:2px solid var(--deep-purple);background:rgba(30,16,56,0.04);color:var(--deep-purple);cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.copy-asset-btn:hover{background:var(--deep-purple);color:white}
+.copy-asset-btn.copied{background:var(--mint);border-color:var(--mint);color:white}
+/* Swatch row with hex */
+.brand-card-swatch{flex:1;height:48px;position:relative;cursor:pointer;transition:transform 0.15s}
+.brand-card-swatch:hover{transform:scaleY(1.15)}
+.brand-card-swatch::after{content:attr(data-hex);position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-family:monospace;color:var(--text-light);white-space:nowrap;opacity:0;transition:opacity 0.2s}
+.brand-card-swatches:hover .brand-card-swatch::after{opacity:1}
+.brand-card-swatches{margin-bottom:32px}
+/* Voice guide sections */
+.voice-section{margin-bottom:20px}
+.voice-section-title{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:var(--electric-yellow);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(196,181,253,0.15)}
+.voice-section-content p{color:var(--lavender);font-size:15px;line-height:1.7;padding:3px 0}
+.voice-sample{color:var(--white);font-family:'Caveat',cursive;font-size:19px;padding:12px 0;border-top:1px solid rgba(196,181,253,0.15)}
+.voice-bullet{padding-left:16px;color:var(--lavender);font-size:15px;line-height:1.7;padding-top:3px;padding-bottom:3px}
+.voice-bullet::before{content:'→ ';color:var(--electric-yellow)}
+/* Pages section */
+.pages-section{margin-bottom:48px}
+.pages-section-title{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--text);margin-bottom:8px}
+.pages-section-hint{font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);margin-bottom:20px}
+.page-card{background:var(--white);border:3px solid var(--charcoal);margin-bottom:16px;overflow:hidden}
+.page-card-header{background:var(--deep-purple);padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.page-card-header h4{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--electric-yellow);margin:0}
+.page-card-header .page-card-meta{font-size:13px;color:var(--lavender);opacity:0.7}
+.page-card-body{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.page-card-preview{flex:1;min-height:0}
+.page-card-preview iframe{width:100%;height:200px;border:2px solid #e0dde6;pointer-events:none}
+.page-card-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+/* Module row timestamps */
+.mod-meta{font-size:12px;color:var(--text-light);opacity:0.7;margin-top:2px}
+.mod-row.completed .mod-meta{color:var(--mint);opacity:0.6}
+/* Edit link on completed rows */
+.mod-edit{font-size:13px;color:var(--hot-pink);font-weight:600;text-decoration:none;white-space:nowrap}
+.mod-edit:hover{text-decoration:underline}
+@media(max-width:640px){.dash-title{font-size:30px}.stats-grid{grid-template-columns:1fr 1fr}.resume-card{flex-direction:column}.upsell{flex-direction:column}.auth-box{padding:32px 24px}.brand-card-fonts{flex-direction:column;gap:8px}.brand-card-actions{flex-direction:column}.page-card-body{flex-direction:column}.page-card-actions{flex-direction:row}}
 </style>
 </head>
 <body>
@@ -166,6 +202,8 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
       </div>
 
       <div id="brandIdentityCard" style="display:none"></div>
+
+      <div id="pagesSection" style="display:none"></div>
 
       <div class="resume-card" id="resumeCard">
         <div>
@@ -451,9 +489,12 @@ function renderDashboard(moduleMap) {
   if (isModuleComplete('module01', moduleMap)) {
     try {
       const m01out = JSON.parse(moduleMap.module01.output);
-      renderBrandCard(m01out, moduleMap.module01.data);
+      renderBrandCard(m01out, moduleMap.module01.data, moduleMap.module01.output);
     } catch(e) { console.error('Brand card parse error:', e); }
   }
+
+  // Your Pages section (modules with HTML output)
+  renderPagesSection(moduleMap);
 
   // Stats
   document.getElementById('statDone').textContent = count;
@@ -476,35 +517,126 @@ function renderDashboard(moduleMap) {
     document.getElementById('resumeBtn').href = firstIncomplete.file;
   }
 
-  // Module list
+  // Module list — with timestamps and edit links
   document.getElementById('moduleList').innerHTML = MODULES.map((m, i) => {
     const isComplete = isModuleComplete(m.key, moduleMap);
     const isCurrent = firstIncomplete?.key === m.key;
     const isLocked = !isComplete && !isCurrent && i > firstIncompleteIdx;
     const icon = isComplete ? '✓' : isCurrent ? '→' : m.num;
     const rowClass = isComplete ? 'completed' : isCurrent ? 'current' : isLocked ? 'locked' : '';
-    const statusText = isComplete ? 'Done' : isCurrent ? 'In Progress' : m.tag;
     const statusClass = isComplete ? 'done' : isCurrent ? 'active' : '';
     const tag = isLocked ? 'div' : 'a';
     const href = isLocked ? '' : ` href="${m.file}"`;
+
+    // Timestamp
+    const updatedAt = moduleMap[m.key]?.updated_at;
+    const timeStr = updatedAt ? formatTimeAgo(updatedAt) : '';
+
+    // Status text with edit affordance
+    let statusHTML = '';
+    if (isComplete) {
+      statusHTML = `<div class="mod-status done">Done</div><a href="${m.file}" class="mod-edit" onclick="event.stopPropagation()">Edit &rarr;</a>`;
+    } else if (isCurrent) {
+      statusHTML = `<div class="mod-status active">In Progress</div>`;
+    } else {
+      statusHTML = `<div class="mod-status">${m.tag}</div>`;
+    }
+
     return `<${tag}${href} class="mod-row ${rowClass}">
       <div class="mod-icon">${icon}</div>
       <div class="mod-info">
         <div class="mod-tag">Module ${m.num} &middot; ${m.tag}</div>
         <div class="mod-title">${m.title}</div>
         <div class="mod-desc">${m.desc}</div>
+        ${timeStr ? `<div class="mod-meta">Last edited ${timeStr}</div>` : ''}
       </div>
-      <div class="mod-status ${statusClass}">${statusText}</div>
+      <div style="text-align:right;flex-shrink:0">${statusHTML}</div>
     </${tag}>`;
   }).join('');
 }
 
 // ============================================================
+// TIME FORMATTING
+// ============================================================
+function formatTimeAgo(isoDate) {
+  const now = new Date();
+  const then = new Date(isoDate);
+  const diffMs = now - then;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHrs = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHrs / 24);
+
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return then.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ============================================================
+// YOUR PAGES SECTION
+// ============================================================
+const PAGE_MODULES = [
+  { key: 'module02', title: 'Homepage', file: 'module02.html' },
+  { key: 'module03', title: 'Sales & Services', file: 'module03.html' },
+  { key: 'module04', title: 'About Page', file: 'module04.html' },
+  { key: 'module05', title: 'Privacy & Terms', file: 'module05.html' },
+  { key: 'module06', title: 'Header & Footer', file: 'module06.html' }
+];
+
+function renderPagesSection(moduleMap) {
+  const container = document.getElementById('pagesSection');
+  const pages = PAGE_MODULES.filter(p => {
+    const output = moduleMap[p.key]?.output;
+    // Must have real HTML output (not just "complete" or placeholder JSON)
+    return output && output.length > 100 && output.includes('<');
+  });
+
+  if (!pages.length) return;
+
+  let html = `<div class="pages-section">
+    <div class="pages-section-title">Your Pages</div>
+    <div class="pages-section-hint">Copy the HTML or jump back in to edit</div>`;
+
+  pages.forEach(p => {
+    const mod = moduleMap[p.key];
+    const timeStr = mod.updated_at ? formatTimeAgo(mod.updated_at) : '';
+    html += `<div class="page-card">
+      <div class="page-card-header">
+        <h4>${p.title}</h4>
+        ${timeStr ? `<span class="page-card-meta">Updated ${timeStr}</span>` : ''}
+      </div>
+      <div class="page-card-body">
+        <div class="page-card-preview">
+          <iframe srcdoc="${escAttr(mod.output)}" sandbox="allow-same-origin" scrolling="no"></iframe>
+        </div>
+        <div class="page-card-actions">
+          <button class="copy-asset-btn" onclick="copyText(this, 'page-${p.key}')">&#128203; Copy HTML</button>
+          <a href="${p.file}" class="copy-asset-btn" style="text-decoration:none;text-align:center">&#9998; Edit</a>
+        </div>
+      </div>
+      <textarea id="page-${p.key}" style="display:none">${esc(mod.output)}</textarea>
+    </div>`;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+function escAttr(str) {
+  return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ============================================================
 // BRAND IDENTITY CARD
 // ============================================================
-function renderBrandCard(output, data) {
+function renderBrandCard(output, data, rawOutput) {
   const container = document.getElementById('brandIdentityCard');
-  // Pull from structured output, with fallbacks to data
   const aName = output.archetypeName || (data?.resultArchetype ? ARCHETYPES[data.resultArchetype]?.name : '') || '';
   const aEmoji = output.archetypeEmoji || (data?.resultArchetype ? ARCHETYPES[data.resultArchetype]?.emoji : '') || '';
   const saName = output.secondaryArchetypeName || '';
@@ -513,44 +645,44 @@ function renderBrandCard(output, data) {
   const fontB = output.fontBody || data?.fontBody || '';
   const traits = output.voiceTraits || data?.voiceTraits || [];
   const voice = output.voice || '';
+  const css = output.css || '';
 
   if (!aName) return;
 
-  // Extract font display names from CSS font values
+  // Store raw outputs for copy functions
+  window._dashCSS = css;
+  window._dashVoice = voice;
+
   const fontHName = fontH.replace(/'/g, '').split(',')[0].trim() || 'Not set';
   const fontBName = fontB.replace(/'/g, '').split(',')[0].trim() || 'Not set';
 
+  // Swatches with clickable hex codes
   let swatchesHTML = '';
   if (tokens) {
     const swatchKeys = ['bg_dark', 'primary', 'accent', 'subtle', 'card_bg'];
-    swatchesHTML = `<div class="brand-card-swatches">${swatchKeys.filter(k => tokens[k]).map(k => `<div class="brand-card-swatch" style="background:${tokens[k]}" title="${k}: ${tokens[k]}"></div>`).join('')}</div>`;
+    const swatchLabels = { bg_dark: 'Dark BG', primary: 'Primary', accent: 'Accent', subtle: 'Subtle', card_bg: 'Card BG' };
+    swatchesHTML = `<div class="brand-card-swatches">${swatchKeys.filter(k => tokens[k]).map(k =>
+      `<div class="brand-card-swatch" style="background:${tokens[k]}" data-hex="${tokens[k]}" title="${swatchLabels[k]}: ${tokens[k]}" onclick="copyHex(this,'${tokens[k]}')"></div>`
+    ).join('')}</div>`;
   }
 
+  // Traits
   let traitsHTML = '';
   if (traits.length) {
-    const top3 = traits.slice(0, 3);
-    traitsHTML = `<div class="brand-card-traits">${top3.map(t => `<span class="brand-card-trait">${t}</span>`).join('')}</div>`;
+    traitsHTML = `<div class="brand-card-traits">${traits.slice(0, 5).map(t => `<span class="brand-card-trait">${t}</span>`).join('')}</div>`;
   }
 
-  // Format voice guide for accordion
+  // Copy action buttons
+  let actionsHTML = '<div class="brand-card-actions">';
+  if (css) actionsHTML += `<button class="copy-asset-btn" onclick="copyText(this, '_dashCSS')">&#128203; Copy CSS</button>`;
+  if (voice) actionsHTML += `<button class="copy-asset-btn" onclick="copyText(this, '_dashVoice')">&#128203; Copy Voice Guide</button>`;
+  actionsHTML += `<a href="module01.html" class="copy-asset-btn" style="text-decoration:none">&#9998; Edit Brand</a>`;
+  actionsHTML += '</div>';
+
+  // Better voice guide formatting with sections
   let voiceHTML = '';
   if (voice) {
-    const lines = voice.split('\n');
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return;
-      if (trimmed.startsWith('BRAND VOICE GUIDELINES') || trimmed.startsWith('Voice Description:') || trimmed.startsWith('Example Copy:') || trimmed.startsWith('Tone Rules:') || trimmed.startsWith('WRITING SAMPLE') || trimmed.startsWith('ADDITIONAL BRAND NOTES')) {
-        voiceHTML += `<h4>${trimmed}</h4>`;
-      } else if (trimmed.startsWith('- ')) {
-        voiceHTML += `<p style="padding-left:16px"><span style="color:var(--electric-yellow)">→</span> ${trimmed.slice(2)}</p>`;
-      } else if (trimmed.startsWith('"')) {
-        voiceHTML += `<p style="color:var(--white);font-family:'Caveat',cursive;font-size:19px;padding:8px 0;border-top:1px solid rgba(196,181,253,0.15)">${trimmed}</p>`;
-      } else if (trimmed.startsWith('---')) {
-        voiceHTML += '';
-      } else {
-        voiceHTML += `<p>${trimmed}</p>`;
-      }
-    });
+    voiceHTML = formatVoiceGuide(voice);
   }
 
   container.innerHTML = `
@@ -568,16 +700,93 @@ function renderBrandCard(output, data) {
         <div><strong>Body:</strong> ${fontBName}</div>
       </div>
       ${traitsHTML}
+      ${actionsHTML}
       ${voice ? `<button class="brand-card-toggle" onclick="toggleBrandGuide(this)">View Brand Guide</button>
       <div class="brand-card-guide" id="brandGuideAccordion">${voiceHTML}</div>` : ''}
     </div>`;
   container.style.display = 'block';
 }
 
+function formatVoiceGuide(voice) {
+  const lines = voice.split('\n');
+  let html = '';
+  let currentSection = null;
+  let sectionContent = '';
+
+  function flushSection() {
+    if (currentSection) {
+      html += `<div class="voice-section"><div class="voice-section-title">${currentSection}</div><div class="voice-section-content">${sectionContent}</div></div>`;
+    }
+    sectionContent = '';
+  }
+
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('---')) return;
+
+    // Section headers
+    if (trimmed.startsWith('BRAND VOICE GUIDELINES') || trimmed.startsWith('Voice Description:') || trimmed.startsWith('Example Copy:') || trimmed.startsWith('Tone Rules:') || trimmed.startsWith('WRITING SAMPLE') || trimmed.startsWith('ADDITIONAL BRAND NOTES') || trimmed.startsWith('Brand Traits:') || trimmed.startsWith('Archetype:')) {
+      flushSection();
+      currentSection = trimmed;
+    } else if (trimmed.startsWith('- ')) {
+      sectionContent += `<p class="voice-bullet">${trimmed.slice(2)}</p>`;
+    } else if (trimmed.startsWith('"')) {
+      sectionContent += `<p class="voice-sample">${trimmed}</p>`;
+    } else {
+      sectionContent += `<p>${trimmed}</p>`;
+    }
+  });
+  flushSection();
+  return html;
+}
+
 function toggleBrandGuide(btn) {
   const guide = document.getElementById('brandGuideAccordion');
   const isOpen = guide.classList.toggle('open');
   btn.textContent = isOpen ? 'Hide Brand Guide' : 'View Brand Guide';
+}
+
+// ============================================================
+// COPY UTILITIES
+// ============================================================
+function copyText(btn, sourceId) {
+  let text = '';
+  // Check if it's a window variable or a textarea element
+  if (sourceId.startsWith('_dash')) {
+    text = window[sourceId] || '';
+  } else {
+    const el = document.getElementById(sourceId);
+    text = el ? (el.value || el.textContent) : '';
+  }
+  if (!text) return;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.innerHTML;
+    btn.innerHTML = '&#10003; Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const original = btn.innerHTML;
+    btn.innerHTML = '&#10003; Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyHex(swatch, hex) {
+  navigator.clipboard.writeText(hex).then(() => {
+    const original = swatch.getAttribute('data-hex');
+    swatch.setAttribute('data-hex', '✓ Copied');
+    setTimeout(() => swatch.setAttribute('data-hex', original), 1500);
+  }).catch(() => {});
 }
 
 // ============================================================
