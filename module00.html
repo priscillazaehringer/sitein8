@@ -380,8 +380,8 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
    ============================================ */
 const SUPABASE_URL = 'https://rcchpjkcrzwezjpqkcmm.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjY2hwamtjcnp3ZXpqcHFrY21tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzMyNzMsImV4cCI6MjA4OTM0OTI3M30._cGF2WKJOJ-F9IFsCpXklDnwwy-fnBggXujvEHanBEs';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let db = null;
+try { const { createClient } = supabase; db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) { console.warn('Supabase not available — preview mode'); }
 
 let currentUser = null;
 let projectId = null;
