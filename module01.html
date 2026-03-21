@@ -255,21 +255,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
 .preview-frame .pv-card p { font-size: 14px; opacity: 0.7; }
 .preview-frame .pv-footer { padding: 24px; text-align: center; font-size: 14px; margin-top: 24px; }
 
-/* === WRITING SAMPLE === */
-.writing-sample-area { margin: 24px 0; }
-.writing-sample-area textarea { width: 100%; min-height: 200px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 17px; padding: 20px; border: 3px solid #e0dde6; background: var(--white); color: var(--text); resize: vertical; line-height: 1.6; }
-.writing-sample-area textarea:focus { outline: none; border-color: var(--hot-pink); }
-.sample-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.sample-tag { font-size: 14px; font-weight: 600; padding: 6px 14px; background: rgba(232, 52, 107, 0.08); color: var(--hot-pink); border: none; }
-
-/* === OUTPUT === */
-.output-block { background: var(--charcoal); padding: 32px; margin: 24px 0; position: relative; max-height: 500px; overflow-y: auto; }
-.output-block pre { color: var(--lavender); font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-.copy-btn { position: sticky; top: 0; float: right; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 14px; padding: 10px 20px; border: 2px solid var(--electric-yellow); background: var(--electric-yellow); color: var(--charcoal); cursor: pointer; transition: all 0.2s ease; z-index: 5; }
-.copy-btn:hover { background: var(--hot-pink); border-color: var(--hot-pink); color: white; }
-.copy-btn.copied { background: var(--mint); border-color: var(--mint); }
-.output-label { font-family: 'Caveat', cursive; font-size: 20px; color: var(--text-light); margin-bottom: 8px; }
-.output-note { font-size: 16px; color: var(--text-light); margin-top: 16px; line-height: 1.6; padding: 20px; background: rgba(52, 211, 153, 0.08); border: 2px solid var(--mint); }
+/* === (writing sample + output CSS removed — not needed in simplified flow) === */
 
 /* === BUTTONS === */
 .btn { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; font-size: 18px; padding: 18px 40px; border: 3px solid var(--charcoal); cursor: pointer; transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: inline-block; text-decoration: none; }
@@ -344,18 +330,18 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
   <div class="header-eyebrow">Brand Companion</div>
   <h1 class="header-title">Module 01: Brand Foundation 🎨</h1>
   <p class="header-subtitle">Discover your brand archetype and build your design system</p>
-  <div class="header-meta"><span>⏱ 20 min</span><span>📋 6 steps</span></div>
+  <div class="header-meta"><span>⏱ 15 min</span><span>📋 5 steps</span></div>
 </div>
 
 <div class="squiggle"><svg viewBox="0 0 1200 16" preserveAspectRatio="none"><path d="M0,8 C50,2 100,14 150,8 C200,2 250,14 300,8 C350,2 400,14 450,8 C500,2 550,14 600,8 C650,2 700,14 750,8 C800,2 850,14 900,8 C950,2 1000,14 1050,8 C1100,2 1150,14 1200,8" fill="none" stroke="#E8346B" stroke-width="3"/></svg></div>
 
 <nav class="step-tracker">
   <button class="step-btn active" data-step="welcome"><span class="step-num"><span>1</span></span><span class="step-label">Welcome</span></button>
-  <button class="step-btn" data-step="starting" disabled><span class="step-num"><span>2</span></span><span class="step-label">Starting Point</span></button>
+  <button class="step-btn" data-step="starting" disabled><span class="step-num"><span>2</span></span><span class="step-label">Brand Assets</span></button>
   <button class="step-btn" data-step="quiz" disabled><span class="step-num"><span>3</span></span><span class="step-label">Quiz</span></button>
   <button class="step-btn" data-step="reveal" disabled><span class="step-num"><span>4</span></span><span class="step-label">Archetype</span></button>
   <button class="step-btn" data-step="customize" disabled><span class="step-num"><span>5</span></span><span class="step-label">Customize</span></button>
-  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>6</span></span><span class="step-label">Your System</span></button>
+  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>6</span></span><span class="step-label">Done</span></button>
 </nav>
 
 <main class="companion">
@@ -367,21 +353,18 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
       <p>This companion builds your complete brand design system. Here's what we'll do together:</p>
     </div>
     <div class="roadmap">
-      <div class="roadmap-step"><div class="roadmap-icon">1</div><div class="roadmap-content"><h3>Starting Point</h3><p>Tell us what platform you're building on, and whether you already have brand colors and fonts or you're starting fresh.</p><div class="what-youll-need">You'll need: your platform choice + hex codes and font names if you have them</div></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">1</div><div class="roadmap-content"><h3>Brand Assets</h3><p>Tell us whether you already have brand colors and fonts or you're starting fresh.</p><div class="what-youll-need">You'll need: hex codes and font names if you have them</div></div></div>
       <div class="roadmap-step"><div class="roadmap-icon">2</div><div class="roadmap-content"><h3>Brand Personality Quiz</h3><p>15 questions about how you think, what you value, and how you move through the world. Non-obvious and worth sitting with. Go with your gut.</p><div class="what-youll-need">You'll need: 10 minutes and honest first reactions</div></div></div>
-      <div class="roadmap-step"><div class="roadmap-icon">3</div><div class="roadmap-content"><h3>Your Archetype Reveal</h3><p>Meet your brand archetype - the personality framework that shapes your design and voice.</p></div></div>
+      <div class="roadmap-step"><div class="roadmap-icon">3</div><div class="roadmap-content"><h3>Your Archetype Reveal</h3><p>Meet your brand archetype — the personality framework that shapes your design and voice.</p></div></div>
       <div class="roadmap-step"><div class="roadmap-icon">4</div><div class="roadmap-content"><h3>Customize Your Design System</h3><p>Choose palettes, fonts, and style details curated for your archetype. See a live preview.</p><div class="what-youll-need">Skipped if you have existing brand colors/fonts</div></div></div>
-      <div class="roadmap-step"><div class="roadmap-icon">5</div><div class="roadmap-content"><h3>Writing Sample</h3><p>Paste something you've written so Claude can match your real voice.</p><div class="what-youll-need">You'll need: 1-3 paragraphs of your writing</div></div></div>
-      <div class="roadmap-step"><div class="roadmap-icon">6</div><div class="roadmap-content"><h3>Your CSS + Voice Output</h3><p>One-click copy your design system and brand voice. Auto-saved to your account for all future modules.</p></div></div>
     </div>
     <div class="what-you-get">
       <h3>What you'll walk away with</h3>
       <ul>
-        <li>A complete CSS design system (colors, fonts, buttons, cards, sections, nav, footer)</li>
-        <li>Your brand archetype and what it means</li>
+        <li>Your brand archetype and what it means for your business</li>
+        <li>A complete design system — colors, fonts, buttons, cards, all of it</li>
         <li>Brand voice guidelines with example copy</li>
-        <li>Everything auto-saved — pick up where you left off on any device</li>
-        <li>Auto-loaded into Modules 02-07, no copy-pasting needed</li>
+        <li>Everything auto-saved and auto-loaded into future modules</li>
       </ul>
     </div>
     <div class="btn-row"><button class="btn btn--yellow" onclick="goToStep('starting')">Let's Go →</button></div>
@@ -390,24 +373,8 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
   <!-- STARTING POINT -->
   <div class="panel" id="panel-starting">
     <div class="panel-intro">
-      <h2>Let's get the basics down</h2>
-      <p>Two quick things before the fun part: where you're building, and what you're working with.</p>
-    </div>
-    <div class="customize-section">
-      <h3 class="section-label">What platform are you building on?</h3>
-      <div class="section-hint">This helps us format the CSS output for your specific setup</div>
-      <div class="quiz-options" id="platformOptions">
-        <button class="quiz-option" onclick="selectPlatform('wordpress-elementor', this)"><span class="option-label">WordPress + Elementor</span><span class="option-desc">Most flexible. This is what I recommend.</span></button>
-        <button class="quiz-option" onclick="selectPlatform('wordpress-divi', this)"><span class="option-label">WordPress + Divi</span><span class="option-desc">Popular builder with its own styling system</span></button>
-        <button class="quiz-option" onclick="selectPlatform('wordpress-other', this)"><span class="option-label">WordPress + other builder</span><span class="option-desc">Beaver Builder, Oxygen, Bricks, etc.</span></button>
-        <button class="quiz-option" onclick="selectPlatform('squarespace', this)"><span class="option-label">Squarespace</span><span class="option-desc">Clean, hosted, limited CSS injection</span></button>
-        <button class="quiz-option" onclick="selectPlatform('showit', this)"><span class="option-label">Showit</span><span class="option-desc">Drag-and-drop, popular with creatives</span></button>
-        <button class="quiz-option" onclick="selectPlatform('webflow', this)"><span class="option-label">Webflow</span><span class="option-desc">Design-forward, code-level control</span></button>
-        <button class="quiz-option" onclick="selectPlatform('framer', this)"><span class="option-label">Framer</span><span class="option-desc">Modern, component-based</span></button>
-        <button class="quiz-option" onclick="selectPlatform('wix', this)"><span class="option-label">Wix</span><span class="option-desc">Beginner-friendly, some CSS limitations</span></button>
-        <button class="quiz-option" onclick="selectPlatform('other', this)"><span class="option-label">Something else</span><span class="option-desc">I'll figure out the CSS part</span></button>
-        <button class="quiz-option" onclick="selectPlatform('undecided', this)"><span class="option-label">I haven't decided yet</span><span class="option-desc">No worries - we'll give you generic CSS that works anywhere</span></button>
-      </div>
+      <h2>One quick thing before the fun part</h2>
+      <p>Do you already have brand colors and fonts, or are you starting from scratch?</p>
     </div>
     <div class="customize-section">
       <h3 class="section-label">Do you have existing brand assets?</h3>
@@ -460,8 +427,7 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
     <div class="next-steps-box">
       <h3>Here's what happens next</h3>
       <p id="nextStep1"></p>
-      <p>You'll share a writing sample so Claude can match your real voice</p>
-      <p>You'll get your complete CSS + voice guidelines — auto-saved to your account</p>
+      <p>Your design system and voice guidelines get saved to your account automatically</p>
     </div>
     <div class="btn-row" style="justify-content:center">
       <button class="btn btn--outline" onclick="goToStep('quiz')">← Retake Quiz</button>
@@ -481,78 +447,30 @@ body { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400; color: 
     </div>
     <div class="btn-row">
       <button class="btn btn--outline" onclick="goToStep('reveal')">← Back</button>
-      <button class="btn btn--yellow" onclick="goToStep('writing')">Next: Writing Sample →</button>
+      <button class="btn btn--yellow" onclick="generateOutput()">Generate My Brand System →</button>
     </div>
   </div>
 
-  <!-- WRITING SAMPLE -->
-  <div class="panel" id="panel-writing">
-    <div class="panel-intro"><h2>Share your voice ✍️</h2><p>Paste something you've written that sounds like you. This helps Claude match your real voice when it writes your website copy.</p></div>
-    <div class="section-hint">Good things to paste:</div>
-    <div class="sample-suggestions">
-      <span class="sample-tag">Blog post</span><span class="sample-tag">Instagram caption</span><span class="sample-tag">Email to a client</span><span class="sample-tag">About page draft</span><span class="sample-tag">Newsletter</span><span class="sample-tag">Social media bio</span>
-    </div>
-    <div class="writing-sample-area"><textarea id="writingSample" placeholder="Paste 1-3 paragraphs of something you've written that feels most like your voice. It doesn't have to be perfect - it just has to sound like you." oninput="autoSave()"></textarea></div>
-    <div class="section-hint" style="margin-top:8px">Don't have anything handy? Write a few sentences about what you do and who you do it for, like you're texting a friend.</div>
-    <div id="writingNudge" style="display:none;margin-top:20px;padding:20px;background:rgba(255,210,63,0.12);border:3px solid var(--electric-yellow);animation:fadeUp 0.3s ease">
-      <p style="font-weight:600;margin-bottom:8px;font-size:17px">⚡ Your voice guide will be stronger with a writing sample</p>
-      <p style="font-size:15px;color:var(--text-light);margin-bottom:16px">Without it, Claude will use your archetype voice guidelines — which is fine! But a real sample helps Claude nail your specific tone.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button class="btn btn--outline" style="font-size:15px;padding:12px 24px" onclick="document.getElementById('writingNudge').style.display='none';document.getElementById('writingSample').focus()">Let me add one</button>
-        <button class="btn btn--pink" style="font-size:15px;padding:12px 24px" onclick="generateOutput()">Skip it, generate anyway →</button>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn--outline" id="writingBackBtn" onclick="goToWritingBack()">← Back</button>
-      <button class="btn btn--yellow" onclick="checkWritingSample()">Generate My CSS →</button>
-    </div>
-  </div>
+  <!-- WRITING SAMPLE panel removed — Claude interviews handle voice in later modules -->
 
-  <!-- OUTPUT -->
+  <!-- DONE -->
   <div class="panel" id="panel-output">
-    <div class="panel-intro"><h2>Your Brand System is Ready 🎉</h2><p>Your brand foundation is saved to your account — every other module will load it automatically. No copy-pasting needed.</p></div>
+    <div class="panel-intro"><h2>Your Brand Foundation is Set 🎉</h2><p>Everything is saved to your account. The next modules will use this automatically — you don't need to do anything with it right now.</p></div>
 
-    <div style="background:rgba(52,211,153,0.1);border:3px solid var(--mint);padding:20px;margin-bottom:32px;display:flex;align-items:center;gap:16px">
+    <div style="background:rgba(52,211,153,0.1);border:3px solid var(--mint);padding:24px;margin-bottom:32px;display:flex;align-items:center;gap:16px">
       <span style="font-size:32px">✓</span>
       <div>
-        <p style="font-weight:700;font-size:18px;color:var(--text);margin:0">Auto-saved to your account</p>
-        <p style="font-size:15px;color:var(--text-light);margin:4px 0 0">Modules 02-07 will load this automatically. You never need to copy-paste your brand CSS.</p>
+        <p style="font-weight:700;font-size:18px;color:var(--text);margin:0">Saved to your account</p>
+        <p style="font-size:15px;color:var(--text-light);margin:4px 0 0">Your brand archetype, colors, fonts, and voice guidelines are all locked in.</p>
       </div>
     </div>
 
     <!-- Live brand preview panel -->
     <div id="brandPreviewPanel"></div>
 
-    <!-- Copy buttons -->
-    <div style="display:flex;gap:16px;margin:32px 0;flex-wrap:wrap">
-      <button class="btn btn--yellow" onclick="copyBlock(document.querySelector('#cssCopyBtn'),'css')" id="cssCopyBtn" style="flex:1;text-align:center;font-size:17px;padding:18px 32px;">📋 Copy CSS</button>
-      <button class="btn btn--outline" onclick="copyBlock(document.querySelector('#voiceCopyBtn'),'voice')" id="voiceCopyBtn" style="flex:1;text-align:center;font-size:17px;padding:18px 32px;">📋 Copy Voice Guide</button>
-    </div>
-
-    <!-- Voice guide as formatted text -->
-    <div id="voiceGuideFormatted" style="margin-bottom:40px"></div>
-
-    <!-- CSS code block (collapsed) -->
-    <details style="margin-bottom:32px">
-      <summary style="font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);cursor:pointer;padding:12px 0">View raw CSS code</summary>
-      <div class="output-block" id="cssOutput"></div>
-    </details>
-
-    <div id="platformInstructions"></div>
-
-    <div style="background:var(--deep-purple);padding:32px;margin-top:40px">
-      <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">What's next in Module 02: Homepage</h3>
-      <p style="color:var(--lavender);font-size:16px;line-height:1.6;margin-bottom:8px">Module 02 will ask you for:</p>
-      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ Your headline and what you want visitors to feel first</p>
-      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ Your primary CTA (button text + where it links)</p>
-      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ A hero image URL (your headshot or brand photo)</p>
-      <p style="color:var(--lavender);font-size:16px;padding:6px 0">✦ What makes you different from others in your space</p>
-      <p style="color:var(--lavender);font-size:16px;margin-top:12px;opacity:0.7">Your brand CSS will already be loaded. Just show up and answer the questions.</p>
-    </div>
-
     <div class="btn-row" style="margin-top:40px">
-      <button class="btn btn--outline" onclick="goToStep('writing')">← Back</button>
-      <a class="btn btn--yellow" href="module02.html">Start Module 02: Homepage →</a>
+      <button class="btn btn--outline" onclick="goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'reveal')">← Back</button>
+      <a class="btn btn--yellow" href="index.html">Back to Dashboard →</a>
     </div>
   </div>
 
@@ -756,7 +674,6 @@ async function loadState() {
         window._voiceOutput = out.voice;
         window._outputData = out;
         renderOutputPanel();
-        renderPlatformInstructions();
         document.querySelector('[data-step="output"]').disabled = false;
       }
     } catch(e) {}
@@ -783,7 +700,6 @@ function buildStateObject() {
   if (sa?.traits) voiceTraits = voiceTraits.concat(sa.traits.slice(0, 2));
   return {
     brandPath,
-    selectedPlatform,
     quizAnswers,
     resultArchetype,
     secondaryArchetype,
@@ -794,7 +710,6 @@ function buildStateObject() {
     fontHeading,
     fontBody,
     voiceTraits,
-    writingSample: document.getElementById('writingSample')?.value || '',
     userColors: {
       c1: document.getElementById('userColor1')?.value,
       c2: document.getElementById('userColor2')?.value,
@@ -811,11 +726,6 @@ function buildStateObject() {
 }
 
 function restoreFromState(s) {
-  if (s.selectedPlatform) {
-    selectedPlatform = s.selectedPlatform;
-    const btn = document.querySelector(`#platformOptions .quiz-option[onclick*="${s.selectedPlatform}"]`);
-    if (btn) btn.classList.add('selected');
-  }
   if (s.brandPath) {
     brandPath = s.brandPath;
     document.querySelectorAll('.fork-card').forEach(c => {
@@ -823,7 +733,7 @@ function restoreFromState(s) {
           (s.brandPath==='existing' && c.querySelector('h4').textContent.includes('brand assets'))) c.classList.add('selected');
     });
     if (s.brandPath==='existing') document.getElementById('brandInputs').classList.add('visible');
-    if (selectedPlatform && brandPath) document.getElementById('startingNext').disabled = false;
+    if (brandPath) document.getElementById('startingNext').disabled = false;
   }
   if (s.userColors) {
     ['c1','c2','c3','c4'].forEach((k,i) => {
@@ -876,7 +786,6 @@ function restoreFromState(s) {
     renderReveal();
     if (archetypes[resultArchetype]?.palettes) renderCustomization();
   }
-  if (s.writingSample) document.getElementById('writingSample').value = s.writingSample;
 }
 
 function showSaveIndicator() {
@@ -950,7 +859,6 @@ async function clearSavedState() {
    STATE
    ============================================ */
 let brandPath = null;
-let selectedPlatform = null;
 let quizAnswers = [];
 let scores = {};
 let resultArchetype = null;
@@ -1326,25 +1234,18 @@ const archetypes = {
 /* ============================================
    NAVIGATION
    ============================================ */
-const stepOrder = ['welcome','starting','quiz','reveal','customize','writing','output'];
+const stepOrder = ['welcome','starting','quiz','reveal','customize','output'];
 function goToStep(id) {
   document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
-  const mapped = (id==='writing')?'customize':id;
-  const btn = document.querySelector(`[data-step="${mapped}"]`);
+  const btn = document.querySelector(`[data-step="${id}"]`);
   if(btn){ btn.classList.add('active'); btn.disabled=false; }
   const ci = stepOrder.indexOf(id);
-  stepOrder.forEach((s,i)=>{ if(i<ci){ const b2=document.querySelector(`[data-step="${s==='writing'?'customize':s}"]`); if(b2) b2.classList.add('completed'); }});
+  stepOrder.forEach((s,i)=>{ if(i<ci){ const b2=document.querySelector(`[data-step="${s}"]`); if(b2) b2.classList.add('completed'); }});
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(`panel-${id}`).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function selectPlatform(platform, btn) {
-  selectedPlatform=platform;
-  document.querySelectorAll('#platformOptions .quiz-option').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  checkStartingReady(); autoSave();
-}
 function selectFork(p) {
   brandPath=p;
   document.querySelectorAll('.fork-card').forEach(c=>c.classList.remove('selected'));
@@ -1352,7 +1253,7 @@ function selectFork(p) {
   document.getElementById('brandInputs').classList.toggle('visible',p==='existing');
   checkStartingReady(); autoSave();
 }
-function checkStartingReady() { document.getElementById('startingNext').disabled=!(selectedPlatform&&brandPath); }
+function checkStartingReady() { document.getElementById('startingNext').disabled=!brandPath; }
 function syncColor(id) { document.getElementById(id+'Text').value=document.getElementById(id).value; autoSave(); }
 function syncColorText(id) { const v=document.getElementById(id+'Text').value; if(/^#[0-9a-fA-F]{6}$/.test(v)) document.getElementById(id).value=v; autoSave(); }
 
@@ -1517,12 +1418,14 @@ function renderReveal() {
   document.getElementById('revealContainer').innerHTML=h;
   const ns=document.getElementById('nextStep1');
   if(brandPath==='fresh'&&a.palettes){ ns.textContent="You'll choose colors, fonts, and style details curated for your archetype"; document.getElementById('revealNextBtn').textContent="Next: Customize →"; }
-  else{ ns.textContent="We'll use your existing brand colors and fonts to build your CSS system"; document.getElementById('revealNextBtn').textContent="Next: Writing Sample →"; }
+  else{ ns.textContent="We'll use your existing brand colors and fonts to build your design system"; document.getElementById('revealNextBtn').textContent="Generate My Brand System →"; }
   if(a.palettes) renderCustomization();
 }
 
-function goToNextFromReveal() { goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'writing'); }
-function goToWritingBack() { goToStep(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes?'customize':'reveal'); }
+function goToNextFromReveal() {
+  if(brandPath==='fresh'&&archetypes[resultArchetype]?.palettes) goToStep('customize');
+  else generateOutput();
+}
 
 /* === CUSTOMIZATION === */
 function renderCustomization() {
@@ -1548,7 +1451,7 @@ function updatePreview() {
 
 /* === OUTPUT === */
 async function generateOutput() {
-  const a=archetypes[resultArchetype],ws=document.getElementById('writingSample').value.trim();
+  const a=archetypes[resultArchetype];
   let fontImport,hFont,bFont,tokens;
   if(brandPath==='existing') {
     const hf=document.getElementById('userHeadingFont').value.trim()||'Georgia',bf=document.getElementById('userBodyFont').value.trim()||'sans-serif';
@@ -1561,11 +1464,9 @@ async function generateOutput() {
   }
   const sp={airy:{section:'120px',element:'48px',card:'40px'},balanced:{section:'80px',element:'32px',card:'28px'},dense:{section:'56px',element:'20px',card:'20px'}}[styleChoices.density];
   const anim=styleChoices.animation==='expressive'?'--transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);\n  --transition-speed: 0.3s;\n  --hover-lift: translateY(-4px);\n  --hover-scale: scale(1.02);':'--transition-bounce: ease;\n  --transition-speed: 0.2s;\n  --hover-lift: translateY(-2px);\n  --hover-scale: scale(1.01);';
-  const platformLabels={'wordpress-elementor':'WordPress + Elementor','wordpress-divi':'WordPress + Divi','wordpress-other':'WordPress + Other Builder','squarespace':'Squarespace','showit':'Showit','webflow':'Webflow','framer':'Framer','wix':'Wix','other':'Other Platform','undecided':'Platform TBD'};
 
   const css=`/* ===========================================
    ${a.name.toUpperCase()} BRAND DESIGN SYSTEM
-   Platform: ${platformLabels[selectedPlatform]||'Not specified'}
    Generated by sitein8 Brand Foundation
    =========================================== */
 
@@ -1623,10 +1524,9 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
 .testimonial { border-left: 4px solid var(--color-primary); padding: var(--spacing-card); background: var(--color-card-bg); border-radius: var(--border-radius); font-style: italic; font-size: 1.125rem; }
 .testimonial cite { display: block; margin-top: 1rem; font-style: normal; font-weight: 600; color: var(--color-primary); }`;
 
-  let voice=`BRAND VOICE GUIDELINES — ${a.name.toUpperCase()}\n\nArchetype: ${a.name}\nPlatform: ${platformLabels[selectedPlatform]||'Not specified'}\nPersonality: ${a.traits?a.traits.join(', '):'See archetype description'}`;
+  let voice=`BRAND VOICE GUIDELINES — ${a.name.toUpperCase()}\n\nArchetype: ${a.name}\nPersonality: ${a.traits?a.traits.join(', '):'See archetype description'}`;
   if(a.voice) voice+=`\n\nVoice Description:\n${a.voice.description}\n\nExample Copy:\n${a.voice.examples.join('\n')}`;
   voice+=`\n\nTone Rules:\n- Write in first person\n- Use contractions\n- Keep sentences punchy - mix short with long\n- Be specific over generic\n- Lead with transformation, not features\n- Use sensory language when possible`;
-  if(ws) voice+=`\n\nWRITING SAMPLE (match this voice):\n---\n${ws}\n---\nMatch the tone, rhythm, and personality of the sample above.`;
   if(brandPath==='existing'){ const n=document.getElementById('userBrandNotes').value.trim(); if(n) voice+=`\n\nADDITIONAL BRAND NOTES:\n${n}`; }
 
   window._cssOutput=css; window._voiceOutput=voice;
@@ -1670,7 +1570,6 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
   }
 
   renderOutputPanel();
-  renderPlatformInstructions();
   document.querySelector('[data-step="output"]').disabled=false;
   await saveToSupabase(); goToStep('output');
 }
@@ -1745,66 +1644,7 @@ function renderOutputPanel() {
 
   document.getElementById('brandPreviewPanel').innerHTML = previewHTML;
 
-  // Render voice guide as formatted readable text
-  const voice = od.voice || window._voiceOutput || '';
-  let voiceHTML = '';
-  if (voice) {
-    const lines = voice.split('\n');
-    let html = '';
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed) { html += '<div style="height:16px"></div>'; return; }
-      if (trimmed.startsWith('BRAND VOICE GUIDELINES')) {
-        html += `<h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:var(--electric-yellow);margin-bottom:16px">${trimmed}</h3>`;
-      } else if (trimmed.startsWith('Voice Description:') || trimmed.startsWith('Example Copy:') || trimmed.startsWith('Tone Rules:') || trimmed.startsWith('WRITING SAMPLE') || trimmed.startsWith('ADDITIONAL BRAND NOTES')) {
-        html += `<h4 style="font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--lavender);margin:20px 0 8px">${trimmed}</h4>`;
-      } else if (trimmed.startsWith('- ')) {
-        html += `<p style="color:var(--lavender);font-size:16px;line-height:1.6;padding:4px 0 4px 20px;position:relative"><span style="position:absolute;left:0;color:var(--electric-yellow)">→</span>${trimmed.slice(2)}</p>`;
-      } else if (trimmed.startsWith('"')) {
-        html += `<p style="color:var(--white);font-family:'Caveat',cursive;font-size:20px;padding:12px 0;border-top:1px solid rgba(196,181,253,0.15)">${trimmed}</p>`;
-      } else if (trimmed.startsWith('---')) {
-        html += '<hr style="border:none;border-top:1px solid rgba(196,181,253,0.2);margin:12px 0">';
-      } else {
-        html += `<p style="color:var(--lavender);font-size:16px;line-height:1.7;padding:4px 0">${trimmed}</p>`;
-      }
-    });
-    voiceHTML = `<div style="background:var(--deep-purple);padding:40px">${html}</div>`;
-  }
-  document.getElementById('voiceGuideFormatted').innerHTML = voiceHTML;
-
-  // Still populate the CSS code block for the collapsible view
-  document.getElementById('cssOutput').innerHTML = `<button class="copy-btn" onclick="copyBlock(this,'css')">Copy CSS</button><pre>${esc(od.css || window._cssOutput || '')}</pre>`;
 }
-
-function copyBlock(btn,t) {
-  navigator.clipboard.writeText(t==='css'?window._cssOutput:window._voiceOutput).then(()=>{
-    btn.textContent='Copied! ✓'; btn.classList.add('copied');
-    setTimeout(()=>{ btn.textContent=t==='css'?'Copy CSS':'Copy Voice Guide'; btn.classList.remove('copied'); },2000);
-  });
-}
-function copyAll() {
-  const combined=`${window._cssOutput}\n\n/* =========================================== */\n\n${window._voiceOutput}`;
-  navigator.clipboard.writeText(combined).then(()=>{
-    const btn=document.getElementById('copyAllBtn');
-    btn.textContent='✓ Everything Copied!'; btn.style.background='var(--mint)'; btn.style.borderColor='var(--mint)';
-    setTimeout(()=>{ btn.textContent='📋 Copy Everything — CSS + Voice Guide'; btn.style.background=''; btn.style.borderColor=''; },2500);
-  });
-}
-function checkWritingSample() {
-  const ws=document.getElementById('writingSample').value.trim();
-  if(!ws){ document.getElementById('writingNudge').style.display='block'; document.getElementById('writingNudge').scrollIntoView({behavior:'smooth',block:'center'}); }
-  else generateOutput();
-}
-
-function renderPlatformInstructions() {
-  const instructions={'wordpress-elementor':{title:'How to paste in WordPress + Elementor',steps:['Open your WordPress dashboard','Go to Appearance → Customize → Additional CSS','Paste your CSS there and hit Publish','For the Google Fonts import: paste the @import line at the very top of the Additional CSS box','When Claude gives you HTML in later modules, use an Elementor HTML widget to paste it in']},'wordpress-divi':{title:'How to paste in WordPress + Divi',steps:['Open your WordPress dashboard','Go to Divi → Theme Options → General → Custom CSS','Paste your CSS there and save','For the Google Fonts import: paste the @import line at the very top','When Claude gives you HTML, use a Divi Code Module to paste it in']}};
-  const pi=instructions[selectedPlatform];
-  const container=document.getElementById('platformInstructions');
-  if(pi){ container.innerHTML=`<div style="background:var(--deep-purple);padding:32px;margin-bottom:24px"><h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--electric-yellow);margin-bottom:16px">${pi.title}</h3>${pi.steps.map((s,i)=>`<p style="color:var(--lavender);font-size:16px;padding:8px 0;border-bottom:1px solid rgba(196,181,253,0.15)"><span style="color:var(--electric-yellow);font-weight:700">${i+1}.</span> ${s}</p>`).join('')}</div>`; }
-  else container.innerHTML='';
-}
-
-function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 document.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{ if(!b.disabled) goToStep(b.dataset.step); }));
 renderQuiz();
