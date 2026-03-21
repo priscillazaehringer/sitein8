@@ -1602,7 +1602,7 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
   // Fire Claude API call for combination description (if we have a secondary archetype)
   if (secondaryArchetype && secondaryArchetype !== resultArchetype) {
     try {
-      const comboResp = await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/functions/v1/claude-proxy', {
+      const comboResp = await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/functions/v1/quick-api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'apikey': SUPABASE_ANON_KEY },
         body: JSON.stringify({
