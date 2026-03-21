@@ -634,32 +634,49 @@ async function saveToSupabase() {
     : null;
 
   const body = {
-    project_id: projectId,
-    module_key: 'module01',
     data: state,
     output: outputValue,
     updated_at: new Date().toISOString()
   };
 
+  const base = 'https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1';
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+
   try {
-    // Use POST with upsert (merge-duplicates handles conflicts automatically)
-    const r = await fetch('https://rcchpjkcrzwezjpqkcmm.supabase.co/rest/v1/module_data', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify(body)
+    // First try PATCH on existing row (created by autoSave)
+    const r = await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module01`, {
+      method: 'PATCH', headers, body: JSON.stringify(body)
     });
-    console.log('upsert result:', r.status, r.statusText);
-    if (r.ok || r.status === 201 || r.status === 204) {
+    console.log('save PATCH result:', r.status, r.statusText);
+
+    if (r.ok || r.status === 204) {
+      // PATCH 204 can mean 0 rows matched — check if row exists
+      const check = await fetch(`${base}/module_data?project_id=eq.${projectId}&module_key=eq.module01&select=project_id`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token } });
+      const rows = await check.json();
+      if (!rows?.length) {
+        // No row yet — create one with full payload
+        console.log('No existing row, inserting...');
+        const ins = await fetch(`${base}/module_data`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ project_id: projectId, module_key: 'module01', ...body })
+        });
+        console.log('save INSERT result:', ins.status, ins.statusText);
+        if (!ins.ok && ins.status !== 201) {
+          const err = await ins.text();
+          console.error('save INSERT error:', ins.status, err);
+          return;
+        }
+      }
       console.log('saved OK. output set:', !!outputValue);
       showSaveIndicator();
     } else {
       const err = await r.text();
-      console.error('save error:', r.status, err);
+      console.error('save PATCH error:', r.status, err);
     }
   } catch(e) { console.error('save fetch error:', e); }
 }
