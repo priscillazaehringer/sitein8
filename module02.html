@@ -86,23 +86,38 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 @keyframes spin{to{transform:rotate(360deg)}}
 .generating-state h3{font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:var(--text);margin-bottom:8px}
 .generating-state p{font-size:16px;color:var(--text-light)}
-.copy-section{margin-bottom:32px;border:3px solid #e0dde6;background:var(--white);overflow:hidden}
-.copy-section-header{background:var(--deep-purple);padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
-.copy-section-header h3{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--electric-yellow);margin:0}
-.copy-section-preview{padding:20px 24px;font-size:16px;color:var(--text);line-height:1.6;border-bottom:2px solid #e0dde6}
-.edit-toggle{font-family:'Caveat',cursive;font-size:17px;color:var(--lavender);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;transition:color 0.2s;white-space:nowrap}
-.edit-toggle:hover{color:var(--electric-yellow)}
-.edit-fields{display:none;padding:20px 24px;animation:fadeUp 0.3s ease;border-top:2px solid #e0dde6}
-.edit-fields.open{display:block}
-.copy-field{margin-bottom:20px}
-.copy-field:last-child{margin-bottom:0}
-.copy-field-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:8px}
-.copy-field textarea,.copy-field input{width:100%;font-family:'Bricolage Grotesque',sans-serif;font-size:16px;padding:12px 16px;border:2px solid #e0dde6;background:var(--off-white);color:var(--text);line-height:1.5;resize:vertical;transition:border-color 0.2s}
+/* Copy doc — flowing Google-Doc style */
+.copy-doc{background:var(--white);border:2px solid #e0dde6;box-shadow:0 2px 24px rgba(0,0,0,0.06);padding:56px 56px 64px;max-width:760px;margin:0 auto 40px;line-height:1.8;position:relative}
+.copy-doc::before{content:'';position:absolute;left:56px;right:56px;top:0;height:4px;background:linear-gradient(90deg,var(--hot-pink),var(--electric-yellow),var(--mint))}
+.copy-doc-header{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #e0dde6}
+.copy-doc-header h2{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--deep-purple);margin-bottom:4px}
+.copy-doc-header p{font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);margin:0}
+.copy-doc-section{margin-bottom:40px}
+.copy-doc-section:last-child{margin-bottom:0}
+.copy-doc-label{font-family:'Caveat',cursive;font-size:16px;color:var(--hot-pink);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.copy-doc-label::after{content:'';flex:1;height:1px;background:rgba(232,52,107,0.2)}
+.copy-doc-h1{font-family:'Fraunces',serif;font-weight:900;font-size:36px;color:var(--deep-purple);line-height:1.15;margin-bottom:8px}
+.copy-doc-h2{font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:var(--deep-purple);line-height:1.2;margin-bottom:8px}
+.copy-doc-body{font-size:17px;color:var(--text);line-height:1.8;margin-bottom:8px}
+.copy-doc-body:last-child{margin-bottom:0}
+.copy-doc-quote{font-style:italic;border-left:3px solid var(--hot-pink);padding:8px 0 8px 20px;margin:12px 0;color:var(--text)}
+.copy-doc-quote cite{display:block;font-style:normal;font-weight:700;color:var(--hot-pink);margin-top:6px;font-size:15px}
+.copy-doc-step{display:flex;gap:16px;align-items:baseline;margin-bottom:12px}
+.copy-doc-step-num{font-family:'Fraunces',serif;font-weight:900;font-size:28px;color:var(--hot-pink);line-height:1;flex-shrink:0;width:32px}
+.copy-doc-step-text{font-size:17px;color:var(--text)}
+.copy-doc-step-text strong{color:var(--deep-purple)}
+.copy-doc-faq{margin-bottom:16px}
+.copy-doc-faq-q{font-weight:700;font-size:17px;color:var(--deep-purple);margin-bottom:4px}
+.copy-doc-faq-a{font-size:16px;color:var(--text-light);line-height:1.7}
+.copy-doc-cta{text-align:center;background:linear-gradient(135deg,rgba(232,52,107,0.06),rgba(255,210,63,0.08));padding:32px;margin-top:8px}
+.copy-doc-divider{border:none;border-top:1px solid #e0dde6;margin:40px 0}
+.copy-doc [contenteditable]{outline:none;border-radius:2px;transition:background 0.2s,box-shadow 0.2s;padding:2px 4px;margin:-2px -4px}
+.copy-doc [contenteditable]:hover{background:rgba(255,210,63,0.1)}
+.copy-doc [contenteditable]:focus{background:rgba(255,210,63,0.15);box-shadow:0 0 0 2px rgba(255,210,63,0.3)}
+.copy-doc-edit-hint{text-align:center;font-family:'Caveat',cursive;font-size:18px;color:var(--text-light);margin-bottom:24px}
+@media(max-width:600px){.copy-doc{padding:32px 24px}.copy-doc::before{left:24px;right:24px}.copy-doc-h1{font-size:28px}}
 .copy-field textarea:focus,.copy-field input:focus{outline:none;border-color:var(--hot-pink);background:var(--white)}
 .copy-field textarea{min-height:72px}
-.looks-good-box{background:rgba(52,211,153,0.08);border:3px solid var(--mint);padding:28px 32px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
-.looks-good-box p{font-size:17px;color:var(--text);margin:0;flex:1}
-.looks-good-box strong{color:var(--mint)}
 .output-block{background:var(--charcoal);padding:32px;margin:24px 0;position:relative;max-height:600px;overflow-y:auto}
 .output-block pre{color:var(--lavender);font-family:'Courier New',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
 .copy-btn{position:sticky;top:0;float:right;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;padding:10px 20px;border:2px solid var(--electric-yellow);background:var(--electric-yellow);color:var(--charcoal);cursor:pointer;transition:all 0.2s ease;z-index:5}
@@ -303,17 +318,13 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
   </div>
   <div id="copyReviewState" style="display:none">
     <div class="panel-intro">
-      <h2>Here's your homepage copy &#10024;</h2>
-      <p>Claude wrote this in your brand voice. Read through it &mdash; expand any section to tweak. Or just hit the button below.</p>
-    </div>
-    <div class="looks-good-box">
-      <p>Happy with it? <strong>Hit the button and your HTML is ready.</strong> Or expand any section to edit first.</p>
-      <button class="btn btn--mint" onclick="generateHomepage()">Looks Good &mdash; Build My Page &rarr;</button>
+      <h2>Your Homepage Copy &#10024;</h2>
+      <p>Here's your full-page copy, written in your brand voice. Click any text to edit it right on the page.</p>
     </div>
     <div id="copyFields"></div>
-    <div class="btn-row">
+    <div class="btn-row" style="justify-content:center;gap:16px;margin-top:0">
       <button class="btn btn--outline" onclick="goToStep('content')">&larr; Back to Interview</button>
-      <button class="btn btn--yellow" onclick="generateHomepage()">Build My Homepage &rarr;</button>
+      <button class="btn btn--yellow" style="font-size:20px;padding:20px 48px" onclick="generateHomepage()">Build My Homepage &rarr;</button>
     </div>
   </div>
 </div>
@@ -785,75 +796,154 @@ function renderCopyReview(){
   document.getElementById('copyReviewState').style.display='block';
   const container=document.getElementById('copyFields');container.innerHTML='';
   const pc=polishedCopy;
-  const sections=[];
+  const voiceName=brandArchetype||'your brand';
 
-  sections.push({key:'hero',title:'&#129464; Hero Section',fields:[
-    {label:'Headline',id:'pc_heroHeadline',value:pc.heroHeadline||'',type:'input'},
-    {label:'Subheadline',id:'pc_heroSubheadline',value:pc.heroSubheadline||'',type:'textarea'}
-  ]});
-  if(selectedSections.trust&&pc.trustText)sections.push({key:'trust',title:'&#10022; Social Proof',fields:[{label:'Proof line',id:'pc_trustText',value:pc.trustText,type:'input'}]});
-  if(selectedSections.problem&&(pc.problemBody||pc.solutionBody))sections.push({key:'problem',title:'&#128161; Problem + Solution',fields:[{label:'Section headline',id:'pc_problemHeadline',value:pc.problemHeadline||'Sound familiar?',type:'input'},{label:'The problem',id:'pc_problemBody',value:pc.problemBody||'',type:'textarea'},{label:'The solution',id:'pc_solutionBody',value:pc.solutionBody||'',type:'textarea'}]});
+  // Build one flowing copy doc
+  let html=`<div class="copy-doc">
+    <div class="copy-doc-header">
+      <h2>Homepage Copy</h2>
+      <p>written in ${esc(voiceName)} voice</p>
+    </div>
+    <p class="copy-doc-edit-hint">click any text to edit it</p>`;
+
+  // Hero
+  html+=`<div class="copy-doc-section">
+    <div class="copy-doc-label">Hero</div>
+    <div class="copy-doc-h1" contenteditable="true" data-field="heroHeadline">${esc(pc.heroHeadline||'')}</div>
+    <div class="copy-doc-body" contenteditable="true" data-field="heroSubheadline">${esc(pc.heroSubheadline||'')}</div>
+  </div>`;
+
+  // Trust / Social proof
+  if(selectedSections.trust&&pc.trustText){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">Social Proof</div>
+      <div class="copy-doc-body" style="font-weight:600;text-align:center" contenteditable="true" data-field="trustText">${esc(pc.trustText)}</div>
+    </div>`;
+  }
+
+  // Problem + Solution
+  if(selectedSections.problem&&(pc.problemBody||pc.solutionBody)){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">Problem</div>
+      <div class="copy-doc-h2" contenteditable="true" data-field="problemHeadline">${esc(pc.problemHeadline||'Sound familiar?')}</div>
+      <div class="copy-doc-body" contenteditable="true" data-field="problemBody">${esc(pc.problemBody||'')}</div>`;
+    if(pc.solutionBody){
+      html+=`<div class="copy-doc-label" style="margin-top:24px">Solution</div>
+      <div class="copy-doc-body" contenteditable="true" data-field="solutionBody">${esc(pc.solutionBody)}</div>`;
+    }
+    html+=`</div>`;
+  }
+
+  // Services
   if(selectedSections.services&&pc.service1Name){
-    const sf=[{label:'Service 1 name',id:'pc_service1Name',value:pc.service1Name||'',type:'input'},{label:'Service 1 description',id:'pc_service1Desc',value:pc.service1Desc||'',type:'textarea'},{label:'Service 2 name',id:'pc_service2Name',value:pc.service2Name||'',type:'input'},{label:'Service 2 description',id:'pc_service2Desc',value:pc.service2Desc||'',type:'textarea'}];
-    if(pc.service3Name){sf.push({label:'Service 3 name',id:'pc_service3Name',value:pc.service3Name,type:'input'});sf.push({label:'Service 3 description',id:'pc_service3Desc',value:pc.service3Desc||'',type:'textarea'});}
-    sections.push({key:'services',title:'&#128295; Services',fields:sf});
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">Services</div>`;
+    const svcs=[[pc.service1Name,pc.service1Desc,'service1'],[pc.service2Name,pc.service2Desc,'service2'],[pc.service3Name,pc.service3Desc,'service3']].filter(([n])=>n);
+    svcs.forEach(([name,desc,key])=>{
+      html+=`<div class="copy-doc-h2" contenteditable="true" data-field="${key}Name" style="font-size:20px;margin-top:16px">${esc(name)}</div>
+      <div class="copy-doc-body" contenteditable="true" data-field="${key}Desc">${esc(desc||'')}</div>`;
+    });
+    html+=`</div>`;
   }
-  if(selectedSections.about&&pc.aboutBody)sections.push({key:'about',title:'&#128075; About Snippet',fields:[{label:'About text',id:'pc_aboutBody',value:pc.aboutBody,type:'textarea'}]});
-  if(selectedSections.testimonials&&(pc.t1Quote||pc.t2Quote)){
-    const tf=[];
-    if(pc.t1Quote){tf.push({label:'Quote 1',id:'pc_t1Quote',value:pc.t1Quote,type:'textarea'});tf.push({label:'Name 1',id:'pc_t1Name',value:pc.t1Name||'',type:'input'});}
-    if(pc.t2Quote){tf.push({label:'Quote 2',id:'pc_t2Quote',value:pc.t2Quote,type:'textarea'});tf.push({label:'Name 2',id:'pc_t2Name',value:pc.t2Name||'',type:'input'});}
-    if(pc.t3Quote){tf.push({label:'Quote 3',id:'pc_t3Quote',value:pc.t3Quote,type:'textarea'});tf.push({label:'Name 3',id:'pc_t3Name',value:pc.t3Name||'',type:'input'});}
-    sections.push({key:'testimonials',title:'&#128172; Testimonials',fields:tf});
-  }
-  if(selectedSections.process&&pc.step1Desc){
-    const pf=[{label:'Step 1 label',id:'pc_step1Label',value:pc.step1Label||'',type:'input'},{label:'Step 1 description',id:'pc_step1Desc',value:pc.step1Desc||'',type:'input'},{label:'Step 2 label',id:'pc_step2Label',value:pc.step2Label||'',type:'input'},{label:'Step 2 description',id:'pc_step2Desc',value:pc.step2Desc||'',type:'input'},{label:'Step 3 label',id:'pc_step3Label',value:pc.step3Label||'',type:'input'},{label:'Step 3 description',id:'pc_step3Desc',value:pc.step3Desc||'',type:'input'}];
-    if(pc.step4Desc){pf.push({label:'Step 4 label',id:'pc_step4Label',value:pc.step4Label||'',type:'input'});pf.push({label:'Step 4 description',id:'pc_step4Desc',value:pc.step4Desc||'',type:'input'});}
-    sections.push({key:'process',title:'&#9881;&#65039; Process',fields:pf});
-  }
-  if(selectedSections.faq&&pc.faq1Q){
-    const ff=[{label:'Q1',id:'pc_faq1Q',value:pc.faq1Q||'',type:'input'},{label:'A1',id:'pc_faq1A',value:pc.faq1A||'',type:'textarea'},{label:'Q2',id:'pc_faq2Q',value:pc.faq2Q||'',type:'input'},{label:'A2',id:'pc_faq2A',value:pc.faq2A||'',type:'textarea'}];
-    if(pc.faq3Q){ff.push({label:'Q3',id:'pc_faq3Q',value:pc.faq3Q,type:'input'});ff.push({label:'A3',id:'pc_faq3A',value:pc.faq3A||'',type:'textarea'});}
-    sections.push({key:'faq',title:'&#10067; FAQ',fields:ff});
-  }
-  if(selectedSections.cta&&pc.ctaHeadline)sections.push({key:'cta',title:'&#128640; Final CTA',fields:[{label:'Closing headline',id:'pc_ctaHeadline',value:pc.ctaHeadline,type:'input'},{label:'Button text',id:'pc_ctaButtonText',value:pc.ctaButtonText||"Let's Do This",type:'input'}]});
 
-  sections.forEach(sec=>{
-    // "You said" = first field's raw note from contentData
-    // Map each section to its most meaningful "you said" note and "claude wrote" output
-    const is=window._interviewSummary||{};
-    const rawNoteMap={hero:v('heroHeadline'),trust:is.trustProof||'',problem:is.problemStatement||'',services:is.services?is.services.map(s=>s.name).join(', '):'',about:is.aboutSnippet||'',testimonials:is.testimonials?.[0]?.quote||'',process:is.process?.[0]?.label||'',faq:is.faqItems?.[0]?.question||'',cta:is.ctaHeadline||''};
-    const claudeWroteMap={hero:pc.heroHeadline,trust:pc.trustText,problem:pc.problemBody,services:pc.service1Desc,about:pc.aboutBody,testimonials:pc.t1Quote,process:pc.step1Desc,faq:pc.faq1A,cta:pc.ctaHeadline};
-    const youSaid=(rawNoteMap[sec.key]||'').trim();
-    const claudeWrote=(claudeWroteMap[sec.key]||sec.fields[0]?.value||'').trim();
-    const youSaidTrunc=youSaid.length>90?youSaid.slice(0,90)+'\u2026':youSaid;
-    const claudeWroteTrunc=claudeWrote.length>90?claudeWrote.slice(0,90)+'\u2026':claudeWrote;
-    const card=document.createElement('div');card.className='copy-section';
-    card.innerHTML=`
-      <div class="copy-section-header"><h3>${sec.title}</h3><button class="edit-toggle" onclick="toggleEdit('edit-${sec.key}',this)">Edit &darr;</button></div>
-      <div class="copy-section-preview">
-        ${youSaid?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #e0dde6">
-          <div style="padding:14px 16px;border-right:1px solid #e0dde6">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:6px">You said</div>
-            <div style="font-size:15px;color:var(--text-light);line-height:1.5;font-style:italic">${youSaidTrunc}</div>
-          </div>
-          <div style="padding:14px 16px;background:rgba(52,211,153,0.04)">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mint);margin-bottom:6px">Claude wrote</div>
-            <div style="font-size:15px;color:var(--text);line-height:1.5;font-weight:500">${claudeWroteTrunc}</div>
-          </div>
-        </div>`:`<div style="padding:14px 16px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mint);margin-bottom:6px">Claude wrote</div><div style="font-size:15px;color:var(--text);line-height:1.5">${claudeWroteTrunc}</div></div>`}
+  // About
+  if(selectedSections.about&&pc.aboutBody){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">About</div>
+      <div class="copy-doc-body" contenteditable="true" data-field="aboutBody">${esc(pc.aboutBody)}</div>
+    </div>`;
+  }
+
+  // Testimonials
+  if(selectedSections.testimonials&&(pc.t1Quote||pc.t2Quote)){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">Testimonials</div>`;
+    const ts=[[pc.t1Quote,pc.t1Name,'t1'],[pc.t2Quote,pc.t2Name,'t2'],[pc.t3Quote,pc.t3Name,'t3']].filter(([q])=>q);
+    ts.forEach(([quote,name,key])=>{
+      html+=`<div class="copy-doc-quote">
+        <div contenteditable="true" data-field="${key}Quote">&ldquo;${esc(quote)}&rdquo;</div>
+        <cite contenteditable="true" data-field="${key}Name">&mdash; ${esc(name||'Client')}</cite>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // Process
+  if(selectedSections.process&&pc.step1Desc){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">How It Works</div>`;
+    const steps=[[pc.step1Label,pc.step1Desc,'step1'],[pc.step2Label,pc.step2Desc,'step2'],[pc.step3Label,pc.step3Desc,'step3'],[pc.step4Label,pc.step4Desc,'step4']].filter(([,d])=>d);
+    steps.forEach(([label,desc,key],i)=>{
+      html+=`<div class="copy-doc-step">
+        <div class="copy-doc-step-num">${i+1}</div>
+        <div class="copy-doc-step-text"><strong contenteditable="true" data-field="${key}Label">${esc(label||'')}</strong> &mdash; <span contenteditable="true" data-field="${key}Desc">${esc(desc)}</span></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // FAQ
+  if(selectedSections.faq&&pc.faq1Q){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-label">FAQ</div>`;
+    const faqs=[[pc.faq1Q,pc.faq1A,'faq1'],[pc.faq2Q,pc.faq2A,'faq2'],[pc.faq3Q,pc.faq3A,'faq3']].filter(([q])=>q);
+    faqs.forEach(([q,a,key])=>{
+      html+=`<div class="copy-doc-faq">
+        <div class="copy-doc-faq-q" contenteditable="true" data-field="${key}Q">${esc(q)}</div>
+        <div class="copy-doc-faq-a" contenteditable="true" data-field="${key}A">${esc(a||'')}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // CTA
+  if(selectedSections.cta&&pc.ctaHeadline){
+    html+=`<hr class="copy-doc-divider">
+    <div class="copy-doc-section">
+      <div class="copy-doc-cta">
+        <div class="copy-doc-h2" contenteditable="true" data-field="ctaHeadline">${esc(pc.ctaHeadline)}</div>
+        <div class="copy-doc-body" style="font-weight:700;color:var(--hot-pink);margin-top:8px" contenteditable="true" data-field="ctaButtonText">[ ${esc(pc.ctaButtonText||"Let's Do This")} ]</div>
       </div>
-      <div class="edit-fields" id="edit-${sec.key}">${sec.fields.map(f=>`<div class="copy-field"><div class="copy-field-label">${f.label}</div>${f.type==='textarea'?`<textarea id="${f.id}" oninput="syncPolished('${f.id}')">${esc(f.value)}</textarea>`:`<input type="text" id="${f.id}" value="${esc(f.value)}" oninput="syncPolished('${f.id}')">`}</div>`).join('')}</div>`;
-    container.appendChild(card);
+    </div>`;
+  }
+
+  html+=`</div>`;
+  container.innerHTML=html;
+
+  // Bind contenteditable fields to polishedCopy
+  container.querySelectorAll('[contenteditable][data-field]').forEach(el=>{
+    el.addEventListener('input',function(){
+      const field=this.dataset.field;
+      let val=this.innerText.trim();
+      // Strip decorative quotes/brackets from display-only formatting
+      if(field.endsWith('Quote'))val=val.replace(/^[\u201c"\u201d]+|[\u201c"\u201d]+$/g,'').trim();
+      if(field==='ctaButtonText')val=val.replace(/^\[\s*|\s*\]$/g,'').trim();
+      if(field.endsWith('Name')&&field.startsWith('t'))val=val.replace(/^\u2014\s*/,'').trim();
+      polishedCopy[field]=val;
+    });
   });
 }
 
-function toggleEdit(id,btn){const el=document.getElementById(id);const open=el.classList.toggle('open');btn.innerHTML=open?'Done &uarr;':'Edit &darr;';}
 function syncPolished(fieldId){const el=document.getElementById(fieldId);if(!el)return;polishedCopy[fieldId.replace('pc_','')]=el.value;}
 
 /* GENERATE HTML */
 function generateHomepage(){
-  document.querySelectorAll('[id^="pc_"]').forEach(el=>{polishedCopy[el.id.replace('pc_','')]=el.value||'';});
+  // Sync any contenteditable fields back to polishedCopy
+  document.querySelectorAll('[contenteditable][data-field]').forEach(el=>{
+    const field=el.dataset.field;
+    let val=el.innerText.trim();
+    if(field.endsWith('Quote'))val=val.replace(/^[\u201c"\u201d]+|[\u201c"\u201d]+$/g,'').trim();
+    if(field==='ctaButtonText')val=val.replace(/^\[\s*|\s*\]$/g,'').trim();
+    if(field.endsWith('Name')&&field.startsWith('t'))val=val.replace(/^\u2014\s*/,'').trim();
+    polishedCopy[field]=val;
+  });
   const pc=polishedCopy;
   const d={headline:pc.heroHeadline||v('heroHeadline'),sub:pc.heroSubheadline||v('heroSub'),cta:v('heroCTA')||'Get Started',ctaLink:v('heroCTALink')||'#contact',cta2:v('heroSecondaryCTA'),cta2Link:v('heroSecondaryCTALink'),image:v('heroImage')};
   const inlineCSS=brandCSS?`<style>${brandCSS}</style>`:`<style>:root{--color-bg-dark:#1E1038;--color-bg-light:#FFFDF7;--color-primary:#E8346B;--color-accent:#FFD23F;--color-text-on-dark:#f0f0f0;--color-text-on-light:#2D2B3D;--color-subtle:#C4B5FD;--color-card-bg:#fef9ef;--font-heading:'Georgia',serif;--font-body:sans-serif;--border-radius:0px;--spacing-section:80px;--spacing-element:32px;--spacing-card:28px;--transition-speed:0.3s;--transition-bounce:ease;--hover-lift:translateY(-4px);--hover-scale:scale(1.02)}body{font-family:var(--font-body);color:var(--color-text-on-light);background:var(--color-bg-light);line-height:1.6}h1,h2,h3,h4{font-family:var(--font-heading);line-height:1.15}h1{font-size:clamp(2.5rem,5vw,4rem);font-weight:700}h2{font-size:clamp(2rem,4vw,3rem);font-weight:700}h3{font-size:clamp(1.5rem,3vw,2rem);font-weight:600}.btn-primary{display:inline-block;padding:18px 40px;background:var(--color-accent);color:var(--color-bg-dark);font-weight:600;font-size:1.125rem;border:3px solid var(--color-accent);border-radius:var(--border-radius);text-decoration:none;transition:all var(--transition-speed)}.btn-secondary{display:inline-block;padding:18px 40px;background:transparent;color:var(--color-primary);font-weight:600;font-size:1.125rem;border:3px solid var(--color-primary);border-radius:var(--border-radius);text-decoration:none}.card{background:var(--color-card-bg);border:2px solid var(--color-subtle);border-radius:var(--border-radius);padding:var(--spacing-card)}.section-light{background:var(--color-bg-light);padding:var(--spacing-section) 5%}.section-dark{background:var(--color-bg-dark);color:var(--color-text-on-dark);padding:var(--spacing-section) 5%}.testimonial{border-left:4px solid var(--color-primary);padding:var(--spacing-card);background:var(--color-card-bg);font-style:italic}</style>`;
