@@ -885,7 +885,7 @@ let resultArchetype = null;
 let secondaryArchetype = null;
 let selectedPalette = 0;
 let selectedFont = 0;
-let styleChoices = { corners: "0px", density: "balanced", animation: "expressive" };
+let styleChoices = { corners: null, density: null, animation: null };
 
 /* ============================================
    QUIZ QUESTIONS
@@ -1060,7 +1060,7 @@ const archetypes = {
       { name:"Cormorant + Work Sans", heading:"'Cormorant Garamond', serif", body:"'Work Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap");', previewHeading:"Transform Everything", previewBody:"Refined, editorial, a little magical." },
       { name:"DM Serif + Inter", heading:"'DM Serif Display', serif", body:"'Inter', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap");', previewHeading:"Transform Everything", previewBody:"Bold, confident, contemporary." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"4px"},{label:"Rounded",value:"8px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Slow Reveal",value:"slow-reveal"},{label:"Dramatic",value:"dramatic"}] }
   },
 
   creator:{ name:"The Creator", emoji:"🎨", tagline:"\"You build worlds that didn't exist before you.\"",
@@ -1077,7 +1077,7 @@ const archetypes = {
       { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Made by Hand", previewBody:"Editorial, distinctive, confident." },
       { name:"Space Grotesk + Libre Baskerville", heading:"'Space Grotesk', sans-serif", body:"'Libre Baskerville', serif", import:'@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Libre+Baskerville:wght@400;700&display=swap");', previewHeading:"Made by Hand", previewBody:"Modern meets classic." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"4px"},{label:"Rounded",value:"8px"}], density:[{label:"Balanced",value:"balanced"},{label:"Airy",value:"airy"},{label:"Dense",value:"dense"}], animation:[{label:"Intentional",value:"intentional"},{label:"Expressive",value:"expressive"}] }
   },
 
   sage:{ name:"The Sage", emoji:"📚", tagline:"\"You turn confusion into clarity.\"",
@@ -1094,7 +1094,7 @@ const archetypes = {
       { name:"Lora + Source Sans", heading:"'Lora', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Clarity in Every Word", previewBody:"Warm expertise, modern clarity." },
       { name:"IBM Plex Serif + IBM Plex Sans", heading:"'IBM Plex Serif', serif", body:"'IBM Plex Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap");', previewHeading:"Clarity in Every Word", previewBody:"Precise, technical, trustworthy." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"2px"},{label:"Rounded",value:"6px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle Fade",value:"subtle-fade"},{label:"Minimal",value:"minimal"}] }
   },
 
   hero:{ name:"The Hero", emoji:"⚔️", tagline:"\"You rise to every challenge and bring others with you.\"",
@@ -1111,7 +1111,7 @@ const archetypes = {
       { name:"Barlow Condensed + Barlow", heading:"'Barlow Condensed', sans-serif", body:"'Barlow', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap");', previewHeading:"Built to Last", previewBody:"Disciplined, focused, confident." },
       { name:"Playfair + Lato", heading:"'Playfair Display', serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Built to Last", previewBody:"Classic strength, modern clarity." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"2px"},{label:"Rounded",value:"6px"}], density:[{label:"Balanced",value:"balanced"},{label:"Airy",value:"airy"},{label:"Dense",value:"dense"}], animation:[{label:"Rise",value:"rise"},{label:"Power Rise",value:"power-rise"}] }
   },
 
   rebel:{ name:"The Rebel", emoji:"🔥", tagline:"\"You break the rules that needed breaking.\"",
@@ -1128,7 +1128,7 @@ const archetypes = {
       { name:"Space Grotesk + Space Grotesk", heading:"'Space Grotesk', sans-serif", body:"'Space Grotesk', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");', previewHeading:"Break the Rules", previewBody:"Modern, edgy, completely itself." },
       { name:"Barlow Condensed + Source Sans", heading:"'Barlow Condensed', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap");', previewHeading:"Break the Rules", previewBody:"Tight, direct, no wasted space." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"2px"},{label:"Rounded",value:"4px"}], density:[{label:"Dense",value:"dense"},{label:"Balanced",value:"balanced"},{label:"Airy",value:"airy"}], animation:[{label:"Snap",value:"snap"},{label:"Aggressive",value:"aggressive"}] }
   },
 
   explorer:{ name:"The Explorer", emoji:"🧭", tagline:"\"You forge your own path and invite others to follow.\"",
@@ -1145,7 +1145,7 @@ const archetypes = {
       { name:"Raleway + Source Sans", heading:"'Raleway', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Beyond the Map", previewBody:"Elegant movement, clear purpose." },
       { name:"Montserrat + Open Sans", heading:"'Montserrat', sans-serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Beyond the Map", previewBody:"Modern, mobile, adventurous." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"6px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"4px"},{label:"Rounded",value:"8px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Glide",value:"glide"},{label:"Full Momentum",value:"momentum"}] }
   },
 
   caregiver:{ name:"The Caregiver", emoji:"🤲", tagline:"\"You make people feel safe enough to grow.\"",
@@ -1162,7 +1162,7 @@ const archetypes = {
       { name:"Lora + Open Sans", heading:"'Lora', serif", body:"'Open Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Open+Sans:wght@300;400;600&display=swap");', previewHeading:"Here for You", previewBody:"Warm, approachable, trustworthy." },
       { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Here for You", previewBody:"Caring with elegance." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Subtle",value:"4px"},{label:"Soft",value:"8px"},{label:"Rounded",value:"12px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Gentle",value:"gentle"},{label:"Warm Drift",value:"warm-drift"}] }
   },
 
   ruler:{ name:"The Ruler", emoji:"👑", tagline:"\"You build empires with precision and vision.\"",
@@ -1179,7 +1179,7 @@ const archetypes = {
       { name:"Playfair + Lato", heading:"'Playfair Display', serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Built to Lead", previewBody:"Authority with refinement." },
       { name:"Cormorant + Inter", heading:"'Cormorant Garamond', serif", body:"'Inter', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500&display=swap");', previewHeading:"Built to Lead", previewBody:"Precise, structured, premium." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Subtle",value:"4px"},{label:"Rounded",value:"8px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Precise",value:"2px"},{label:"Subtle",value:"4px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Still",value:"still"},{label:"Minimal",value:"ruler-minimal"}] }
   },
 
   lover:{ name:"The Lover", emoji:"💎", tagline:"\"You create beauty and deep connection in everything.\"",
@@ -1196,7 +1196,7 @@ const archetypes = {
       { name:"Playfair + Source Sans", heading:"'Playfair Display', serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"For the Feeling", previewBody:"Beautiful, considered, warm." },
       { name:"DM Serif + DM Sans", heading:"'DM Serif Display', serif", body:"'DM Sans', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap");', previewHeading:"For the Feeling", previewBody:"Soft, modern, deeply personal." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Subtle",value:"4px"},{label:"Soft",value:"8px"},{label:"Rounded",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Slow Drift",value:"slow-drift"},{label:"Dreamy",value:"dreamy"}] }
   },
 
   jester:{ name:"The Jester", emoji:"🎪", tagline:"\"You turn the serious into something people actually enjoy.\"",
@@ -1213,7 +1213,7 @@ const archetypes = {
       { name:"Fredoka + Quicksand", heading:"'Fredoka One', cursive", body:"'Quicksand', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;500;600;700&display=swap");', previewHeading:"Let's Have Fun with This", previewBody:"Playful, warm, approachable." },
       { name:"Poppins + Poppins", heading:"'Poppins', sans-serif", body:"'Poppins', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");', previewHeading:"Let's Have Fun with This", previewBody:"Modern joy, clean energy." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Playful",value:"6px"},{label:"Rounded",value:"12px"}], density:[{label:"Balanced",value:"balanced"},{label:"Airy",value:"airy"},{label:"Dense",value:"dense"}], animation:[{label:"Bouncy",value:"bouncy"},{label:"Wild Wobble",value:"wild-wobble"}] }
   },
 
   innocent:{ name:"The Innocent", emoji:"🌿", tagline:"\"You remind people that simplicity is the ultimate sophistication.\"",
@@ -1230,7 +1230,7 @@ const archetypes = {
       { name:"Quicksand + Lato", heading:"'Quicksand', sans-serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Keep It Simple", previewBody:"Light, clean, unpretentious." },
       { name:"Poppins + Source Sans", heading:"'Poppins', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Keep It Simple", previewBody:"Modern simplicity, warm clarity." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Soft",value:"8px"},{label:"Rounded",value:"12px"},{label:"Pillowy",value:"16px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Gentle Float",value:"gentle-float"},{label:"Soft Fade",value:"soft-fade"}] }
   },
 
   everyperson:{ name:"The Everyperson", emoji:"🤝", tagline:"\"You make people feel like they belong.\"",
@@ -1247,7 +1247,7 @@ const archetypes = {
       { name:"Poppins + Lato", heading:"'Poppins', sans-serif", body:"'Lato', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@300;400;700&display=swap");', previewHeading:"Just Real People", previewBody:"Clean, modern, totally unpretentious." },
       { name:"Raleway + Source Sans", heading:"'Raleway', sans-serif", body:"'Source Sans 3', sans-serif", import:'@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap");', previewHeading:"Just Real People", previewBody:"Welcoming, clear, down to earth." }
     ],
-    styleOptions:{ corners:[{label:"Sharp",value:"0px"},{label:"Soft",value:"12px"},{label:"Rounded",value:"24px"}], density:[{label:"Airy",value:"airy"},{label:"Balanced",value:"balanced"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Expressive",value:"expressive"}] }
+    styleOptions:{ corners:[{label:"Subtle",value:"4px"},{label:"Friendly",value:"6px"},{label:"Rounded",value:"10px"}], density:[{label:"Balanced",value:"balanced"},{label:"Airy",value:"airy"},{label:"Dense",value:"dense"}], animation:[{label:"Subtle",value:"subtle"},{label:"Gentle Fade",value:"gentle-fade"}] }
   }
 };
 
@@ -1454,7 +1454,7 @@ function renderCustomization() {
   document.getElementById('paletteOptions').innerHTML=a.palettes.map((p,i)=>`<div class="palette-card ${i===selectedPalette?'selected':''}" onclick="selectPalette(${i})"><div class="palette-swatches">${p.colors.map(c=>`<div class="swatch" style="background:${c}"></div>`).join('')}</div><div><div class="palette-name">${p.name}</div><div class="palette-desc">${p.desc}</div></div></div>`).join('');
   document.getElementById('fontOptions').innerHTML=a.fonts.map((f,i)=>`<div class="font-card ${i===selectedFont?'selected':''}" onclick="selectFont(${i})"><div class="font-preview-heading" style="font-family:${f.heading}">${f.previewHeading}</div><div class="font-preview-body" style="font-family:${f.body}">${f.previewBody}</div><div class="font-card-name">${f.name}</div></div>`).join('');
   const tc=document.getElementById('styleToggles'); tc.innerHTML='';
-  Object.entries(a.styleOptions).forEach(([k,opts])=>{ tc.innerHTML+=`<div class="style-toggle"><span class="style-toggle-label">${k.charAt(0).toUpperCase()+k.slice(1)}</span><div class="toggle-options">${opts.map(o=>`<button class="toggle-opt ${styleChoices[k]===o.value?'selected':''}" onclick="selectStyle('${k}','${o.value}',this)">${o.label}</button>`).join('')}</div></div>`; });
+  Object.entries(a.styleOptions).forEach(([k,opts])=>{ if(!opts.some(o=>o.value===styleChoices[k])) styleChoices[k]=opts[0].value; tc.innerHTML+=`<div class="style-toggle"><span class="style-toggle-label">${k.charAt(0).toUpperCase()+k.slice(1)}</span><div class="toggle-options">${opts.map(o=>`<button class="toggle-opt ${styleChoices[k]===o.value?'selected':''}" onclick="selectStyle('${k}','${o.value}',this)">${o.label}</button>`).join('')}</div></div>`; });
   updatePreview();
 }
 
@@ -1483,7 +1483,34 @@ async function generateOutput() {
     fontImport=fn.import; hFont=fn.heading; bFont=fn.body; tokens=pl.tokens;
   }
   const sp={airy:{section:'120px',element:'48px',card:'40px'},balanced:{section:'80px',element:'32px',card:'28px'},dense:{section:'56px',element:'20px',card:'20px'}}[styleChoices.density];
-  const anim=styleChoices.animation==='expressive'?'--transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);\n  --transition-speed: 0.3s;\n  --hover-lift: translateY(-4px);\n  --hover-scale: scale(1.02);':'--transition-bounce: ease;\n  --transition-speed: 0.2s;\n  --hover-lift: translateY(-2px);\n  --hover-scale: scale(1.01);';
+  const animStyles={
+    'slow-reveal':{bounce:'cubic-bezier(0.25, 0.1, 0.25, 1)',speed:'0.6s',lift:'translateY(-3px)',scale:'scale(1.01)'},
+    'dramatic':{bounce:'cubic-bezier(0.16, 1, 0.3, 1)',speed:'0.8s',lift:'translateY(-6px)',scale:'scale(1.03)'},
+    'intentional':{bounce:'cubic-bezier(0.22, 1, 0.36, 1)',speed:'0.4s',lift:'translateY(-3px) rotate(-1deg)',scale:'scale(1.02) rotate(1deg)'},
+    'expressive':{bounce:'cubic-bezier(0.34, 1.56, 0.64, 1)',speed:'0.35s',lift:'translateY(-5px) rotate(-2deg)',scale:'scale(1.04) rotate(2deg)'},
+    'subtle-fade':{bounce:'ease',speed:'0.2s',lift:'translateY(-2px)',scale:'scale(1.01)'},
+    'minimal':{bounce:'ease',speed:'0.15s',lift:'translateY(-1px)',scale:'scale(1.005)'},
+    'rise':{bounce:'cubic-bezier(0.33, 1, 0.68, 1)',speed:'0.3s',lift:'translateY(-4px)',scale:'scale(1.02)'},
+    'power-rise':{bounce:'cubic-bezier(0.22, 1, 0.36, 1)',speed:'0.25s',lift:'translateY(-6px)',scale:'scale(1.03)'},
+    'snap':{bounce:'cubic-bezier(0, 0, 0.2, 1)',speed:'0.1s',lift:'translateY(-2px)',scale:'scale(1.02)'},
+    'aggressive':{bounce:'cubic-bezier(0, 0, 0, 1)',speed:'0.08s',lift:'translateY(-4px)',scale:'scale(1.04)'},
+    'glide':{bounce:'cubic-bezier(0.25, 0.46, 0.45, 0.94)',speed:'0.4s',lift:'translateX(-2px) translateY(-2px)',scale:'scale(1.02)'},
+    'momentum':{bounce:'cubic-bezier(0.22, 1, 0.36, 1)',speed:'0.35s',lift:'translateX(-4px) translateY(-3px)',scale:'scale(1.03)'},
+    'gentle':{bounce:'ease-out',speed:'0.4s',lift:'translateY(-2px)',scale:'scale(1.01)'},
+    'warm-drift':{bounce:'cubic-bezier(0.25, 0.1, 0.25, 1)',speed:'0.5s',lift:'translateY(-3px)',scale:'scale(1.015)'},
+    'still':{bounce:'ease',speed:'0s',lift:'none',scale:'none'},
+    'ruler-minimal':{bounce:'ease',speed:'0.1s',lift:'translateY(-1px)',scale:'scale(1.003)'},
+    'slow-drift':{bounce:'cubic-bezier(0.25, 0.1, 0.25, 1)',speed:'0.6s',lift:'translateY(-2px)',scale:'scale(1.01)'},
+    'dreamy':{bounce:'cubic-bezier(0.25, 0.1, 0.25, 1)',speed:'0.8s',lift:'translateY(-4px)',scale:'scale(1.02)'},
+    'bouncy':{bounce:'cubic-bezier(0.34, 1.56, 0.64, 1)',speed:'0.3s',lift:'translateY(-4px)',scale:'scale(1.03) rotate(1deg)'},
+    'wild-wobble':{bounce:'cubic-bezier(0.34, 2, 0.64, 1)',speed:'0.25s',lift:'translateY(-6px) rotate(-2deg)',scale:'scale(1.05) rotate(3deg)'},
+    'gentle-float':{bounce:'cubic-bezier(0.25, 0.46, 0.45, 0.94)',speed:'0.5s',lift:'translateY(-3px)',scale:'scale(1.01)'},
+    'soft-fade':{bounce:'ease-out',speed:'0.35s',lift:'translateY(-2px)',scale:'scale(1.01)'},
+    'subtle':{bounce:'ease',speed:'0.25s',lift:'translateY(-2px)',scale:'scale(1.01)'},
+    'gentle-fade':{bounce:'ease-out',speed:'0.3s',lift:'translateY(-2px)',scale:'scale(1.01)'}
+  };
+  const as=animStyles[styleChoices.animation]||animStyles['subtle'];
+  const anim=`--transition-bounce: ${as.bounce};\n  --transition-speed: ${as.speed};\n  --hover-lift: ${as.lift};\n  --hover-scale: ${as.scale};\n  --animation-style: ${styleChoices.animation};`;
 
   const css=`/* ===========================================
    ${a.name.toUpperCase()} BRAND DESIGN SYSTEM
@@ -1568,7 +1595,9 @@ footer { background: var(--color-bg-dark); color: var(--color-text-on-dark); pad
     paletteTokens: tokens,
     fontHeading: hFont,
     fontBody: bFont,
-    voiceTraits: voiceTraits
+    voiceTraits: voiceTraits,
+    styleChoices: { ...styleChoices },
+    layoutConfig: a.layout || null
   };
 
   // Fire Claude API call for combination description (if we have a secondary archetype)
