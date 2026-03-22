@@ -256,12 +256,13 @@ try { const { createClient } = supabase; db = createClient(SUPABASE_URL, SUPABAS
 const MODULES = [
   { key:'module00', num:'00', title:'Prerequisites & Setup', desc:'Tools, accounts, and everything you need before starting.', file:'module00.html', tag:'Foundation' },
   { key:'module01', num:'01', title:'Brand Foundation', desc:'Your archetype, design system, and voice guidelines.', file:'module01.html', tag:'Foundation' },
-  { key:'module02', num:'02', title:'Homepage', desc:'The page that makes the right person stay.', file:'module02.html', tag:'Build' },
+  { key:'module02', num:'02', title:'About Page', desc:'Your story, told to the client.', file:'module02.html', tag:'Build' },
   { key:'module03', num:'03', title:'Sales & Services', desc:'The page that converts visitors into clients.', file:'module03.html', tag:'Build' },
-  { key:'module04', num:'04', title:'About Page', desc:'Your story, told to the client.', file:'module04.html', tag:'Build' },
+  { key:'module04', num:'04', title:'Contact', desc:'Make it easy for the right people to reach you.', file:'module04.html', tag:'Build' },
   { key:'module05', num:'05', title:'Privacy Policy & Terms', desc:'The legal pages, done properly.', file:'module05.html', tag:'Build' },
-  { key:'module06', num:'06', title:'Header & Footer', desc:'Navigation that ties every page together.', file:'module06.html', tag:'Build' },
-  { key:'module07', num:'07', title:'Going Live', desc:'Launch checklist, SEO basics, and what comes next.', file:'module07.html', tag:'Launch' }
+  { key:'module06', num:'06', title:'Homepage', desc:'The page that makes the right person stay.', file:'module06.html', tag:'Build' },
+  { key:'module07', num:'07', title:'Header & Footer', desc:'Navigation that ties every page together.', file:'module07.html', tag:'Build' },
+  { key:'module08', num:'08', title:'Going Live', desc:'Launch checklist, SEO basics, and what comes next.', file:'module08.html', tag:'Launch' }
 ];
 
 const ARCHETYPES = {
@@ -513,8 +514,8 @@ function renderDashboard(moduleMap) {
     rc.classList.add('done');
     document.getElementById('resumeTitle').textContent = 'Your site is built!';
     document.getElementById('resumeDesc').textContent = 'All modules complete. Ready to go live.';
-    document.getElementById('resumeBtn').textContent = 'Review Module 07';
-    document.getElementById('resumeBtn').href = 'module07.html';
+    document.getElementById('resumeBtn').textContent = 'Review Module 08';
+    document.getElementById('resumeBtn').href = 'module08.html';
     document.getElementById('upsellCard').style.display = 'flex';
   } else if (firstIncomplete) {
     const isNew = !moduleMap[firstIncomplete.key];
@@ -584,11 +585,12 @@ function formatTimeAgo(isoDate) {
 // YOUR PAGES SECTION
 // ============================================================
 const PAGE_MODULES = [
-  { key: 'module02', title: 'Homepage', file: 'module02.html' },
+  { key: 'module02', title: 'About Page', file: 'module02.html' },
   { key: 'module03', title: 'Sales & Services', file: 'module03.html' },
-  { key: 'module04', title: 'About Page', file: 'module04.html' },
+  { key: 'module04', title: 'Contact', file: 'module04.html' },
   { key: 'module05', title: 'Privacy & Terms', file: 'module05.html' },
-  { key: 'module06', title: 'Header & Footer', file: 'module06.html' }
+  { key: 'module06', title: 'Homepage', file: 'module06.html' },
+  { key: 'module07', title: 'Header & Footer', file: 'module07.html' }
 ];
 
 function renderPagesSection(moduleMap) {
