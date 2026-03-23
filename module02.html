@@ -16,10 +16,18 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:var(--off-white);-webkit-font-smoothing:antialiased;font-size:18px;line-height:1.6}
+.companion{max-width:820px;margin:0 auto;padding:0 24px}
 .auth-gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--deep-purple);padding:24px}
 .auth-box{background:var(--off-white);padding:56px 48px;max-width:480px;width:100%;text-align:center;border:3px solid var(--hot-pink);box-shadow:-6px 6px 0 var(--hot-pink)}
 .auth-box h2{font-family:'Fraunces',serif;font-weight:900;font-size:32px;color:var(--deep-purple);margin-bottom:8px}
 .auth-box p{font-size:17px;color:var(--text-light);margin-bottom:32px}
+.brand-banner{background:rgba(52,211,153,0.1);border-bottom:3px solid var(--mint);padding:14px 24px;display:flex;align-items:center;gap:12px}
+.brand-banner-dot{width:10px;height:10px;background:var(--mint);border-radius:50%;flex-shrink:0}
+.brand-banner p{font-size:15px;color:var(--text);margin:0}
+.brand-banner strong{color:var(--mint)}
+.brand-banner-missing{background:rgba(255,210,63,0.15);border-bottom:3px solid var(--electric-yellow)}
+.save-indicator{position:fixed;bottom:20px;right:20px;z-index:1000;background:var(--deep-purple);color:var(--lavender);padding:10px 20px;font-size:14px;font-weight:600;border:2px solid var(--lavender);opacity:0;transition:opacity 0.3s;pointer-events:none}
+.save-indicator.visible{opacity:1}
 .user-bar{background:var(--charcoal);padding:10px 24px;display:flex;justify-content:space-between;align-items:center}
 .user-bar-email{color:var(--lavender);font-size:14px}
 .user-bar-signout{background:none;border:1px solid rgba(196,181,253,0.3);color:var(--lavender);font-family:'Bricolage Grotesque',sans-serif;font-size:13px;padding:6px 14px;cursor:pointer;transition:all 0.2s}
@@ -30,20 +38,108 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
 .header-eyebrow{font-family:'Caveat',cursive;font-size:22px;color:var(--electric-yellow);margin-bottom:8px;position:relative;z-index:1}
 .header-title{font-family:'Fraunces',serif;font-weight:900;font-size:42px;color:var(--white);line-height:1.1;margin-bottom:12px;position:relative;z-index:1}
 .header-subtitle{font-size:18px;color:var(--lavender);font-weight:300;position:relative;z-index:1}
+.header-meta{display:flex;justify-content:center;gap:24px;margin-top:20px;font-size:15px;color:var(--lavender);position:relative;z-index:1}
 .squiggle{width:100%;height:16px;overflow:hidden}
 .squiggle svg{width:100%;height:16px}
-.coming-soon{max-width:820px;margin:0 auto;padding:80px 24px;text-align:center}
-.coming-soon-icon{font-size:64px;margin-bottom:24px}
-.coming-soon h2{font-family:'Fraunces',serif;font-weight:700;font-size:32px;color:var(--text);margin-bottom:12px}
-.coming-soon p{font-size:18px;color:var(--text-light);max-width:520px;margin:0 auto 32px}
-.coming-soon .back-link{display:inline-block;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:18px;padding:18px 40px;background:var(--hot-pink);color:white;border:3px solid var(--hot-pink);text-decoration:none;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1)}
-.coming-soon .back-link:hover{background:#d42a5c;transform:translateY(-3px) rotate(-1deg) scale(1.03);box-shadow:0 6px 20px rgba(232,52,107,0.3)}
+.step-tracker{display:flex;background:var(--white);border-bottom:3px solid var(--charcoal);position:sticky;top:0;z-index:100;overflow-x:auto}
+.step-btn{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;padding:16px 12px;border:none;background:transparent;color:var(--text-light);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px;transition:all 0.2s ease;display:flex;align-items:center;gap:6px}
+.step-btn:hover:not(:disabled){color:var(--text);background:rgba(232,52,107,0.04)}
+.step-btn.active{color:var(--hot-pink);border-bottom-color:var(--hot-pink);background:rgba(232,52,107,0.04)}
+.step-btn.completed{color:var(--mint)}
+.step-btn:disabled{opacity:0.35;cursor:not-allowed}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;font-size:12px;font-weight:800;border:2px solid currentColor;flex-shrink:0}
+.step-btn.completed .step-num{background:var(--mint);border-color:var(--mint);color:white}
+.step-btn.completed .step-num::after{content:'✓'}
+.step-btn.completed .step-num span{display:none}
+.panel{display:none;padding:48px 0 64px;animation:fadeUp 0.4s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.panel-intro{margin-bottom:40px}
+.panel-intro h2{font-family:'Fraunces',serif;font-weight:700;font-size:32px;color:var(--text);margin-bottom:12px}
+.panel-intro p{font-size:18px;color:var(--text-light);max-width:620px}
+.section-label{font-family:'Fraunces',serif;font-weight:700;font-size:24px;margin-bottom:8px}
+.section-hint{font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);margin-bottom:24px}
+.input-group{margin-bottom:32px}
+.input-group label{display:block;font-weight:600;font-size:16px;margin-bottom:4px}
+.input-group .input-hint{font-family:'Caveat',cursive;font-size:18px;color:var(--text-light);margin-bottom:12px}
+.input-group input,.input-group textarea{width:100%;font-family:'Bricolage Grotesque',sans-serif;font-size:17px;padding:16px 20px;border:3px solid #e0dde6;background:var(--white);color:var(--text);transition:border-color 0.2s ease}
+.input-group input:focus,.input-group textarea:focus{outline:none;border-color:var(--hot-pink)}
+.input-group textarea{min-height:100px;resize:vertical;line-height:1.5}
+.btn{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:18px;padding:18px 40px;border:3px solid var(--charcoal);cursor:pointer;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);display:inline-block;text-decoration:none}
+.btn--pink{background:var(--hot-pink);color:white;border-color:var(--hot-pink)}
+.btn--pink:hover{background:#d42a5c;transform:translateY(-3px) rotate(-1deg) scale(1.03);box-shadow:0 6px 20px rgba(232,52,107,0.3)}
+.btn--yellow{background:var(--electric-yellow);color:var(--charcoal);border-color:var(--electric-yellow)}
+.btn--yellow:hover{transform:translateY(-3px) rotate(1deg) scale(1.03);box-shadow:0 6px 20px rgba(255,210,63,0.3)}
+.btn--outline{background:transparent;border-color:var(--hot-pink);color:var(--hot-pink)}
+.btn--outline:hover{background:var(--hot-pink);color:white;transform:translateY(-3px) scale(1.03)}
+.btn--mint{background:var(--mint);color:var(--charcoal);border-color:var(--mint)}
+.btn--mint:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 6px 20px rgba(52,211,153,0.3)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important}
+.btn-row{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
 .companion-footer{background:var(--charcoal);padding:32px 24px;text-align:center;color:var(--lavender);font-size:15px}
 .companion-footer a{color:var(--electric-yellow);text-decoration:none}
-.save-indicator{position:fixed;bottom:20px;right:20px;z-index:1000;background:var(--deep-purple);color:var(--lavender);padding:10px 20px;font-size:14px;font-weight:600;border:2px solid var(--lavender);opacity:0;transition:opacity 0.3s;pointer-events:none}
-.save-indicator.visible{opacity:1}
+/* CHAT UI */
+.chat-container{display:flex;flex-direction:column;height:520px;border:3px solid var(--deep-purple);background:var(--white);overflow:hidden}
+.chat-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px}
+.chat-bubble{max-width:78%;padding:16px 20px;font-size:16px;line-height:1.6;animation:fadeUp 0.3s ease}
+.chat-bubble-ai{align-self:flex-start;background:var(--deep-purple);color:var(--lavender);border:none;border-radius:0 16px 16px 16px;display:flex;gap:14px;align-items:flex-start}
+.chat-bubble-ai .chat-avatar{width:32px;height:32px;background:var(--hot-pink);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:white;font-weight:800}
+.chat-bubble-ai .chat-text{flex:1}
+.chat-bubble-user{align-self:flex-end;background:rgba(232,52,107,0.08);color:var(--text);border:2px solid var(--hot-pink);border-radius:16px 0 16px 16px}
+.chat-input-row{display:flex;gap:0;border-top:3px solid var(--deep-purple);background:var(--off-white)}
+.chat-input-row input{flex:1;font-family:'Bricolage Grotesque',sans-serif;font-size:17px;padding:18px 20px;border:none;background:transparent;color:var(--text);outline:none}
+.chat-input-row input::placeholder{color:var(--text-light)}
+.chat-input-row button{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:16px;padding:18px 28px;background:var(--hot-pink);color:white;border:none;cursor:pointer;transition:background 0.2s}
+.chat-input-row button:hover{background:#d42a5c}
+.chat-input-row button:disabled{opacity:0.4;cursor:not-allowed}
+.chat-typing{align-self:flex-start;display:flex;gap:14px;align-items:flex-start;max-width:78%;padding:16px 20px;background:var(--deep-purple);border-radius:0 16px 16px 16px}
+.chat-typing .chat-avatar{width:32px;height:32px;background:var(--hot-pink);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:white;font-weight:800}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing-dots span{width:8px;height:8px;background:var(--lavender);border-radius:50%;animation:typingBounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-ready-btn{display:inline-block;margin-top:12px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:15px;padding:14px 28px;background:var(--electric-yellow);color:var(--charcoal);border:3px solid var(--electric-yellow);cursor:pointer;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1)}
+.chat-ready-btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 20px rgba(255,210,63,0.3)}
+/* COPY REVIEW */
+.generating-state{text-align:center;padding:64px 24px}
+.generating-spinner{width:56px;height:56px;border:4px solid #e0dde6;border-top-color:var(--hot-pink);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.generating-state h3{font-family:'Fraunces',serif;font-weight:700;font-size:24px;color:var(--text);margin-bottom:8px}
+.generating-state p{font-size:16px;color:var(--text-light)}
+.copy-section{margin-bottom:32px;border:3px solid #e0dde6;background:var(--white);overflow:hidden}
+.copy-section-header{background:var(--deep-purple);padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.copy-section-header h3{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:var(--electric-yellow);margin:0}
+.copy-section-preview{padding:20px 24px;font-size:16px;color:var(--text);line-height:1.6;border-bottom:2px solid #e0dde6}
+.edit-toggle{font-family:'Caveat',cursive;font-size:17px;color:var(--lavender);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;transition:color 0.2s;white-space:nowrap}
+.edit-toggle:hover{color:var(--electric-yellow)}
+.edit-fields{display:none;padding:20px 24px;animation:fadeUp 0.3s ease;border-top:2px solid #e0dde6}
+.edit-fields.open{display:block}
+.copy-field{margin-bottom:20px}
+.copy-field:last-child{margin-bottom:0}
+.copy-field-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:8px}
+.copy-field textarea,.copy-field input{width:100%;font-family:'Bricolage Grotesque',sans-serif;font-size:16px;padding:12px 16px;border:2px solid #e0dde6;background:var(--off-white);color:var(--text);line-height:1.5;resize:vertical;transition:border-color 0.2s}
+.copy-field textarea:focus,.copy-field input:focus{outline:none;border-color:var(--hot-pink);background:var(--white)}
+.copy-field textarea{min-height:72px}
+.looks-good-box{background:rgba(52,211,153,0.08);border:3px solid var(--mint);padding:28px 32px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.looks-good-box p{font-size:17px;color:var(--text);margin:0;flex:1}
+.looks-good-box strong{color:var(--mint)}
+.output-block{background:var(--charcoal);padding:32px;margin:24px 0;position:relative;max-height:600px;overflow-y:auto}
+.output-block pre{color:var(--lavender);font-family:'Courier New',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.copy-btn{position:sticky;top:0;float:right;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:14px;padding:10px 20px;border:2px solid var(--electric-yellow);background:var(--electric-yellow);color:var(--charcoal);cursor:pointer;transition:all 0.2s ease;z-index:5}
+.copy-btn:hover{background:var(--hot-pink);border-color:var(--hot-pink);color:white}
+.output-label{font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);margin-bottom:8px}
+.preview-container{border:3px solid var(--charcoal);overflow:hidden;margin:32px 0}
+.preview-bar{background:var(--charcoal);padding:12px 20px;display:flex;align-items:center;gap:8px}
+.preview-dot{width:12px;height:12px;border-radius:50%}
+.preview-dot:nth-child(1){background:var(--coral)}.preview-dot:nth-child(2){background:var(--electric-yellow)}.preview-dot:nth-child(3){background:var(--mint)}
+.preview-bar-title{color:var(--lavender);font-size:13px;margin-left:8px}
+#livePreview{width:100%;min-height:400px;border:none;display:block}
 @media(max-width:640px){
-  .header-title{font-size:32px}
+  .header-title{font-size:32px}.input-row{grid-template-columns:1fr}
+  .step-btn{font-size:12px;padding:12px 8px}.step-btn .step-label{display:none}
+  .btn{width:100%;text-align:center}.btn-row{flex-direction:column}.looks-good-box{flex-direction:column}
+  .chat-container{height:460px}.chat-bubble{max-width:90%}
 }
 </style>
 </head>
@@ -69,27 +165,149 @@ body{font-family:'Bricolage Grotesque',sans-serif;color:var(--text);background:v
   </div>
 </div>
 
+<div id="brandBanner"></div>
+
 <div class="companion-header">
-  <div class="header-eyebrow">Brand Companion</div>
+  <div class="header-eyebrow">About Page Companion</div>
   <h1 class="header-title">Module 02: About Page &#128075;</h1>
   <p class="header-subtitle">Your story, told to the client</p>
+  <div class="header-meta"><span>&#9201; 20 min</span><span>&#128203; 4 steps</span></div>
 </div>
 
 <div class="squiggle"><svg viewBox="0 0 1200 16" preserveAspectRatio="none"><path d="M0,8 C50,2 100,14 150,8 C200,2 250,14 300,8 C350,2 400,14 450,8 C500,2 550,14 600,8 C650,2 700,14 750,8 C800,2 850,14 900,8 C950,2 1000,14 1050,8 C1100,2 1150,14 1200,8" fill="none" stroke="#E8346B" stroke-width="3"/></svg></div>
 
-<div class="coming-soon">
-  <div class="coming-soon-icon">&#128075;</div>
-  <h2>Module 02: About Page &mdash; Coming Soon</h2>
-  <p>This module will help you craft an about page that builds trust and tells your story. Check back soon.</p>
-  <a href="index.html" class="back-link">&larr; Back to Dashboard</a>
+<nav class="step-tracker">
+  <button class="step-btn active" data-step="story"><span class="step-num"><span>1</span></span><span class="step-label">Your Story</span></button>
+  <button class="step-btn" data-step="interview" disabled><span class="step-num"><span>2</span></span><span class="step-label">Interview</span></button>
+  <button class="step-btn" data-step="copy" disabled><span class="step-num"><span>3</span></span><span class="step-label">Your Copy</span></button>
+  <button class="step-btn" data-step="output" disabled><span class="step-num"><span>4</span></span><span class="step-label">Your Page</span></button>
+</nav>
+
+<main class="companion">
+
+<!-- STEP 1: YOUR STORY -->
+<div class="panel active" id="panel-story">
+  <div class="panel-intro">
+    <h2>Tell us about you &#128075;</h2>
+    <p>Give us the basics about you and your business. Rough notes are fine &mdash; Claude will craft the real copy later.</p>
+  </div>
+  <div class="input-group">
+    <label>Your name (or business name) <span style="color:var(--hot-pink)">*</span></label>
+    <div class="input-hint">The name visitors will see on the about page</div>
+    <input type="text" id="aboutName" placeholder="e.g. Sarah Chen or Chen Design Co." oninput="checkStoryReady()">
+  </div>
+  <div class="input-group">
+    <label>What do you do? <span style="color:var(--hot-pink)">*</span></label>
+    <div class="input-hint">One sentence about what your business offers</div>
+    <input type="text" id="aboutRole" placeholder="e.g. I help small businesses build brands that feel like them" oninput="checkStoryReady()">
+  </div>
+  <div class="input-group">
+    <label>How did you get started?</label>
+    <div class="input-hint">The short version of your origin story</div>
+    <textarea id="aboutOrigin" placeholder="e.g. I left my agency job in 2019 after realising small business owners deserved the same quality branding as big companies..."></textarea>
+  </div>
+  <div class="input-group">
+    <label>Who do you help?</label>
+    <div class="input-hint">Your ideal client &mdash; be specific</div>
+    <input type="text" id="aboutAudience" placeholder="e.g. Solo consultants and coaches in their first 3 years of business">
+  </div>
+  <div class="input-group">
+    <label>What makes you different?</label>
+    <div class="input-hint">Your secret sauce &mdash; why do clients pick you?</div>
+    <textarea id="aboutDifferentiator" placeholder="e.g. I combine strategy with design so clients don't need two different agencies..."></textarea>
+  </div>
+  <div class="btn-row"><button class="btn btn--yellow" id="storyNext" onclick="goToStep('interview')" disabled>Next: Tell Me More &rarr;</button></div>
 </div>
 
-<footer class="companion-footer">
-  <div style="font-family:'Fraunces',serif;font-weight:900;font-size:20px;letter-spacing:-1px;margin-bottom:8px">
-    <span style="color:var(--hot-pink)">{</span>sitein8<span style="color:var(--electric-yellow)">}</span>
+<!-- STEP 2: INTERVIEW -->
+<div class="panel" id="panel-interview">
+  <div class="panel-intro">
+    <h2>Let's dig into your story &#128172;</h2>
+    <p>Have a quick chat with Claude about your background. Answer naturally &mdash; Claude will ask everything needed to write an about page that builds trust.</p>
   </div>
-  <a href="https://sitein8.com">sitein8.com</a>
-</footer>
+  <div style="background:rgba(255,210,63,0.12);border:3px solid var(--electric-yellow);padding:20px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start">
+    <span style="font-size:24px;flex-shrink:0">&#10024;</span>
+    <p style="font-size:16px;color:var(--text);margin:0;line-height:1.6">Your brand voice from Module 01 is loaded. Just talk naturally &mdash; Claude will use <strong id="archetypeNameHint">your brand voice</strong> when writing the final copy.</p>
+  </div>
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type your answer..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+      <button id="chatSendBtn" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn--outline" onclick="goToStep('story')">&larr; Back</button>
+  </div>
+</div>
+
+<!-- STEP 3: COPY REVIEW -->
+<div class="panel" id="panel-copy">
+  <div id="generatingState" class="generating-state">
+    <div class="generating-spinner"></div>
+    <h3>Claude is writing your about page...</h3>
+    <p>Reading your brand voice and crafting copy that builds trust.<br>This takes about 20 seconds.</p>
+  </div>
+  <div id="copyReviewState" style="display:none">
+    <div class="panel-intro">
+      <h2>Here's your about page copy &#10024;</h2>
+      <p>Claude wrote this in your brand voice. Read through it &mdash; expand any section to tweak. Or just hit the button below.</p>
+    </div>
+    <div class="looks-good-box">
+      <p>Happy with it? <strong>Hit the button and your about page is ready.</strong> Or expand any section to edit first.</p>
+      <button class="btn btn--mint" onclick="generateAboutPage()">Looks Good &mdash; Build My Page &rarr;</button>
+    </div>
+    <div id="copyFields"></div>
+    <div class="btn-row">
+      <button class="btn btn--outline" onclick="goToStep('interview')">&larr; Back to Interview</button>
+      <button class="btn btn--yellow" onclick="generateAboutPage()">Build My About Page &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4: OUTPUT -->
+<div class="panel" id="panel-output">
+  <div class="panel-intro">
+    <h2>Your About Page is Ready &#127881;</h2>
+    <p>Complete HTML with your brand CSS and Claude-written copy. Paste into your page builder's HTML block.</p>
+  </div>
+  <div style="background:rgba(52,211,153,0.1);border:3px solid var(--mint);padding:20px;margin-bottom:32px;display:flex;align-items:center;gap:16px">
+    <span style="font-size:32px">&#10003;</span>
+    <div>
+      <p style="font-weight:700;font-size:18px;color:var(--text);margin:0">Auto-saved to your account</p>
+      <p style="font-size:15px;color:var(--text-light);margin:4px 0 0">Your about page HTML is saved. Come back any time to revise.</p>
+    </div>
+  </div>
+  <div style="margin-bottom:32px">
+    <button class="btn btn--yellow" onclick="copyOutput()" id="copyBtn" style="width:100%;text-align:center;font-size:20px;padding:22px 40px">&#128203; Copy About Page HTML</button>
+  </div>
+  <div class="section-label" style="margin-bottom:8px">Live Preview</div>
+  <div class="section-hint">Your about page with real brand CSS and copy</div>
+  <div class="preview-container">
+    <div class="preview-bar"><div class="preview-dot"></div><div class="preview-dot"></div><div class="preview-dot"></div><span class="preview-bar-title">yoursite.com/about</span></div>
+    <iframe id="livePreview" sandbox="allow-same-origin"></iframe>
+  </div>
+  <div class="output-label" style="margin-top:40px">About Page HTML</div>
+  <div class="output-block" id="htmlOutput"></div>
+  <div style="background:var(--deep-purple);padding:32px;margin-top:40px">
+    <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">How to paste this in</h3>
+    <p style="color:var(--lavender);font-size:16px;line-height:1.6">Paste the HTML into your page builder's HTML/Code block. The CSS is embedded &mdash; no separate stylesheet needed. Your brand CSS variables control all the colors and fonts automatically.</p>
+  </div>
+  <div style="background:var(--deep-purple);padding:32px;margin-top:24px">
+    <h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--electric-yellow);margin-bottom:12px">Next up: Module 03 &mdash; Sales Page</h3>
+    <p style="color:var(--lavender);font-size:16px;line-height:1.6">Build a landing page that sells your main offer and converts visitors into clients.</p>
+  </div>
+  <div class="btn-row" style="margin-top:40px;flex-direction:column;align-items:center">
+    <a class="btn btn--yellow" href="module03.html" style="width:100%;text-align:center">Continue to Module 03: Sales Page &rarr;</a>
+    <a href="index.html" style="font-family:'Caveat',cursive;font-size:20px;color:var(--text-light);text-decoration:none;transition:color 0.2s">or go back to Dashboard</a>
+    <button class="btn btn--outline" onclick="goToStep('copy')" style="align-self:flex-start">&larr; Back to Copy Review</button>
+  </div>
+</div>
+
+</main>
+<div class="companion-footer">
+  <a href="https://sitein8.com"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -14 386 100" width="140" style="display:block;margin:0 auto 16px"><text x="0" y="32" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#E8346B">{</text><text x="26" y="32" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#FFD23F">}</text><text x="0" y="68" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#FFD23F">{</text><text x="26" y="68" font-family="Fraunces,serif" font-size="48" font-weight="900" fill="#E8346B">}</text><text x="54" y="52" font-family="Fraunces,serif" font-weight="900" font-size="42" fill="#FFFDF7">sitein8</text></svg></a>
+</div>
 </div>
 
 <script>
